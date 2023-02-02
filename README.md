@@ -1,1 +1,1 @@
-# SCORE Sensot catalogue web application
+# SCORE Sensor catalogue web application
