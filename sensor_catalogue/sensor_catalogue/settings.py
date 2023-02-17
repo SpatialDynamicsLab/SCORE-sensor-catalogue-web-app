@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -39,13 +39,29 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+    # ...
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    # ...
+
+    # ...
+    "debug_toolbar",
+    # ...
+
+    # ...
+    'import_export',
+    # ...
+
+    # ...
+   'admin_extra_buttons',
+    # ...
 
     "catalogue",
 
 ]
+
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -55,6 +71,10 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
+    # ...
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    # ...
 ]
 
 ROOT_URLCONF = "sensor_catalogue.urls"
@@ -62,7 +82,7 @@ ROOT_URLCONF = "sensor_catalogue.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, 'templates')],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -144,7 +164,7 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-# AUTHENTICATION 
+# AUTHENTIFICATION 
 
 AUTHENTICATION_BACKENDS = [
 
@@ -155,8 +175,16 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-
-
-
 SITE_ID = 1
+
+LOGIN_REDIRECT_URL = '/'
+
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATIC_URL = '/static/'
+# MEDIA_URL = 'media/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+    ]
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root')
 

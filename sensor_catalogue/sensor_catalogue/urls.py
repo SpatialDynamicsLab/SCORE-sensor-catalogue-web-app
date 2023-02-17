@@ -20,9 +20,10 @@ from django.urls import path,include
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('accounts/', include('allauth.urls')),
+    path('', include('catalogue.urls', namespace ='catalogue'))
 ]
 
 
-# if settings.DEBUG:
-#     import debug_toolbar
-#     urlpatterns+= [path('__debug__/',  include(debug_toolbar.urls))]
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns+= [path('__debug__/', include('debug_toolbar.urls'))]

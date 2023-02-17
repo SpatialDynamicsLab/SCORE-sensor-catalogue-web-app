@@ -5,6 +5,9 @@ import uuid
 from autoslug import AutoSlugField
 import datetime
 
+from django.shortcuts import reverse
+
+
 
 PURCHASE_OPERATION_COMPLEXITY_CHOICES = (
     ('VD', 'very difficult'),
@@ -12,7 +15,6 @@ PURCHASE_OPERATION_COMPLEXITY_CHOICES = (
     ('NE', 'neutral'),
     ('EA', 'easy'),
     ('VE', 'very easy')
-
 )
 
 
@@ -60,9 +62,20 @@ INSTALLATION_COST_CHOICES = (
 )
 
 
+HAZARD_CHOICES = (
+     ('SL', 'Sea level rise'),
+     ('CF', 'Coastal flooding'),
+     ('LF', 'Land and river flooding'),
+     ('CE', 'Coastal Erosion'),
+     ('SS', 'Storm Surge'),
+     ('DH', 'Droughts and heat waves'),
+     ('LS', 'Landslide')
+)
+
 YEAR_CHOICES = []
 for Y in range(1990, (datetime.datetime.now().year+1)):
      YEAR_CHOICES.append((Y,Y))
+
 
 class HazardCategory(models.Model):
     hazard_category_name  =  models.CharField(
@@ -140,6 +153,10 @@ class Sensor(models.Model):
     relevant_to_models = models.BooleanField(
          default=True, 
          verbose_name="Relevant to WP3 Models / EWSS")
+    hazard = models.CharField(
+         choices=HAZARD_CHOICES, 
+         max_length=2, 
+         verbose_name='Hazard')
     hazard_category= models.ManyToManyField(
          HazardCategory, 
          blank=True,
@@ -172,7 +189,7 @@ class Sensor(models.Model):
     accuracy = models.CharField(
          max_length=15, 
          verbose_name="Sensor Accuracy")
-    data_refresh_time= models.IntegerField(
+    data_refresh_time= models.IntegerField(blank=True,null=True,
          default=5, 
          verbose_name="Data Refresh Duration (Minutes)")
     wifi_connection = models.BooleanField(
@@ -188,12 +205,12 @@ class Sensor(models.Model):
          default=False, 
          verbose_name= "External Power Supply")
     minimum_purchase_quantity = models.IntegerField(
-         null=True, 
+         null=True, blank=True, default=1,
          verbose_name="Minimum purchase quantity")
     spatial_density_per_area = models.IntegerField(
-         null=True, 
+         null=True, blank=True,
          verbose_name="Spatial Density / min number per area [km2]")
-    spatial_density_distribution = models.TextField(
+    spatial_density_distribution = models.TextField(blank=True, null=True, default="Not provided",
          verbose_name="Spatial Density / min number and distribution description")
     # Operation complexities
     purchase_operation = models.CharField(
@@ -223,23 +240,43 @@ class Sensor(models.Model):
     targeted_user = models.CharField(
          max_length=250, 
          verbose_name="Targeted Users")
-    picture = models.ImageField(upload_to='sensor_pictures/')
-    sensor_slug =  AutoSlugField(
+    picture = models.ImageField(blank=True, null=True, upload_to='sensor_pictures/')
+    slug =  AutoSlugField(
          populate_from='sensor_name', 
          unique=True, 
          null=True, 
          default=None)
+    
+
     class Meta:
          verbose_name = "Sensor"
          verbose_name_plural = "Sensors"
 
     def __str__(self):
         return self.sensor_name
+    
 
-class OrderedSensor(models.Model):
+    def get_absolute_url(self):
+         return reverse("catalogue:sensor", kwargs={
+              'slug':self.slug
+         })
+    
+
+    def get_add_to_cart_url(self):
+         return reverse("catalogue:add-to-cart", kwargs = {
+              'slug':self.slug
+         })
+
+    def get_remove_from_cart_url(self):
+         return reverse("catalogue:remove-from-cart", kwargs = {
+              'slug':self.slug
+         })
+
+
+class OrderSensor(models.Model):
         user = models.ForeignKey(
              settings.AUTH_USER_MODEL, 
-             on_delete=models.CASCADE)
+             on_delete=models.CASCADE, blank=True, null=True)
         ordered = models.BooleanField(
              default=False)
         sensor = models.ForeignKey(
@@ -248,23 +285,34 @@ class OrderedSensor(models.Model):
         quantity = models.IntegerField(default=1)
 
         def __str__(self):
-            return f"{self.quantity} of {self.sensor.name}"
+            return f"{self.quantity} of {self.sensor.sensor_name}"
         
         def get_total_sensor_price(self):
-             return self.quantity * self.sensor.cost
+             return self.quantity *self.sensor.price
         
         class Meta:
-         verbose_name = "Ordered Sensor"
-         verbose_name_plural = "Ordered Sensors"
+         verbose_name = "Order Sensor"
+         verbose_name_plural = "Order Sensors"
 
 class Order(models.Model):
         user = models.ForeignKey(
              settings.AUTH_USER_MODEL, 
              on_delete=models.CASCADE)
-        sensors = models.ManyToManyField(OrderedSensor)
+        sensors = models.ManyToManyField(OrderSensor)
         start_date = models.DateTimeField(auto_now_add=True)
         ordered_date = models.DateTimeField()
         ordered = models.BooleanField(default=False)
+
+
+        def __str__(self):
+             return self.user.username
+        
+
+        def get_order_total(self):
+             total = 0
+             for order_sensor in self.sensors.all():
+                  total += order_sensor.get_total_sensor_price()
+             return total
 
         class Meta:
             verbose_name = "Order"
