@@ -7,3 +7,4 @@ typing_extensions==4.4.0
 tzdata==2022.7
 django-autoslug
 Pillow
+django-environ
