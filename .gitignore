@@ -131,3 +131,5 @@ dmypy.json
 
 #image fils
  sensor_catalogue/sensor_pictures/
+
+.idea/
