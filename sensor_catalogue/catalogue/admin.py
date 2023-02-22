@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from .models import (
+from catalogue.models import (
     Sensor,
     Order,
-    OrderedSensor,
+    OrderSensor,
     MonitoredParameter,
     HazardSpecific,
     UserProfile,
@@ -12,7 +12,7 @@ from .models import (
 
 
 admin.site.register(Order)
-admin.site.register(OrderedSensor)
+admin.site.register(OrderSensor)
 admin.site.register(MonitoredParameter)
 admin.site.register(HazardSpecific)
 admin.site.register(UserProfile)

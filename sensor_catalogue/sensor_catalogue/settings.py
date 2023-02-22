@@ -25,6 +25,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+# BASE_DIR = os.path.dirname(os.path.dirname(
+#     os.path.dirname(os.path.abspath(__file__))))
+
+SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -47,8 +52,34 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
+    # ...
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'django_countries',
+    'crispy_forms',
+    "crispy_bootstrap5",
+    # ...
+
+    # ...
+    "debug_toolbar",
+    # ...
+
+    # ...
+    'import_export',
+    # ...
+
+    # ...
+   'admin_extra_buttons',
+    # ...
+
     "catalogue",
+
+
 ]
+
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -58,6 +89,10 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
+    # ...
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    # ...
 ]
 
 ROOT_URLCONF = "sensor_catalogue.urls"
@@ -65,7 +100,8 @@ ROOT_URLCONF = "sensor_catalogue.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        # "DIRS": [os.path.join(BASE_DIR, 'templates')],
+        "DIRS": [os.path.join(SETTINGS_PATH, 'templates')],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -144,3 +180,38 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# AUTHENTIFICATION
+
+AUTHENTICATION_BACKENDS = [
+
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SITE_ID = 1
+
+LOGIN_REDIRECT_URL = '/'
+
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATIC_URL = '/static/'
+# MEDIA_URL = 'media/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+    ]
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root')
+
+
+# CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# CRISPY_TEMPLATE_PACK = 'uni_form'
+# CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

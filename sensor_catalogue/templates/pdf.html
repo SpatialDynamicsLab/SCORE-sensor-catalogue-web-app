@@ -1,0 +1,44 @@
+<html>
+<body>
+  <h1>Sensor Catalogue</h1>
+  <p>
+    Invoice no. {{ order.id }}<br>
+    <span class="secondary">
+      {{ order.created|date:"d M, Y" }}
+    </span>
+  </p>
+  <h3>Bill to</h3>
+  <p>
+    {{ request.user}}<br>
+  </p>
+  <h3>Items bought</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Sensor</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Cost</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order_sensor in object.sensors.all}
+        <tr class="row{% cycle "1" "2" %}">
+          <td>{{order_sensor.sensor.sensor_name}}</td>
+          <td class="num">${{order_sensor.sensor.price }}</td>
+          <td class="num">{{ item.quantity }}</td>
+          <td class="num">${{ item.get_cost }}</td>
+        </tr>
+      {% endfor %}
+      <tr class="total">
+        <td colspan="3">Total</td>
+        <td class="num">€{{ order_sensor.get_total_sensor_price }}</td>
+      </tr>
+    </tbody>
+  </table>
+<!-- 
+  <span class="{% if order.paid %}paid{% else %}pending{% endif %}">
+    {% if order.paid %}Paid{% else %}Pending payment{% endif %} -->
+  </span>
+</body>
+</html>
