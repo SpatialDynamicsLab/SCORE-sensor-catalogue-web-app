@@ -130,6 +130,7 @@ dmypy.json
 
 
 #image fils
- sensor_catalogue/sensor_pictures/
+sensor_catalogue/sensor_pictures/
+sensor_catalogue/staticfiles/
 
 .idea/
