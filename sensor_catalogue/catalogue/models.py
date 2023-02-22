@@ -165,7 +165,9 @@ class Sensor(models.Model):
          HazardSpecific,
          blank=True,
          verbose_name="Hazard Specific")
-    price = models.FloatField(
+    price = models.DecimalField(
+         max_digits=10, 
+         decimal_places=2,
          verbose_name="Cost(€)")
     sensor_website = models.URLField(
          blank=True, 
@@ -240,7 +242,10 @@ class Sensor(models.Model):
     targeted_user = models.CharField(
          max_length=250, 
          verbose_name="Targeted Users")
-    picture = models.ImageField(blank=True, null=True, upload_to='sensor_pictures/')
+    image = models.ImageField(
+         upload_to='sensor_pictures/%Y/%m/%d',
+         blank=True,
+          null=True)
     slug =  AutoSlugField(
          populate_from='sensor_name', 
          unique=True, 

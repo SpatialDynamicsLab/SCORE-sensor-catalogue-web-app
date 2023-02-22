@@ -1,12 +1,19 @@
+from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+import weasyprint
+
 from django.utils import timezone
 
 from django.views.generic import ListView, DetailView, View
+
+from .forms import CheckoutForm
 
 from .models import Sensor, OrderSensor, Order
 
@@ -15,7 +22,7 @@ class HomePage(ListView):
     model = Sensor
     paginate_by = 10
     template_name = "index.html"
-
+    # template_name = "home.html"
 
 
 class OrderSummaryView(LoginRequiredMixin,View):
@@ -122,8 +129,54 @@ def remove_single_sensor_from_cart(request, slug):
         messages.info(request, "You do not have an active order.")
         return redirect("catalogue:order-summary",slug=slug)
     
+def checkout(request):
+    return render(request,'checkout.html')
 
 
-def filter_by_hazards(request, hazard):
-    hazard = Sensor.objects.filter(hazard=hazard)
-    return render(request, 'index.html', {'hazard':hazard})
+class CheckoutView(View):
+
+
+    def get(self,*args, **kwargs):
+        # add the form here
+        form = CheckoutForm()
+        order = Order.objects.get(user=self.request.user, ordered=False)
+        context = {
+            'form':form,
+            'order':order
+        }
+        return render(self.request, "checkout.html", context)
+    
+    def post(self, *args, **kwargs):
+
+        form = CheckoutForm(self.request.POST or None)
+
+        try:
+            order = Order.objects.get(user = self.request.user, ordered=False)
+            if form.is_valid():
+                first_name = form.cleaned_data.get('first_name')
+                last_name = form.cleaned_data.get('last_name')
+                street_address = form.cleaned_data.get('street_address')
+                apartment_address = form.cleaned_data.get('apartment_address')
+                country = form.cleaned_data.get('country')
+                zip_code = form.cleaned_data.get('zip_code')
+                # save_info = form.cleaned_data.get('save_info')
+                order.save()
+                return redirect('catalogue:checkout')
+            messages.warning(self.request,"Email not sent. We are working to fix this functionality.")
+            return redirect('catalogue:checkout')
+        except ObjectDoesNotExist:
+            message.error(self.request, "You do not have an active order")
+            return redirect("catalogue:order-summary")
+
+
+@login_required
+def admin_order_pdf(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    html= render_to_string('pdf.html',
+                           {'order':order})
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition']= f'filename=order_{order_id}.pdf'
+    weasyprint.HTML(string=html).write_pdf(response, 
+                                           stylesheets=[weasyprint.css(
+        settings.STATIC_ROOT + 'css/pdf.css')])
+    return redirect('catalogue:home')

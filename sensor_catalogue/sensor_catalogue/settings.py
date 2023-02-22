@@ -15,6 +15,11 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# BASE_DIR = os.path.dirname(os.path.dirname(
+#     os.path.dirname(os.path.abspath(__file__))))
+
+SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -43,6 +48,9 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'django_countries',
+    'crispy_forms',
+    "crispy_bootstrap5",
     # ...
 
     # ...
@@ -58,6 +66,7 @@ INSTALLED_APPS = [
     # ...
 
     "catalogue",
+
 
 ]
 
@@ -82,7 +91,8 @@ ROOT_URLCONF = "sensor_catalogue.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, 'templates')],
+        # "DIRS": [os.path.join(BASE_DIR, 'templates')],
+        "DIRS": [os.path.join(SETTINGS_PATH, 'templates')],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -188,3 +198,12 @@ STATICFILES_DIRS = [
     ]
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root')
 
+
+# CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# CRISPY_TEMPLATE_PACK = 'uni_form'
+# CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

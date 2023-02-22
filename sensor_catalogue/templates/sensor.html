@@ -42,7 +42,29 @@
           </div>
 
         </div>
-        <!--Grid column-->
+        <!--Grid column -->
+        <!-- Display table content here -->
+
+        <div class="col-md-12 mb-3">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Project Name</th>
+                <th>Project Year</th>
+                <th>Project website</th>
+                <th>Project users</th>
+              </tr>
+            </thead><tbody>
+              <tr>
+                <td>{{ object.project_name  }}</td>
+                <td>{{ object.project_year }}</td>
+                <td>{{ object.project_website  }}</td>
+                <td>{{ object.targted_users  }}</td>
+              </tr>
+            </tbody>
+    
+          </table>
+        </div>
       </div>
       <!--Grid row-->
 
@@ -94,25 +116,7 @@
 
       </div>
       <!--Grid row-->
-      
-      <table class="table">
-        <thead>
-          <tr>
-            <th>project name</th>
-            <th>project year</th>
-            <th>project Website</th>
-            <th>project user</th>
-          </tr>
-        </thead><tbody>
-          <tr>
-            <td>{{ object.project_name  }}</td>
-            <td>{{ object.project_year }}</td>
-            <td>{{ object.project_website  }}</td>
-            <td>{{ object.targted_users  }}</td>
-          </tr>
-        </tbody>
-
-    </div>
+     </div>
 
   </main>
 
