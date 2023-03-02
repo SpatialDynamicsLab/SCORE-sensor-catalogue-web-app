@@ -1,0 +1,24 @@
+
+
+
+
+<div>
+    <h1>{{ hazard.name }}</h1>
+    <ul>
+
+ 
+    {% for sensor in hazard.sensor_set.all %}
+        <li>{{ sensor.sensor_name }}</li>
+    {% endfor %}
+
+    <p>
+        No sensors under this category
+    </p>
+
+
+
+
+
+</ul>
+
+</div>

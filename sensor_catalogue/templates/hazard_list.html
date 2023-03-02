@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>SCORE Sensor Catalogue</title>
+    <!-- MDB icon -->
+    <link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon" />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <!-- Google Fonts Roboto -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap"
+    />
+    <!-- MDB -->
+    <link rel="stylesheet" href="{% static 'css/mdb.min.css' %}" />
+  </head>
+  <body>
+   <!-- Start your project here-->
+    <div class="container">
+
+        <h1>
+            SCORE Sensor Catalogue
+        </h1>
+
+        <!-- {% include 'tab.html' %} -->
+
+    </div>
+    <div class="container">
+
+      <div class="row">
+        {% if hazards %} 
+
+        {% for hazard in hazards %}
+        <div class="col-lg-3 col-md-6 mb-4">
+
+            <a href="{% url 'catalogue:hazard_sensor_list' hazard.slug %}" class="card">
+              <div class="flip-card">
+                <div class="flip-card-inner">
+                  <div class="flip-card-front">
+                    <h5 class="card-title card text-center mb-4">{{hazard.name}}</h5>
+                   <img src="{% if hazard.image %}{{ hazard.image.url }} {% else %}{% static "images/no_image.png" %} {% endif %}" alt="{{ hazard.name}}" style="width:50%;height:50%; margin-left: auto;margin-right: auto; display: block;" class="img-fluid">
+                  </div>
+                  <div class="flip-card-back">
+                    <!-- <p>{{ hazard.name }}</p>  -->
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+              <a href="{{ sensor.get_absolute_url }}" class="text-reset">
+              </a>
+              <h6 class="mb-3 price"></h6>
+                </div>
+
+            </a>
+        </div>
+        {% endfor %}
+  
+        {% else %}
+        <p>
+          Hazard list is still empty.
+        </p>
+  
+        {% endif %}
+      </div>
+      </div>
+            </div>
+        </div>
+        
+<br>
+<hr>
+
+
+
+
+</div>
+
+</div>
+
+    <!-- End your project here-->
+
+    <!-- MDB -->
+    <script type="text/javascript" src="js/mdb.min.js"></script>
+    <!-- Custom scripts -->
+    <script type="text/javascript"></script>
+  </body>
+</html>

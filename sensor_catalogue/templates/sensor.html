@@ -8,22 +8,24 @@
       <!--Grid row-->
       <div class="row wow fadeIn">
         <!--Grid column-->
-        <div class="col-md-6 mb-4">
+        <div class="col-md-4 mb-3">
           <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg" class="img-fluid" alt="">
+          
+          
         </div>
-
 
         <div class="col-md-6 mb-4">
           <!--Content-->
           <div class="p-4">
             <div class="mb-3">
+              {{sensor.sensor_name}}
               <a href="">
-                <span class="badge purple mr-1">{{ object.get_citizen_science_operation_display }}</span>
+                <span class="badge purple mr-1">{{ sensor.get_citizen_science_operation_display }}</span>
               </a>
             </div>
             <p class="lead font-weight-bold">Details Description</p>
 
-              <p>{{ object.full_description  }}</p>
+              <p>{{ sensor.full_description  }}</p>
 
               <p class="lead">
                 <span> €{{ object.price }}</span>
@@ -45,28 +47,34 @@
         <!--Grid column -->
         <!-- Display table content here -->
 
-        <div class="col-md-12 mb-3">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Project Name</th>
-                <th>Project Year</th>
-                <th>Project website</th>
-                <th>Project users</th>
-              </tr>
-            </thead><tbody>
-              <tr>
-                <td>{{ object.project_name  }}</td>
-                <td>{{ object.project_year }}</td>
-                <td>{{ object.project_website  }}</td>
-                <td>{{ object.targted_users  }}</td>
-              </tr>
-            </tbody>
-    
-          </table>
-        </div>
+
       </div>
       <!--Grid row-->
+
+      <div class="col-md-12 mb-2">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Project Name</th>
+              <th>Project Year</th>
+              <th>Project website</th>
+              <th>Monitored Parameters</th>
+              <th>Project website</th>
+              <th>Project users</th>
+            </tr>
+          </thead><tbody>
+            <tr>
+              <td>{{ object.project_name  }}</td>
+              <td>{{ object.project_year }}</td>
+              <td>{{ object.project_website  }}</td>
+              <td>{{ object.hazard_specific  }}</td>
+              <td>{{ object.targeted_user  }}</td>
+              <td>{{ object.targeted_user  }}</td>
+            </tr>
+          </tbody>
+  
+        </table>
+      </div>
 
       <hr/>
       <!--Grid row-->
@@ -116,7 +124,7 @@
 
       </div>
       <!--Grid row-->
-     </div>
+
 
   </main>
 

@@ -16,7 +16,7 @@
     <!-- Google Fonts Roboto -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
     <!-- MDB -->
-    <link rel="stylesheet" href="{% static 'new_static/css/mdb.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/mdb.min.css' %}"/>
     <!-- Custom styles -->
     <link rel="stylesheet" href="{% static 'new_static/css/style.css' %}" />
 
@@ -109,12 +109,12 @@
   <br>
 <div class="container">
   <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark mt-3 mb-5 shadow p-2" style="background-color: #607D8B">
+<!-- <nav class="navbar navbar-expand-lg navbar-dark mt-3 mb-5 shadow p-2" style="background-color: #607D8B"> -->
   <!-- Container wrapper -->
-  <div class="container-fluid">
+  <!-- <div class="container-fluid"> -->
 
     <!-- Navbar brand -->
-    <a class="navbar-brand" href="#">SCORE Sensor Catalogue:</a>
+    <!-- <a class="navbar-brand" href="#">SCORE Sensor Catalogue:</a> -->
 
     <!-- Collapsible wrapper -->
     <!-- <div class="collapse navbar-collapse" id="navbarSupportedContent2">
@@ -141,8 +141,8 @@
         <input type="search" class="form-control rounded-0" placeholder="Search" aria-label="Search">
       </form> -->
 
-    </div>
-  </div>
+    <!-- </div>
+  </div> -->
   <!-- Container wrapper -->
 </nav>
 <!-- Navbar -->
@@ -151,20 +151,16 @@
   <section>
   <div class="text-center">
     <div class="row">
-      {% for sensor in object_list %}
+
+  {% if hazard.sensor_set.all %}
+     {% for sensor in hazard.sensor_set.all%}
+
       <div class="col-lg-3 col-md-6 mb-4">
         <div class="card">
             <div class="flip-card">
               <div class="flip-card-inner">
                 <div class="flip-card-front">
-                  <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg" alt="{{ object.sensor_name}}" style="width:300px;height:300px;">
-                  <!-- <img src="{% if sensor.image %}{{ sensor.image.url }}{% else %}{% static "new_static/img/no_image.png" %}{% endif %} alt="{{ sensor.sensor_name}}" style="width:300px;height:300px;"> -->
-                  <!-- <img src=
-                  "{% if object.image %} {{ object.image.url }}"
-                  {% else %}
-                  {% static "new_static/img/no_image.png" %} 
-                  {% endif %} alt="{{ object.sensor_name}}" 
-                  style="width:300px;height:300px;"> -->
+                  <img src="{% if sensor.image %}{{ sensor.image.url }}{% else %}{% static "images/no_image.png" %}{% endif %}" alt="{{ sensor.name}}" style="width:100px;height:100px;">
                 </div>
                 <div class="flip-card-back">
                   <p>{{ sensor.short_description }}</p> 
@@ -176,18 +172,19 @@
               <h5 class="card-title mb-2">{{sensor.sensor_name}}</h5>
             </a>
 
-        
-
-
-
               <p>Installation Operation:{{sensor.get_installation_operation_display}}</p>
           
             <h6 class="mb-3 price">Cost €:{{sensor.price}}</h6>
           </div>
         </div>
       </div>
+
+
       {% endfor %}
-    </div>
+
+      {% else %}
+    <p>No sensors currently available under {{hazard}}</p>
+    {% endif %}
   
 <!-- Pagination -->
     {% if is_paginated %}
@@ -229,9 +226,6 @@
       <!-- Section: Social media -->
   </div>
   <!-- Grid container -->
-
-  <!-- Copyright -->
-  <!-- Copyright -->
 </footer>
     <!-- MDB -->
     <script type="text/javascript" src="{% static 'new_static/js/mdb.min.js' %}"></script>

@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models import Model,CharField
 from django.conf import settings
-import uuid
+# import uuid
 from autoslug import AutoSlugField
 import datetime
 
@@ -77,12 +77,38 @@ for Y in range(1990, (datetime.datetime.now().year+1)):
      YEAR_CHOICES.append((Y,Y))
 
 
+class Hazard(models.Model):
+         name = models.CharField(max_length=200, blank=True)
+     #     choices=HAZARD_CHOICES, max_length=2)
+         description = models.TextField(blank=True,default='Not provided')
+         image = models.ImageField(blank=True,null=True)
+         slug = AutoSlugField(
+              populate_from='name', 
+              max_length=200,
+              unique=True, 
+              null=True )
+         
+         class Meta:
+              ordering = ['name']
+              indexes = [
+                   models.Index(fields=['name']),
+              ]
+              verbose_name = 'Hazard'
+              verbose_name_plural = 'Hazards'
+
+         def __str__(self):
+              return self.name
+         
+         def get_absolute_url(self):
+              return reverse('catalogue:sensor_list_by_hazard',
+                             args=[self.slug])
+         
+
 class HazardCategory(models.Model):
     hazard_category_name  =  models.CharField(
          max_length=100,
          blank=True,
          null=True)
-
     class Meta:
          verbose_name = "Hazard Category"
          verbose_name_plural = "Hazard Categories"
@@ -126,13 +152,9 @@ class UserProfile(models.Model):
         return self.user.username
 
 class Sensor(models.Model):
-    id  =  models.UUIDField(
-         primary_key=True, 
-         default=uuid.uuid4, 
-         editable=False)
     id_old = models.CharField(
-         max_length=10, 
-         verbose_name="OLD ID")
+         max_length=20, 
+         verbose_name="Sensor Old ID")
     tested_with_score = models.BooleanField(
          default=True, 
          verbose_name="Tested with SCORE")
@@ -144,7 +166,7 @@ class Sensor(models.Model):
          verbose_name= "Name")
     short_description = models.TextField(
          verbose_name="Short Description")
-    full_description = models.TextField(
+    full_description = models.TextField(blank=True,
          verbose_name="Detailed Description")
     monitored_parameter = models.ManyToManyField(
          MonitoredParameter,
@@ -153,10 +175,9 @@ class Sensor(models.Model):
     relevant_to_models = models.BooleanField(
          default=True, 
          verbose_name="Relevant to WP3 Models / EWSS")
-    hazard = models.CharField(
-         choices=HAZARD_CHOICES, 
-         max_length=2, 
-         verbose_name='Hazard')
+
+    hazard = models.ManyToManyField(Hazard, blank=True, verbose_name="Hazard")
+
     hazard_category= models.ManyToManyField(
          HazardCategory, 
          blank=True,
@@ -174,10 +195,11 @@ class Sensor(models.Model):
          verbose_name="Sensor Web Page")
     project_name = models.CharField(
          max_length=250, 
-         verbose_name="Project Name")
+         verbose_name="Project Name",
+         blank=True)
     project_year = models.IntegerField(
          choices=YEAR_CHOICES,default=datetime.datetime.now().year,
-         verbose_name="Project Year")
+         verbose_name="Project Year",blank=True,null=True)
 
     project_website = models.URLField(
          blank=True, 
@@ -186,9 +208,11 @@ class Sensor(models.Model):
          blank=True, 
          verbose_name="Reference Paper")
     unit_of_measurement = models.CharField(
+         blank=True,null=True,
          max_length=10, 
          verbose_name="Unit of Measurement")
     accuracy = models.CharField(
+         blank=True,null=True,
          max_length=15, 
          verbose_name="Sensor Accuracy")
     data_refresh_time= models.IntegerField(blank=True,null=True,
@@ -202,7 +226,8 @@ class Sensor(models.Model):
          verbose_name= "4G Connection")
     number_of_components = models.IntegerField(
          null=True, 
-         verbose_name="Number of components")
+         verbose_name="Number of components",
+         blank=True)
     external_power_supply = models.BooleanField(
          default=False, 
          verbose_name= "External Power Supply")
@@ -218,34 +243,33 @@ class Sensor(models.Model):
     purchase_operation = models.CharField(
          choices=PURCHASE_OPERATION_COMPLEXITY_CHOICES, 
          max_length=2, 
-         verbose_name="Purchase Operations Complexity")
+         verbose_name="Purchase Operations Complexity",
+         blank=True)
     assembly_operation = models.CharField(
          choices=ASSEMBLY_OPERATION_COMPLEXITY_CHOICES, 
-         max_length=2, 
+         max_length=2,
+         blank=True,
          verbose_name="Assembly Operations Complexity")
     installation_operation = models.CharField(
          choices=INSTALLATION_OPERATION_COMPLEXITY_CHOICES, 
-         max_length=2, 
+         max_length=2, blank=True,
          verbose_name="Installation Operation Complexity ")
     installation_costs = models.CharField(
          choices=INSTALLATION_COST_CHOICES, 
-         max_length=1, 
+         max_length=1, blank=True,
          verbose_name="Installation Cost")
     data_analysis_operation = models.CharField(
          choices=DATA_ANALYSIS_OPERATION_CHOICES, 
-         max_length=2, 
+         max_length=2, blank=True,
          verbose_name="Data Analysis Operations Complexity")
     citizen_science_operation = models.CharField(
          choices=CITIZEN_SCIENCE_OPERATION_CHOICES, 
-         max_length=2, 
+         max_length=2, blank=True,
          verbose_name="Citizen Science Activities Complexity")
     targeted_user = models.CharField(
-         max_length=250, 
+         max_length=250, blank=True,
          verbose_name="Targeted Users")
-    image = models.ImageField(
-         upload_to='sensor_pictures/%Y/%m/%d',
-         blank=True,
-          null=True)
+    image = models.ImageField(blank=True,null=True)
     slug =  AutoSlugField(
          populate_from='sensor_name', 
          unique=True, 
@@ -277,7 +301,19 @@ class Sensor(models.Model):
               'slug':self.slug
          })
 
+class SensorImage(models.Model):
+    sensor = models.ForeignKey(Sensor, default=None, on_delete=models.CASCADE)
+    images = models.FileField(upload_to = 'sensor_images/%Y/%m/%d',blank=True)
+ 
+    def __str__(self):
+        return self.sensor.sensor_name
+    
 
+    class Meta:
+         verbose_name = "Sensor Image"
+         verbose_name_plural = "Sensor Images"
+
+    
 class OrderSensor(models.Model):
         user = models.ForeignKey(
              settings.AUTH_USER_MODEL, 

@@ -15,14 +15,38 @@ from django.views.generic import ListView, DetailView, View
 
 from .forms import CheckoutForm
 
-from .models import Sensor, OrderSensor, Order
+from .models import Sensor, OrderSensor, Order, Hazard
+
+
+class LandingPage(ListView):
+    model = Hazard
+    # template_name = "home.html"
+    template_name = "index2.html"
+
+
+def hazard_list(request):
+    hazards = Hazard.objects.all()
+    context = {'hazards': hazards}
+    return render(request, 'hazard_list.html', context)
+
+
+def hazard_sensor_list(request, hazard_slug):
+    hazard = get_object_or_404(Hazard, slug=hazard_slug)
+    print(hazard)
+    context = {'hazard': hazard}
+    # return render(request, 'hazard_sensor_list.html', context)
+    # return render(request, 'home.html', context)
+    return render(request, 'index.html', context)
+
+
+
 
 
 class HomePage(ListView):
     model = Sensor
     paginate_by = 10
     template_name = "index.html"
-    # template_name = "home.html"
+
 
 
 class OrderSummaryView(LoginRequiredMixin,View):
