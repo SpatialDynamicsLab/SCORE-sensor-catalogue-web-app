@@ -8,57 +8,18 @@ import datetime
 from django.shortcuts import reverse
 
 
-
-PURCHASE_OPERATION_COMPLEXITY_CHOICES = (
-    ('VD', 'very difficult'),
-    ('DI', 'difficult'),
-    ('NE', 'neutral'),
-    ('EA', 'easy'),
-    ('VE', 'very easy')
-)
-
-
-ASSEMBLY_OPERATION_COMPLEXITY_CHOICES = ( 
-    ('VD', 'very difficult'),
-    ('DI', 'difficult'),
-    ('NE', 'neutral'),
-    ('EA', 'easy'),
-    ('VE', 'very easy')
-
-)
-
-INSTALLATION_OPERATION_COMPLEXITY_CHOICES = (
-    ('VD', 'very difficult'),
-    ('DI', 'difficult'),
-    ('NE', 'neutral'),
-    ('EA', 'easy'),
-    ('VE', 'very easy')
-
-)
-
-DATA_ANALYSIS_OPERATION_CHOICES = (
-    ('VD', 'very difficult'),
-    ('DI', 'difficult'),
-    ('NE', 'neutral'),
-    ('EA', 'easy'),
-    ('VE', 'very easy')
-
-)
-
-CITIZEN_SCIENCE_OPERATION_CHOICES = (
-    ('VD', 'very difficult'),
-    ('DI', 'difficult'),
-    ('NE', 'neutral'),
-    ('EA', 'easy'),
-    ('VE', 'very easy')
-
-)
+OPERATION_CHOICES = (
+    ('VD', 'Very difficult'),
+    ('DI', 'Difficult'),
+    ('NE', 'Neutral'),
+    ('EA', 'Easy'),
+    ('VE', 'Very easy'))
 
 INSTALLATION_COST_CHOICES = (
     
-    ('H', 'high'),
-    ('M', 'medium'),
-    ('L', 'low')
+    ('H', 'High'),
+    ('M', 'Medium'),
+    ('L', 'Low')
 )
 
 
@@ -79,14 +40,14 @@ for Y in range(1990, (datetime.datetime.now().year+1)):
 
 class Hazard(models.Model):
          name = models.CharField(max_length=200, blank=True)
-     #     choices=HAZARD_CHOICES, max_length=2)
          description = models.TextField(blank=True,default='Not provided')
          image = models.ImageField(blank=True,null=True)
          slug = AutoSlugField(
               populate_from='name', 
               max_length=200,
               unique=True, 
-              null=True )
+              null=True,
+               default=None )
          
          class Meta:
               ordering = ['name']
@@ -130,18 +91,111 @@ class HazardSpecific(models.Model):
     def __str__(self):
 
         return self.hazard_specific_name
+    
 
 
 class MonitoredParameter(models.Model):
-    monitored_parameter_name = models.CharField(max_length=50)
+    name = models.CharField(max_length=100)
+    slug = AutoSlugField(
+              populate_from='name', 
+              max_length=200,
+              unique=True, 
+              null=True )
 
     class Meta:
          verbose_name = "Monitored Parameter"
          verbose_name_plural = "Monitored Parameters"
 
     def __str__(self):
-        return self.monitored_parameter_name
+        return self.name
+    
 
+    def get_absolute_url(self):
+         return reverse("catalogue:measured_parameter_list", kwargs={
+              'slug':self.slug
+         })
+    
+
+class CommonInfo(models.Model):
+     name = models.CharField(
+         choices=OPERATION_CHOICES, 
+         max_length=2,
+         blank=True,
+         default=None)
+     
+     class Meta:
+        abstract = True
+
+class PurchaseOperation(CommonInfo):
+     class Meta:
+         verbose_name = "Assembly Operation"
+         verbose_name_plural = "Assembly Operations"
+
+     def __str__(self):
+        return self.name
+
+
+class AssemblyOperation(CommonInfo):
+     
+     class Meta:
+         verbose_name = "Assembly Operation"
+         verbose_name_plural = "Assembly Operations"
+
+     def __str__(self):
+        return self.name
+    
+     
+class InstallationOperation(CommonInfo):
+    
+     class Meta:
+         verbose_name = "Install Operation Complexity"
+         verbose_name_plural = "Install Operation Complexities"
+
+     def __str__(self):
+        return self.name
+     
+class PurchaseOperation(CommonInfo):
+     class Meta:
+         verbose_name = "Purchase Operation Complexity"
+         verbose_name_plural = "Purchase Operation Complexities"
+
+     def __str__(self):
+        return self.name
+     
+
+class InstallationCost(models.Model):
+     name = models.CharField(
+         choices=INSTALLATION_COST_CHOICES, 
+         max_length=1, blank=True)
+
+     class Meta:
+         verbose_name = "Installation Cost"
+         verbose_name_plural = "Install Costs"
+
+     def __str__(self):
+        return self.name
+     
+
+
+class DataAnalysisOperation(CommonInfo):    
+     class Meta:
+         verbose_name = "Data Analysis Operation Complexity"
+         verbose_name_plural = "Data Analysis Operation Complexities"
+
+     def __str__(self):
+        return self.name
+     
+    
+class CitizenScienceOperation(CommonInfo):
+     
+     class Meta:
+         verbose_name = "Citizen Science Operation Complexity"
+         verbose_name_plural = "Citizen Science Operation Complexities"
+
+     def __str__(self):
+        return self.name
+     
+    
 
 class UserProfile(models.Model):
     user = models.OneToOneField(
@@ -189,6 +243,7 @@ class Sensor(models.Model):
     price = models.DecimalField(
          max_digits=10, 
          decimal_places=2,
+         blank=True,
          verbose_name="Cost(€)")
     sensor_website = models.URLField(
          blank=True, 
@@ -199,7 +254,9 @@ class Sensor(models.Model):
          blank=True)
     project_year = models.IntegerField(
          choices=YEAR_CHOICES,default=datetime.datetime.now().year,
-         verbose_name="Project Year",blank=True,null=True)
+         verbose_name="Project Year",
+         blank=True,
+         null=True)
 
     project_website = models.URLField(
          blank=True, 
@@ -215,7 +272,7 @@ class Sensor(models.Model):
          blank=True,null=True,
          max_length=15, 
          verbose_name="Sensor Accuracy")
-    data_refresh_time= models.IntegerField(blank=True,null=True,
+    data_refresh_time= models.PositiveIntegerField(blank=True,null=True,
          default=5, 
          verbose_name="Data Refresh Duration (Minutes)")
     wifi_connection = models.BooleanField(
@@ -231,41 +288,59 @@ class Sensor(models.Model):
     external_power_supply = models.BooleanField(
          default=False, 
          verbose_name= "External Power Supply")
-    minimum_purchase_quantity = models.IntegerField(
+    minimum_purchase_quantity = models.PositiveIntegerField(
          null=True, blank=True, default=1,
          verbose_name="Minimum purchase quantity")
-    spatial_density_per_area = models.IntegerField(
+    spatial_density_per_area = models.PositiveIntegerField(
          null=True, blank=True,
          verbose_name="Spatial Density / min number per area [km2]")
     spatial_density_distribution = models.TextField(blank=True, null=True, default="Not provided",
          verbose_name="Spatial Density / min number and distribution description")
-    # Operation complexities
-    purchase_operation = models.CharField(
-         choices=PURCHASE_OPERATION_COMPLEXITY_CHOICES, 
-         max_length=2, 
-         verbose_name="Purchase Operations Complexity",
-         blank=True)
-    assembly_operation = models.CharField(
-         choices=ASSEMBLY_OPERATION_COMPLEXITY_CHOICES, 
+
+    purchase_operation = models.ForeignKey(
+         PurchaseOperation, 
+         on_delete=models.CASCADE,
+         blank=True,
+         default=None,null=True,
+         verbose_name="Purchase Operation")
+    
+    assembly_operation = models.ForeignKey(
+         AssemblyOperation,
+         on_delete=models.CASCADE,
+         default=None,
          max_length=2,
          blank=True,
+         null=True,
          verbose_name="Assembly Operations Complexity")
-    installation_operation = models.CharField(
-         choices=INSTALLATION_OPERATION_COMPLEXITY_CHOICES, 
-         max_length=2, blank=True,
+    
+    installation_operation = models.ForeignKey(
+         InstallationOperation,
+         on_delete=models.CASCADE,
+         default=None,
+         max_length=2, blank=True,null=True,
          verbose_name="Installation Operation Complexity ")
+    
     installation_costs = models.CharField(
          choices=INSTALLATION_COST_CHOICES, 
          max_length=1, blank=True,
+         default=None, null=True,
          verbose_name="Installation Cost")
-    data_analysis_operation = models.CharField(
-         choices=DATA_ANALYSIS_OPERATION_CHOICES, 
-         max_length=2, blank=True,
+    
+    data_analysis_operation = models.ForeignKey(
+         DataAnalysisOperation,
+         on_delete=models.CASCADE,
+         default=None,      
+         max_length=2, blank=True,null=True,
          verbose_name="Data Analysis Operations Complexity")
-    citizen_science_operation = models.CharField(
-         choices=CITIZEN_SCIENCE_OPERATION_CHOICES, 
-         max_length=2, blank=True,
+    
+    citizen_science_operation = models.ForeignKey(
+         CitizenScienceOperation,
+         on_delete=models.CASCADE,
+         default=None,   
+         max_length=2, 
+         blank=True, null=True,
          verbose_name="Citizen Science Activities Complexity")
+    
     targeted_user = models.CharField(
          max_length=250, blank=True,
          verbose_name="Targeted Users")
@@ -276,13 +351,26 @@ class Sensor(models.Model):
          null=True, 
          default=None)
     
-
     class Meta:
          verbose_name = "Sensor"
          verbose_name_plural = "Sensors"
 
     def __str__(self):
         return self.sensor_name
+    
+
+    def name_summary(self):
+         if len(self.sensor_name) <26:
+              return self.sensor_name
+         else:
+              return self.sensor_name[:26]+"..."
+    
+
+    def description_summary(self):
+         if len(self.short_description) < 200:
+              return self.short_description
+         else:
+              return self.full_description[:200]+"..."
     
 
     def get_absolute_url(self):
@@ -312,7 +400,7 @@ class SensorImage(models.Model):
     class Meta:
          verbose_name = "Sensor Image"
          verbose_name_plural = "Sensor Images"
-
+     
     
 class OrderSensor(models.Model):
         user = models.ForeignKey(

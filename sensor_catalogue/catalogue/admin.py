@@ -8,7 +8,14 @@ from catalogue.models import (
     HazardSpecific,
     UserProfile,
     HazardCategory,
-    SensorImage, Hazard
+    SensorImage,
+    Hazard,
+    PurchaseOperation,
+    AssemblyOperation,
+    InstallationOperation,
+    InstallationCost,
+    DataAnalysisOperation,
+    CitizenScienceOperation
 )
 
 
@@ -18,9 +25,14 @@ admin.site.register(MonitoredParameter)
 admin.site.register(HazardSpecific)
 admin.site.register(UserProfile)
 admin.site.register(HazardCategory)
-# admin.site.register(Sensor)
+admin.site.register(PurchaseOperation)
 admin.site.register(Hazard)
-# admin.site.register(SensorImage)
+admin.site.register(AssemblyOperation)
+admin.site.register(InstallationOperation)
+admin.site.register(DataAnalysisOperation)
+admin.site.register(InstallationCost)
+admin.site.register(CitizenScienceOperation)
+
 
 
 class SensorImageInline(admin.TabularInline):

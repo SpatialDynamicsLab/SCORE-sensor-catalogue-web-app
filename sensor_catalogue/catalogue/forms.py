@@ -30,3 +30,7 @@ class CheckoutForm(forms.Form):
     }))
     save_info = forms.BooleanField(widget=forms.CheckboxInput())
 
+
+
+class SensorFilterForm(forms.Form):
+    hazard =  forms.CharField()

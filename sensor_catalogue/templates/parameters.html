@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Parameters</h1>
+        <hr>
+        <div class="row">
+          {% for parameter in parameters %}
+          <div class="col-md-3">
+            <div class="card">
+                <a href="{% url 'catalogue:parameter_sensor_list' parameter.slug %}">
+              <div class="card-body">
+                <h4 class="text-center">{{parameter.name}}</h4>
+                <div class="card-image">
+                  <img src="{% if parameter.image %}{{ parameter.image.url }} {% else %}{% static "images/no_image.png" %} {% endif %}" alt="{{ parameter.name}}" style="width:100%;height:100%; margin-left: auto;margin-right: auto; display: block;" class="w-">
+                </div>
+                </div>
+
+            </a>
+          </div>
+          </div>
+          {% endfor %}
+  
+        </div>
+      </div>
+    </div>
+  </div>       
+
+
+
+{% endblock %}
+

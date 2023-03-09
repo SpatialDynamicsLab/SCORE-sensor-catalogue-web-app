@@ -1,24 +1,45 @@
 
+{% load static %}
 
-
-
+<!-- 
 <div>
     <h1>{{ hazard.name }}</h1>
     <ul>
 
  
     {% for sensor in hazard.sensor_set.all %}
+
         <li>{{ sensor.sensor_name }}</li>
+
     {% endfor %}
-
-    <p>
-        No sensors under this category
-    </p>
-
-
-
-
 
 </ul>
 
-</div>
+</div> -->
+
+
+<div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Hazards</h1>
+        <hr>
+        <div class="row">
+          
+          {% for sensor in sensors %}
+          <div class="col-md-3">
+            <div class="card">
+            <a href="{% url 'catalogue:hazard_sensor_list' hazard.slug %}">
+              <div class="card-body">
+                <h4 class="text-center">{{sensor.sensor_name}}</h4>
+                <div class="card-image">
+                  <img src="{% if sensor.image %}{{ sensor.image.url }} {% else %}{% static "images/no_image.png" %} {% endif %}" alt="{{ hazard.name}}" style="width:50%;height:50%; margin-left: auto;margin-right: auto; display: block;" class="w-">
+                </div>
+                </div>
+            </a>
+          </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div> 

@@ -5,13 +5,18 @@ from .  import views
 
 app_name  = 'catalogue'
 urlpatterns =[
-    
-    path('', views.hazard_list, name='home'),
-
-    path('<slug:hazard_slug>/', views.hazard_sensor_list, name='hazard_sensor_list'),
 
 
-    # path('checkout/',checkout, name='checkout'),
+    path('', views.SensorFilterView, name='home_page'),
+    path('hazards/', views.hazard_list, name='home'),
+    path('filters/', views.SensorFilterView, name='filters'),
+
+    path('hazards/<slug:slug>', views.hazard_sensor_list, name='hazard_sensor_list'),
+
+    path('parameters/', views.parameter_list, name='parameter_list'),
+    path('parameters/<slug:slug>', views.parameter_sensor_list, name= 'parameter_sensor_list'),
+
+
     path('checkout/',views.CheckoutView.as_view(), name='checkout'),
     path('order-summary/', views.OrderSummaryView.as_view(), name='order-summary'),
     path('sensor/<slug>/',views.SensorDetailView.as_view(), name='sensor'),

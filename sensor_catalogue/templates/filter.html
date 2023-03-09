@@ -1,0 +1,117 @@
+{% load static %}
+
+{% block content %}
+
+<main role="main" class="container">
+
+    <h3>Filter Sensors</h3>
+    <form method="GET" action=".">
+      <div class="form-row">
+          <div class="form-group col-12">
+              <div class="input-group">
+                  <input class="form-control py-2 border-right-0 border" type="search" name="hazard_contains" placeholder="Hazard contains..." />
+                  <span class="input-group-append">
+                      <div class="input-group-text bg-transparent">
+                          <!-- <i class="fa fa-search"></i> -->
+                      </div>
+                  </span>
+              </div>
+          </div>        
+      </div>
+      <div class="form-row">
+          <div class="form-group col-12">
+              <div class="input-group">
+                  <input class="form-control py-2 border-right-0 border" type="search" name="reference_partner" placeholder="Reference partner..." />
+                  <span class="input-group-append">
+                      <div class="input-group-text bg-transparent">
+                          <!-- <i class="fa fa-search"></i> -->
+                      </div>
+                  </span>
+              </div>
+          </div>        
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-2 col-lg-2">
+          <label for="priceMin">Minimum Price</label>
+          <input type="number" min=0 class="form-control" id="priceMin" placeholder="1" name="price_min">
+        </div>
+        <div class="form-group col-md-2 col-lg-2">
+          <label for="priceMax">Maximum Price</label>
+          <input type="number" min=0 class="form-control" id="priceMax" placeholder="1000?" name="price_max">
+        </div>
+        <div class="form-group col-md-2 col-lg-2">
+          <label for="projectYear">Project Minimum Year</label>
+          <input type="number" class="form-control" id="projectYear" placeholder=" Enter 'Start Year'" name="project_min_year">
+        </div>
+        <div class="form-group col-md-2 col-lg-2">
+        <label for="publishDateMax">Project Maximum Year</label>
+         <input type="number" class="form-control" id="publishDateMax" placeholder= "Enter 'End Year'" name="date_max">
+        </div>
+        <div class="form-group col-md-2">
+          <label for="installation_operation">Install Complexity</label>
+          <select id="installOperation" class="form-control" name="installation_operation">
+            <option selected>Select...</option>
+            {% for q in install_ops_complexities.all %}
+            <option value="{{ q }}">{{ q.get_name_display }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group col-md-2">
+          <label for="monitored_parameter">Monitored Parameters</label>
+          <select id="monitoredParameter" class="form-control" name="monitored_parameter">
+            <option selected>Select...</option>
+            {% for parameter in monitored_parameters %}
+                   <option value="{{ parameter }}">{{ parameter }}</option>
+            {% endfor %}
+          </select>
+        </div>
+     </div>
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <hr />
+<h4> Sensor Listings</h4>
+{% if queryset %}
+   <div class="row align-items-center">
+
+   
+      {% for sensor in queryset %}        
+        <!-- <div class="col-lg-3 col-md-4 mb-3"> -->
+        <div class="col-lg-4 col-md-12 mb-4">
+        <div class="card" style="height:400px">
+          <div class="column" style="height: 80px;">
+            <div class="row align-items-center" >
+              
+              {% for item in sensor.hazard.all %}
+              <img src="{% if item.image %}{{ item.image.url }} {% else %}{% static "images/no_image.png" %} {% endif %}" alt="{{ item.name}}" style="float: left; width:50px;height:50px; margin-left: auto;margin-right: auto; display: block;" class="w-" >
+            {% endfor %}
+            </div>
+          </div>
+            <div class="flip-card"> 
+              <div class="flip-card-inner">
+                <div class="flip-card-front">
+                  <img src="{% if sensor.image %}{{ sensor.image.url }}{% else %}{% static "images/no_image.png" %}{% endif %}" alt="{{ sensor.name}}" style="width:50%;height:50%; margin-left: auto;margin-right: auto; display: block;" class="w-">
+                </div>
+                <div class="flip-card-back">
+                
+                  <p>{{ sensor.description_summary }}</p> 
+                </div>
+              </div>
+            </div>
+            <div class="card-body" style="text-align: center;">
+            <a href="{{ sensor.get_absolute_url }}" class="text-reset">
+              <h5 class="card-title mb-2" style="color: blue;font-size: medium;">{{sensor.sensor_name}}</h5>
+            </a>
+            <h6 class="mb-3 price">Cost €:{{sensor.price}}</h6>
+          </div>
+        </div>
+      </div>  
+      {% endfor %}
+      {% else %}
+      <h4 style="color: darkred;"> No data available under your filter!</h4>
+      {% endif %}
+
+    </div>
+  </main>
+  {% endblock content %}

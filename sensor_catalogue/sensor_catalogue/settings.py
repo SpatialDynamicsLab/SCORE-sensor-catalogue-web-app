@@ -59,7 +59,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'django_countries',
     'crispy_forms',
-    "crispy_bootstrap5",
+    'crispy_bootstrap5',
+    'django_filters',
     # ...
 
     # ...

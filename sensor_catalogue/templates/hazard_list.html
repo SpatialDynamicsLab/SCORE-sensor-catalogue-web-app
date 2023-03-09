@@ -25,64 +25,78 @@
    <!-- Start your project here-->
     <div class="container">
 
-        <h1>
-            SCORE Sensor Catalogue
-        </h1>
-
-        <!-- {% include 'tab.html' %} -->
-
-    </div>
-    <div class="container">
-
-      <div class="row">
-        {% if hazards %} 
-
-        {% for hazard in hazards %}
-        <div class="col-lg-3 col-md-6 mb-4">
-
-            <a href="{% url 'catalogue:hazard_sensor_list' hazard.slug %}" class="card">
-              <div class="flip-card">
-                <div class="flip-card-inner">
-                  <div class="flip-card-front">
-                    <h5 class="card-title card text-center mb-4">{{hazard.name}}</h5>
-                   <img src="{% if hazard.image %}{{ hazard.image.url }} {% else %}{% static "images/no_image.png" %} {% endif %}" alt="{{ hazard.name}}" style="width:50%;height:50%; margin-left: auto;margin-right: auto; display: block;" class="img-fluid">
-                  </div>
-                  <div class="flip-card-back">
-                    <!-- <p>{{ hazard.name }}</p>  -->
-                  </div>
-                </div>
-              </div>
-              <div class="card-body">
-              <a href="{{ sensor.get_absolute_url }}" class="text-reset">
-              </a>
-              <h6 class="mb-3 price"></h6>
-                </div>
-
-            </a>
-        </div>
-        {% endfor %}
-  
-        {% else %}
-        <p>
-          Hazard list is still empty.
-        </p>
-  
-        {% endif %}
-      </div>
-      </div>
+      <header>
+        <!-- Navbar -->
+        <!-- <nav class="navbar navbar-expand-lg navbar-light bg-white">
+          <div class="container-fluid">
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-mdb-toggle="collapse"
+              data-mdb-target="#navbarExample01"
+              aria-controls="navbarExample01"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarExample01">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item active">
+                  <a class="nav-link" aria-current="page" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Features</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Pricing</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">About</a>
+                </li>
+              </ul>
             </div>
+          </div>
+        </nav> -->
+        <!-- Navbar -->
+      </header>
+
+    </div>   
+
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <h1>Hazards</h1>
+            <hr>
+            <div class="row">
+              {% if hazards %}
+
+              {% for hazard in hazards %}
+              <div class="col-md-3">
+                <div class="card">
+                <a href="{% url 'catalogue:hazard_sensor_list' hazard.slug %}">
+                  <div class="card-body">
+                    <h4 class="text-center">{{hazard.name}}</h4>
+                    <div class="card-image">
+                      <img src="{% if hazard.image %}{{ hazard.image.url }} {% else %}{% static "images/no_image.png" %} {% endif %}" alt="{{ hazard.name}}" style="width:50%;height:50%; margin-left: auto;margin-right: auto; display: block;" class="w-">
+                    </div>
+                    </div>
+                </a>
+              </div>
+              </div>
+              {% endfor %}
+              {% else %}
+              <p>No hazards in the database yet!</p>
+              {% endif %}
+            </div>
+          </div>
         </div>
-        
+      </div>       
 <br>
 <hr>
-
-
-
-
 </div>
 
 </div>
-
     <!-- End your project here-->
 
     <!-- MDB -->

@@ -1,0 +1,34 @@
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div row>
+        <div class="col-md-12">
+            <h3>Hazards Legend</h3>
+            <hr>
+            <div class="row">
+              {% if hazards %}
+              {% for hazard in hazards %}
+              <div class="col-md-3 mb-4">
+                <div class="card">
+                <a href="{% url 'catalogue:hazard_sensor_list' hazard.slug %}">
+                  <div class="card-body">
+                    <h6 class="text-center">{{hazard.name}}</h6>
+                    <!-- <p>{{hazard.name}}</p> -->
+                    <div class="card-image">
+                      <img src="{% if hazard.image %}{{ hazard.image.url }} {% else %}{% static "images/no_image.png" %} {% endif %}" alt="{{ hazard.name}}" style="width:50%;height:50%; margin-left: auto;margin-right: auto; display: block;" class="w-">
+                    </div>
+                    </div>
+                </a>
+              </div>
+              </div>
+              {% endfor %}
+              {% else %}
+              <p>No hazards in the database yet!</p>
+              {% endif %}
+            </div>
+          </div>
+    </div>
+</div>
+
+  {% endblock content %}

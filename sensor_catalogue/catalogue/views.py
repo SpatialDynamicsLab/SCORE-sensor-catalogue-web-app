@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 
 from django.http import HttpResponse
 from django.template.loader import render_to_string
@@ -15,7 +16,11 @@ from django.views.generic import ListView, DetailView, View
 
 from .forms import CheckoutForm
 
-from .models import Sensor, OrderSensor, Order, Hazard
+from .models import Sensor, OrderSensor, Order, Hazard, MonitoredParameter, InstallationOperation
+
+from catalogue.filters import SensorFilter
+
+
 
 
 class LandingPage(ListView):
@@ -30,23 +35,111 @@ def hazard_list(request):
     return render(request, 'hazard_list.html', context)
 
 
-def hazard_sensor_list(request, hazard_slug):
-    hazard = get_object_or_404(Hazard, slug=hazard_slug)
+def hazard_sensor_list(request, slug):
+    hazard = get_object_or_404(Hazard, slug=slug)
+    sensors = Sensor.objects.filter(hazard__slug=slug)
     print(hazard)
-    context = {'hazard': hazard}
-    # return render(request, 'hazard_sensor_list.html', context)
-    # return render(request, 'home.html', context)
+    print(sensors)
+    context = {'hazard': hazard, 
+               'sensors':sensors}
     return render(request, 'index.html', context)
 
 
+def parameter_list(request):
+    parameters = MonitoredParameter.objects.all()
+    context = {'parameters': parameters}
+    return render(request, 'parameters.html', context)
 
 
+def parameter_sensor_list(request, slug):
+    if(MonitoredParameter.objects.filter(slug=slug)):
+        sensors = Sensor.objects.filter(monitored_parameter__slug=slug)
+        parameter  = MonitoredParameter.objects.filter(slug=slug).first()
+        context = {'sensors':sensors,
+                   'parameter':parameter}
+        return render(request, 'parameters_sensors_list.html', context)
+    else:
+        messages.warning(request, "No such parameter found")
+        return redirect("catalogue:parameter_list")
 
-class HomePage(ListView):
-    model = Sensor
-    paginate_by = 10
-    template_name = "index.html"
 
+# def home_page(request):
+
+#     sensor_filter = SensorFilter(request.GET, queryset=Sensor.objects.all())
+#     context = {
+#         'form':sensor_filter.form,
+#         'sensors': sensor_filter.qs
+#     }
+#     return render(request, 'main.html', context)
+
+
+def is_valid_query(param):
+    return param != '' and param is not None
+
+
+def SensorFilterView(request):
+    """
+    This view serves as the main landing page.
+    Besides, it also does the fucntion of filtering data, retrning a 
+    queryset with either the whole data or as a filter that is 
+    then rendered to the template.
+
+    # TO DO.
+
+    Further code refactoring.
+    """
+
+    qs = Sensor.objects.order_by('price').all()
+    install_ops_complexities = InstallationOperation.objects.all()
+    monitored_parameters = MonitoredParameter.objects.order_by('name').all()
+    hazards = Hazard.objects.order_by('name').all
+       
+    hazard_contains_query = request.GET.get('hazard_contains')
+    monitored_parameter_contains_query = request.GET.get('monitored_parameter')
+    reference_partner_query = request.GET.get('reference_partner')
+
+    price_min_query = request.GET.get('price_min')
+    price_max_query = request.GET.get('price_max')
+
+    project_min_year_query = request.GET.get('project_min_year')
+    project_max_year_query = request.GET.get('project_min_year')
+
+    installation_operation_query = request.GET.get('installation_operation')
+    
+
+    if is_valid_query(hazard_contains_query):
+        qs=qs.filter(hazard__name__icontains=hazard_contains_query)
+
+    elif is_valid_query(reference_partner_query):
+        qs=qs.filter(reference_partner__icontains=reference_partner_query)
+
+    if is_valid_query(price_min_query):
+        qs = qs.filter(price__gte=price_min_query)
+
+    if is_valid_query(price_max_query):
+        qs = qs.filter(price__lt=price_max_query)
+
+    if is_valid_query(project_min_year_query):
+        qs = qs.filter(project_year__iexact=project_min_year_query)
+
+    if is_valid_query(project_max_year_query):
+        qs = qs.filter(project_year__iexact=project_max_year_query)
+
+    if is_valid_query(installation_operation_query) and installation_operation_query !='Select...':
+        qs = qs.filter(installation_operation__name=installation_operation_query)
+    
+    if is_valid_query(monitored_parameter_contains_query) and monitored_parameter_contains_query !='Select...':
+        qs=qs.filter(monitored_parameter__name__icontains=monitored_parameter_contains_query)
+
+
+    context = {
+        'queryset':qs,
+        'install_ops_complexities':install_ops_complexities,
+        'monitored_parameters':monitored_parameters,
+        'hazards':hazards
+
+    }
+    return render(request, 'main.html', context)
 
 
 class OrderSummaryView(LoginRequiredMixin,View):
@@ -61,7 +154,6 @@ class OrderSummaryView(LoginRequiredMixin,View):
         except ObjectDoesNotExist:
             messages.warning(self.request, "You do not have an active order")
             return redirect("/")
-
 
 
 class SensorDetailView(DetailView):

@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block content %}
+
+{% include 'navbar.html' %}
+
+<style>
+  .flip-card {
+      background-color: transparent;
+      /* width: 300px;
+      height: 300px; */
+      width: 270px;
+      height: 390px;
+      perspective: 1000px;
+      margin-left: auto; 
+      margin-right: auto;
+      margin-top:15px;
+    }
+    
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    }
+    
+    .flip-card:hover .flip-card-inner {
+      transform: rotateY(180deg);
+      
+    }
+    
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+    
+    .flip-card-front {
+      background-color: #bbb;
+      color: black;
+    }
+    
+    .flip-card-back {
+      background-color: #2980b9;
+      color: white;
+      transform: rotateY(180deg);
+      border-radius: 10px;
+      font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+      font-size: small;
+    }
+
+</style>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="d-flex justify-content-center align-items-center" style="height: 50vh">
+            <div class="text-center">
+              <img
+              src="https://score-eu-project.eu/wp-content/uploads/2021/09/SCORE-LOGO-web.png"
+              height="100"
+              alt="SCORE-LOGO-web"
+              loading="lazy"
+              title="SCORE-LOGO-web"
+              />
+              <h5 class="mb-3">Catalogue of low-cost sensors viable for citizen science activities.</h5>
+              <p class="mb-3">Sensor Catalogue Team</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+<!-- FILTER SENSORS  -->
+  <hr>
+      
+      {% include 'filter.html' %}
+    </div>
+
+    <br>
+    <br>
+    <div class="container">
+
+      <div class="row ">
+
+        <div class="col-md-12">
+
+{% include 'hazard_legend.html' %}
+      </div>
+    </div>
+    </div>
+    <!-- End your project here-->
+{% endblock content%}

@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 
+
+{% load static %}
+
 {% block content %}
+
+{% include 'navbar.html' %}
 
   <main class="mt-5 pt-4">
     <div class="container dark-grey-text mt-5">
@@ -9,11 +14,8 @@
       <div class="row wow fadeIn">
         <!--Grid column-->
         <div class="col-md-4 mb-3">
-          <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg" class="img-fluid" alt="">
-          
-          
+          <img src="{% if hazard.image %} {{ hazard.image.url }} {% else %}{% static "images/no_image.png" %} {% endif %}" alt="{{ hazard.name}}" style="width:50%;height:50%; margin-left: auto;margin-right: auto; display: block;" class="w-">
         </div>
-
         <div class="col-md-6 mb-4">
           <!--Content-->
           <div class="p-4">
@@ -28,7 +30,7 @@
               <p>{{ sensor.full_description  }}</p>
 
               <p class="lead">
-                <span> €{{ object.price }}</span>
+                <span> €{{ sensor.price }}</span>
               </p>
             
             <a href="{{ object.get_add_to_cart_url }}" class="btn btn-primary btn-md my-0 p">
@@ -42,33 +44,55 @@
           </div>
           <div>
           </div>
-
         </div>
-        <!--Grid column -->
-        <!-- Display table content here -->
-
-
       </div>
       <!--Grid row-->
-
+      <hr>
       <div class="col-md-12 mb-2">
         <table class="table">
           <thead>
             <tr>
+              <th>Partners</th>
               <th>Project Name</th>
               <th>Project Year</th>
-              <th>Project website</th>
+              <th>Reference Paper</th>
               <th>Monitored Parameters</th>
-              <th>Project website</th>
+              <th>Hazard Category</th>
+              <th>Specific Hazards</th>
+              <th>Minimum Purchase</th>
+              <th>Spatial Density</th>
+              <!-- <th>Distribution</th> -->
               <th>Project users</th>
             </tr>
           </thead><tbody>
             <tr>
-              <td>{{ object.project_name  }}</td>
-              <td>{{ object.project_year }}</td>
-              <td>{{ object.project_website  }}</td>
-              <td>{{ object.hazard_specific  }}</td>
-              <td>{{ object.targeted_user  }}</td>
+              <td>{{ object.reference_partner  }}</td>
+              <td><a href="{{ object.project_website  }}" target="_blank" style="color: blue;" >{{ object.project_name }}</a></td>
+              <td>{{ object.project_year }}</td> 
+                  <td><a href="{{ object.reference_paper  }}" target="_blank" style="color: blue;" >{{ object.reference_paper }}</a></td>               
+               <td><p>
+                {% for parameter in object.monitored_parameter.all %}
+                {{ parameter }}
+                 {% endfor %}
+               </p>
+              </td>
+              <td><p>
+                {% for hazard in object.hazard_category.all %}
+                {{ hazard }}
+                 {% endfor %}
+               </p>
+              </td>
+              <td><p>
+                {% for specific in object.hazard_specific.all %}
+                {{ specific }}
+                 {% endfor %}
+               </p>
+              </td>
+              <td>{{ object.minimum_purchase_quantity  }}</td>
+              <td>{{ object.minimum_purchase_quantity  }}</td>
+              <td>{{ object.minimum_purchase_quantity  }}</td>
+              <td>{{ object.spatial_density_per_area  }}</td>
+              <!-- <td>{{ object.spatial_density_distribution  }}</td> -->
               <td>{{ object.targeted_user  }}</td>
             </tr>
           </tbody>
@@ -92,40 +116,98 @@
 
       </div>
 
-      <!--Grid row-->
-      <div class="row wow fadeIn">
-
-        <!--Grid column-->
-        <div class="col-lg-4 col-md-12 mb-4">
-
-          <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/11.jpg" class="img-fluid" alt="">
-
+      <div class="lightbox">
+        <div class="row">
+          <div class="col-lg-4">
+            <img
+              src="https://mdbcdn.b-cdn.net/img/Photos/Thumbnails/Slides/1.webp"
+              data-mdb-img="https://mdbcdn.b-cdn.net/img/Photos/Slides/1.webp"
+              alt="Table Full of Spices"
+              class="w-100"
+            />
+          </div>
+          <div class="col-lg-4">
+            <img
+              src="https://mdbcdn.b-cdn.net/img/Photos/Thumbnails/Slides/2.webp"
+              data-mdb-img="https://mdbcdn.b-cdn.net/img/Photos/Slides/2.webp"
+              alt="Winter Landscape"
+              class="w-100"
+            />
+          </div>
+          <div class="col-lg-4">
+            <img
+              src="https://mdbcdn.b-cdn.net/img/Photos/Thumbnails/Slides/3.webp"
+              data-mdb-img="https://mdbcdn.b-cdn.net/img/Photos/Slides/3.webp"
+              alt="View of the City in the Mountains"
+              class="w-100"
+            />
+          </div>
         </div>
-        <!--Grid column-->
-
-        <!--Grid column-->
-        <div class="col-lg-4 col-md-6 mb-4">
-
-          <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/11.jpg" class="img-fluid" alt="">
-
-        </div>
-        <!--Grid column-->
-
-        <!--Grid column-->
-        <div class="col-lg-4 col-md-6 mb-4">
-
-          <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/11.jpg" class="img-fluid" alt="">
-
-        </div>
-        <!--Grid column-->
-
       </div>
+
+
+     
+      <!--Grid row-->
+        <!-- <div class="col-lg-4 col-md-12 mb-4">
+
+          <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/11.jpg" class="img-fluid" alt="">
+
+        </div> -->
+        <!--Grid column-->
+
+        <!--Grid column-->
+        <!-- <div class="col-lg-4 col-md-6 mb-4">
+
+          <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/11.jpg" class="img-fluid" alt="">
+
+        </div> -->
+        <!--Grid column-->
+
+        <!--Grid column-->
+        <!-- <div class="col-lg-4 col-md-6 mb-4">
+
+          <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/11.jpg" class="img-fluid" alt="">
+
+        </div> -->
+        <!--Grid column-->
+
+      <!-- </div> -->
       <!--Grid row-->
 
-      </div>
+      <!-- </div> -->
       <!--Grid row-->
 
 
   </main>
 
+<!-- 
+     <div class="lightbox">
+        <div class="multi-carousel">
+          <div class="multi-carousel-inner">
+            <div class="multi-carousel-item">
+              <img
+                src="https://mdbcdn.b-cdn.net/img/Photos/Thumbnails/Slides/1.webp"
+                data-mdb-img="https://mdbcdn.b-cdn.net/img/Photos/Slides/1.webp"
+                alt="Table Full of Spices"
+                class="w-100"
+              />
+            </div>
+          <button
+            class="carousel-control-prev"
+            type="button"
+            tabindex="0"
+            data-mdb-slide="prev"
+          >
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          </button>
+          <button
+            class="carousel-control-next"
+            type="button"
+            tabindex="0"
+            data-mdb-slide="next"
+          >
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div> -->
 {% endblock content %}
