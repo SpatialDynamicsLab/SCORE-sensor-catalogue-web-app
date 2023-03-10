@@ -4,7 +4,7 @@
 
 <main role="main" class="container">
 
-    <h3>Filter Sensors</h3>
+    <h4>Filter Sensors</h4>
     <form method="GET" action=".">
       <div class="form-row">
           <div class="form-group col-12">
@@ -84,7 +84,7 @@
             <div class="row align-items-center" >
               
               {% for item in sensor.hazard.all %}
-              <img src="{% if item.image %}{{ item.image.url }} {% else %}{% static "images/no_image.png" %} {% endif %}" alt="{{ item.name}}" style="float: left; width:50px;height:50px; margin-left: auto;margin-right: auto; display: block;" class="w-" >
+              <img src="{% if item.image %}{{ item.image.url }} {% else %}{% static "images/no_image.png" %} {% endif %}" alt="{{ item.name}}" style="float: left; width:75px;height:50px; margin-left: auto;margin-right: auto; display: block;" class="w-" >
             {% endfor %}
             </div>
           </div>
@@ -109,7 +109,7 @@
       </div>  
       {% endfor %}
       {% else %}
-      <h4 style="color: darkred;"> No data available under your filter!</h4>
+      <h5 style="color: darkred;"> No data available under your filter!</h5>
       {% endif %}
 
     </div>

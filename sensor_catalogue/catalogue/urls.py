@@ -7,8 +7,8 @@ app_name  = 'catalogue'
 urlpatterns =[
 
 
-    path('', views.SensorFilterView, name='home_page'),
-    path('hazards/', views.hazard_list, name='home'),
+    path('', views.home_page, name='home_page'),
+    path('hazards/', views.hazard_list, name='hazards_list'),
 
     path('hazards/<slug:slug>', views.hazard_sensor_list, name='hazard_sensor_list'),
 

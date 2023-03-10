@@ -21,82 +21,11 @@ from .models import Sensor, OrderSensor, Order, Hazard, MonitoredParameter, Inst
 from catalogue.filters import SensorFilter
 
 
-
-
-class LandingPage(ListView):
-    model = Hazard
-    # template_name = "home.html"
-    template_name = "index2.html"
-
-
-
-
-def detail_view(request, slug):
-    sensor =  get_object_or_404(Sensor, slug=slug)
-    photos = SensorImage.objects.filter(sensor__slug=slug)
-    context = {
-        'sensor':sensor,
-        'photos':photos
-        }
-    return render(request, 'sensor.html', context)
-
-
-
-class SensorDetailView(DetailView):
-    model = Sensor
-    template_name = "sensor.html"
-
-
-def hazard_list(request):
-
-    hazards = Hazard.objects.all()
-    context = {'hazards': hazards}
-    return render(request, 'hazard_list.html', context)
-
-
-def hazard_sensor_list(request, slug):
-    hazard = get_object_or_404(Hazard, slug=slug)
-    sensors = Sensor.objects.filter(hazard__slug=slug)
-    print(hazard)
-    print(sensors)
-    context = {'hazard': hazard, 
-               'sensors':sensors}
-    return render(request, 'index.html', context)
-
-
-def parameter_list(request):
-    parameters = MonitoredParameter.objects.all()
-    context = {'parameters': parameters}
-    return render(request, 'parameters.html', context)
-
-
-def parameter_sensor_list(request, slug):
-    if(MonitoredParameter.objects.filter(slug=slug)):
-        sensors = Sensor.objects.filter(monitored_parameter__slug=slug)
-        parameter  = MonitoredParameter.objects.filter(slug=slug).first()
-        context = {'sensors':sensors,
-                   'parameter':parameter}
-        return render(request, 'parameters_sensors_list.html', context)
-    else:
-        messages.warning(request, "No such parameter found")
-        return redirect("catalogue:parameter_list")
-
-
-# def home_page(request):
-
-#     sensor_filter = SensorFilter(request.GET, queryset=Sensor.objects.all())
-#     context = {
-#         'form':sensor_filter.form,
-#         'sensors': sensor_filter.qs
-#     }
-#     return render(request, 'main.html', context)
-
-
 def is_valid_query(param):
     return param != '' and param is not None
 
 
-def SensorFilterView(request):
+def home_page(request):
     """
     This view serves as the main landing page.
     Besides, it also does the fucntion of filtering data, retrning a 
@@ -158,7 +87,53 @@ def SensorFilterView(request):
         'hazards':hazards
 
     }
-    return render(request, 'main.html', context)
+    return render(request, 'index.html', context)
+
+
+def detail_view(request, slug):
+    sensor =  get_object_or_404(Sensor, slug=slug)
+    photos = SensorImage.objects.filter(sensor__slug=slug)
+    context = {
+        'sensor':sensor,
+        'photos':photos
+        }
+    return render(request, 'sensor.html', context)
+
+
+def hazard_list(request):
+
+    hazards = Hazard.objects.all()
+    context = {'hazards': hazards}
+    return render(request, 'hazard_list.html', context)
+
+
+def hazard_sensor_list(request, slug):
+    hazard = get_object_or_404(Hazard, slug=slug)
+    sensors = Sensor.objects.filter(hazard__slug=slug)
+    print(hazard)
+    print(sensors)
+    context = {'hazard': hazard, 
+               'sensors':sensors}
+    return render(request, 'hazard_sensor_list.html', context)
+
+
+def parameter_list(request):
+    parameters = MonitoredParameter.objects.all()
+    context = {'parameters': parameters}
+    return render(request, 'parameters.html', context)
+
+
+def parameter_sensor_list(request, slug):
+    if(MonitoredParameter.objects.filter(slug=slug)):
+        sensors = Sensor.objects.filter(monitored_parameter__slug=slug)
+        parameter  = MonitoredParameter.objects.filter(slug=slug).first()
+        context = {'sensors':sensors,
+                   'parameter':parameter}
+        return render(request, 'parameters_sensors_list.html', context)
+    else:
+        messages.warning(request, "No such parameter found")
+        return redirect("catalogue:parameter_list")
+
 
 
 class OrderSummaryView(LoginRequiredMixin,View):

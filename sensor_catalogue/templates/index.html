@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
 
+{% load crispy_forms_tags %}
+
 {% load static %}
 
 {% block content %}
 
-
 {% include 'navbar.html' %}
 
-    <style>
+<style>
   .flip-card {
       background-color: transparent;
       /* width: 300px;
@@ -56,89 +57,45 @@
       font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
       font-size: small;
     }
-        
-    </style>
-</head>
-<body>
-  <main role="main" class="container">
 
-  <br>
-  <h4>{{hazard.name}}</h4>
-  <div class="text-center">
-      <hr>
-      {% if sensors %}
-      <div class="row align-items-center">
-         {% for sensor in sensors %}        
-           <!-- <div class="col-lg-3 col-md-4 mb-3"> -->
-           <div class="col-lg-4 col-md-12 mb-4">
-           <div class="card" style="height:400px">
-             <div class="column" style="height: 80px;">
-               <div class="row align-items-center" >
-                 
-                 {% for item in sensor.hazard.all %}
-                 <img src="{% if item.image %}{{ item.image.url }} {% else %}{% static "images/no_image.png" %} {% endif %}" alt="{{ item.name}}" style="float: left; width:50px;height:50px; margin-left: auto;margin-right: auto; display: block;" class="w-" >
-               {% endfor %}
-               </div>
-             </div>
-               <div class="flip-card"> 
-                 <div class="flip-card-inner">
-                   <div class="flip-card-front">
-                     <img src="{% if sensor.image %}{{ sensor.image.url }}{% else %}{% static "images/no_image.png" %}{% endif %}" alt="{{ sensor.name}}" style="width:50%;height:50%; margin-left: auto;margin-right: auto; display: block;" class="w-">
-                   </div>
-                   <div class="flip-card-back">
-                   
-                     <p>{{ sensor.description_summary }}</p> 
-                   </div>
-                 </div>
-               </div>
-               <div class="card-body" style="text-align: center;">
-               <a href="{{ sensor.get_absolute_url }}" class="text-reset">
-                 <h5 class="card-title mb-2" style="color: blue;font-size: medium;">{{sensor.sensor_name}}</h5>
-               </a>
-               <h6 class="mb-3 price">Cost €:{{sensor.price}}</h6>
-             </div>
-           </div>
-         </div>  
-         {% endfor %}
-         {% else %}
-         <h5 style="color: darkred;"> No data available under {{hazard.name}} hazards! </h5>
-         {% endif %}
-  
-<!-- Pagination -->
-    <!-- {% if is_paginated %}
-    <nav class="d-flex justify-content-center wow fadeIn">
-      <ul class="pagination pg-blue">
+</style>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="d-flex justify-content-center align-items-center" style="height: 50vh">
+            <div class="text-center">
+              <img
+              src="https://score-eu-project.eu/wp-content/uploads/2021/09/SCORE-LOGO-web.png"
+              height="100"
+              alt="SCORE-LOGO-web"
+              loading="lazy"
+              title="SCORE-LOGO-web"
+              />
+              <h5 class="mb-3">Catalogue of low-cost sensors viable for citizen science activities.</h5>
+              <p class="mb-3">Sensor Catalogue Team</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+<!-- FILTER SENSORS  -->
+  <hr>
+      
+      {% include 'filter.html' %}
+    </div>
 
-        {% if page_obj.has_previous %}
-        <li class="page-item">
-          <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-            <span class="sr-only">Previous</span>
-          </a>
-        </li>
-        {% endif %}
+    <br>
+    <br>
+    <div class="container">
 
-        <li class="page-item active">
-          <a class="page-link" href="?page={{ page_obj.number }}">{{ page_obj.number }}
-            <span class="sr-only">(current)</span>
-          </a>
-        </li>
+      <div class="row ">
 
-        {% if page_obj.has_next %}
-        <li class="page-item">
-          <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-            <span class="sr-only">Next</span>
-          </a>
-        </li>
-        {% endif %}
-      </ul>
-    </nav>
-    {% endif %}  -->
-<!-- Pagination -->  
-</div>
-</div>
+        <div class="col-md-12">
 
-</main>
-
-{% endblock %}
+{% include 'hazard_legend.html' %}
+      </div>
+    </div>
+    </div>
+    <!-- End your project here-->
+{% endblock content%}
