@@ -1,8 +1,5 @@
 {% extends "base.html" %}
-
-
 {% load static %}
-
 {% block content %}
 
 {% include 'navbar.html' %}
@@ -14,7 +11,7 @@
       <div class="row wow fadeIn">
         <!--Grid column-->
         <div class="col-md-4 mb-3">
-          <img src="{% if hazard.image %} {{ hazard.image.url }} {% else %}{% static "images/no_image.png" %} {% endif %}" alt="{{ hazard.name}}" style="width:50%;height:50%; margin-left: auto;margin-right: auto; display: block;" class="w-">
+          <img src="{% if sensor.image %} {{ sensor.image.url }} {% else %}{% static "images/no_image.png" %} {% endif %}" alt="{{ sensor.name}}" style="width:100%;height:100%; margin-left: auto;margin-right: auto; display: block;" class="w-">
         </div>
         <div class="col-md-6 mb-4">
           <!--Content-->
@@ -61,39 +58,35 @@
               <th>Specific Hazards</th>
               <th>Minimum Purchase</th>
               <th>Spatial Density</th>
-              <!-- <th>Distribution</th> -->
               <th>Project users</th>
             </tr>
           </thead><tbody>
             <tr>
-              <td>{{ object.reference_partner  }}</td>
+              <td>{{ sensor.reference_partner  }}</td>
               <td><a href="{{ object.project_website  }}" target="_blank" style="color: blue;" >{{ object.project_name }}</a></td>
               <td>{{ object.project_year }}</td> 
-                  <td><a href="{{ object.reference_paper  }}" target="_blank" style="color: blue;" >{{ object.reference_paper }}</a></td>               
+                <td><a href="{{ object.reference_paper  }}" target="_blank" style="color: blue;" >{{ object.reference_paper }}</a></td>               
                <td><p>
-                {% for parameter in object.monitored_parameter.all %}
+                {% for parameter in sensor.monitored_parameter.all %}
                 {{ parameter }}
                  {% endfor %}
                </p>
               </td>
               <td><p>
-                {% for hazard in object.hazard_category.all %}
+                {% for hazard in sensor.hazard_category.all %}
                 {{ hazard }}
                  {% endfor %}
                </p>
               </td>
               <td><p>
-                {% for specific in object.hazard_specific.all %}
+                {% for specific in sensor.hazard_specific.all %}
                 {{ specific }}
                  {% endfor %}
                </p>
               </td>
-              <td>{{ object.minimum_purchase_quantity  }}</td>
-              <td>{{ object.minimum_purchase_quantity  }}</td>
-              <td>{{ object.minimum_purchase_quantity  }}</td>
-              <td>{{ object.spatial_density_per_area  }}</td>
-              <!-- <td>{{ object.spatial_density_distribution  }}</td> -->
-              <td>{{ object.targeted_user  }}</td>
+              <td>{{ sensor.minimum_purchase_quantity  }}</td>
+              <td>{{ sensor.spatial_density_per_area  }}</td>
+              <td>{{ sensor.targeted_user  }}</td>
             </tr>
           </tbody>
   
@@ -106,108 +99,21 @@
 
         <!--Grid column-->
         <div class="col-md-6 text-center">
-          <p>
-            More pictures
-          </p>
-
-        </div>
-        <!--Grid column-->
         
+           <h4> Additional pictures </43>
 
-      </div>
-
-      <div class="lightbox">
-        <div class="row">
-          <div class="col-lg-4">
-            <img
-              src="https://mdbcdn.b-cdn.net/img/Photos/Thumbnails/Slides/1.webp"
-              data-mdb-img="https://mdbcdn.b-cdn.net/img/Photos/Slides/1.webp"
-              alt="Table Full of Spices"
-              class="w-100"
-            />
-          </div>
-          <div class="col-lg-4">
-            <img
-              src="https://mdbcdn.b-cdn.net/img/Photos/Thumbnails/Slides/2.webp"
-              data-mdb-img="https://mdbcdn.b-cdn.net/img/Photos/Slides/2.webp"
-              alt="Winter Landscape"
-              class="w-100"
-            />
-          </div>
-          <div class="col-lg-4">
-            <img
-              src="https://mdbcdn.b-cdn.net/img/Photos/Thumbnails/Slides/3.webp"
-              data-mdb-img="https://mdbcdn.b-cdn.net/img/Photos/Slides/3.webp"
-              alt="View of the City in the Mountains"
-              class="w-100"
-            />
-          </div>
         </div>
-      </div>
+   
+      {% if photos %}
 
+      {% include 'additional_pictures.html'%}
 
-     
-      <!--Grid row-->
-        <!-- <div class="col-lg-4 col-md-12 mb-4">
+      {% else %}
 
-          <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/11.jpg" class="img-fluid" alt="">
+      <p style="text-align: center;"> {{sensor}} currently does not have any additional pictures </p>
 
-        </div> -->
-        <!--Grid column-->
+      {% endif %}
 
-        <!--Grid column-->
-        <!-- <div class="col-lg-4 col-md-6 mb-4">
-
-          <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/11.jpg" class="img-fluid" alt="">
-
-        </div> -->
-        <!--Grid column-->
-
-        <!--Grid column-->
-        <!-- <div class="col-lg-4 col-md-6 mb-4">
-
-          <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/11.jpg" class="img-fluid" alt="">
-
-        </div> -->
-        <!--Grid column-->
-
-      <!-- </div> -->
-      <!--Grid row-->
-
-      <!-- </div> -->
-      <!--Grid row-->
-
-
+    </div>
   </main>
-
-<!-- 
-     <div class="lightbox">
-        <div class="multi-carousel">
-          <div class="multi-carousel-inner">
-            <div class="multi-carousel-item">
-              <img
-                src="https://mdbcdn.b-cdn.net/img/Photos/Thumbnails/Slides/1.webp"
-                data-mdb-img="https://mdbcdn.b-cdn.net/img/Photos/Slides/1.webp"
-                alt="Table Full of Spices"
-                class="w-100"
-              />
-            </div>
-          <button
-            class="carousel-control-prev"
-            type="button"
-            tabindex="0"
-            data-mdb-slide="prev"
-          >
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          </button>
-          <button
-            class="carousel-control-next"
-            type="button"
-            tabindex="0"
-            data-mdb-slide="next"
-          >
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          </button>
-        </div>
-      </div> -->
 {% endblock content %}

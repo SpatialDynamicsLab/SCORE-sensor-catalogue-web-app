@@ -9,7 +9,6 @@ urlpatterns =[
 
     path('', views.SensorFilterView, name='home_page'),
     path('hazards/', views.hazard_list, name='home'),
-    path('filters/', views.SensorFilterView, name='filters'),
 
     path('hazards/<slug:slug>', views.hazard_sensor_list, name='hazard_sensor_list'),
 
@@ -19,7 +18,9 @@ urlpatterns =[
 
     path('checkout/',views.CheckoutView.as_view(), name='checkout'),
     path('order-summary/', views.OrderSummaryView.as_view(), name='order-summary'),
-    path('sensor/<slug>/',views.SensorDetailView.as_view(), name='sensor'),
+    # path('sensor/<slug>/',views.SensorDetailView.as_view(), name='sensor'),
+
+    path('sensor/<slug>/',views.detail_view, name='sensor'),
 
     path('add-to-cart/<slug>/', views.add_to_cart,name='add-to-cart'),
     path('remove-from-cart/<slug>/', views.remove_from_cart,name='remove-from-cart'),

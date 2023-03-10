@@ -16,7 +16,7 @@ from django.views.generic import ListView, DetailView, View
 
 from .forms import CheckoutForm
 
-from .models import Sensor, OrderSensor, Order, Hazard, MonitoredParameter, InstallationOperation
+from .models import Sensor, OrderSensor, Order, Hazard, MonitoredParameter, InstallationOperation, SensorImage
 
 from catalogue.filters import SensorFilter
 
@@ -29,7 +29,26 @@ class LandingPage(ListView):
     template_name = "index2.html"
 
 
+
+
+def detail_view(request, slug):
+    sensor =  get_object_or_404(Sensor, slug=slug)
+    photos = SensorImage.objects.filter(sensor__slug=slug)
+    context = {
+        'sensor':sensor,
+        'photos':photos
+        }
+    return render(request, 'sensor.html', context)
+
+
+
+class SensorDetailView(DetailView):
+    model = Sensor
+    template_name = "sensor.html"
+
+
 def hazard_list(request):
+
     hazards = Hazard.objects.all()
     context = {'hazards': hazards}
     return render(request, 'hazard_list.html', context)
@@ -155,10 +174,6 @@ class OrderSummaryView(LoginRequiredMixin,View):
             messages.warning(self.request, "You do not have an active order")
             return redirect("/")
 
-
-class SensorDetailView(DetailView):
-    model = Sensor
-    template_name = "sensor.html"
 
 
 @login_required
