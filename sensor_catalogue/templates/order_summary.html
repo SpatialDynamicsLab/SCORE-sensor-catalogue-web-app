@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+{% load humanize %} 
+
+
+{% include 'navbar.html' %}
   <main>
     <div class="container">
         <div class="table-responsive">
@@ -17,18 +22,18 @@
                 </tr>
               </thead>
               <tbody>
-                {% for order_sensor in object.sensors.all  %}
+                {% for order_sensor in order.sensors.all  %}
                 <tr>
                   <th scope="row">{{ forloop.counter }}</th>
                   <td>{{order_sensor.sensor.sensor_name}}</td>
-                  <td>€{{order_sensor.sensor.price }}</td>
+                  <td>€{{order_sensor.sensor.price  | intcomma }}</td>
                   <td>{{order_sensor.sensor.minimum_purchase_quantity }}</td>
                   <td>
                     <a href="{% url 'catalogue:remove-single-sensor-from-cart' order_sensor.sensor.slug %}"><i class="fas fa-minus mr-2"></i></a>
                     {{order_sensor.quantity}}
                     <a href="{% url 'catalogue:add-to-cart' order_sensor.sensor.slug %}"><i class="fas fa-plus ml-2"></i></a>
                 </td>
-                  <td>€{{ order_sensor.get_total_sensor_price }}
+                  <td>€{{ order_sensor.get_total_sensor_price  | intcomma }}
 
                     <a style='color: red' href="{% url 'catalogue:remove-from-cart' order_sensor.sensor.slug %}">
 
@@ -49,11 +54,11 @@
                 </tr>
                 {% endfor %}
 
-                {% if object.get_order_total %}
+                {% if order.get_order_total %}
 
                 <tr>
-                    <td colspan="4"><b>Total Cost</b></td>
-                    <td><b>€{{object.get_order_total }}</b></td>
+                    <td colspan="4"><b><strong>Total Cost</strong></b></td>
+                    <td><b>€{{order.get_order_total  | intcomma }}</b></td>
                   </tr>
                   <tr>
                     <td colspan="5">
