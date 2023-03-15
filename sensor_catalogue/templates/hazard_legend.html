@@ -10,10 +10,10 @@
               {% if hazards %}
               {% for hazard in hazards %}
               <div class="col-md-3 mb-4">
-                <div class="card">
+                <div class="card-legend">
                 <a href="{% url 'catalogue:hazard_sensor_list' hazard.slug %}">
                   <div class="card-body">
-                    <h6 class="text-center">{{hazard.name}}</h6>
+                    <h5 class="text-center">{{hazard.name}}</h5>
                     <!-- <p>{{hazard.name}}</p> -->
                     <div class="card-image">
                       <img src="{% if hazard.image %}{{ hazard.image.url }} {% else %}{% static "images/no_image.png" %} {% endif %}" alt="{{ hazard.name}}" style="width:50%;height:50%; margin-left: auto;margin-right: auto; display: block;" class="w-">
