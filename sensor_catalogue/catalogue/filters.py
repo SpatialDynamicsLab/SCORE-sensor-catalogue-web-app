@@ -11,5 +11,5 @@ class SensorFilter(django_filters.FilterSet):
         # fields = {
         #     'hazard':['exact'],
         #     'monitored_parameter':['exact'],
-        #     'installation_operation':['exact']}
+        #     'installation_operation__name':['exact']}
 

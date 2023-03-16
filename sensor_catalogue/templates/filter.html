@@ -75,13 +75,15 @@
       <button type="submit" class="btn btn-primary">Search</button>
     </form>
 
+
  </div>
+<hr>
 
- 
+ <br>
 
- <div class="row">
-  <div class="col">
-    <div class="car card-body">
+ <div class="form-row">
+  <div class="col-md-12">
+    <div class="card card-body">
       <form method="get">
         {{myFilter.form | crispy }}
         <button class="btn btn-primary" type="submit">SEARCH</button>
@@ -115,7 +117,7 @@
                 </div>
                 <div class="flip-card-back">
                   <!-- <p>{{ sensor.description_summary }}</p>        -->
-                  {{ sensor.description_summary }} 
+                  {{ sensor.short_description }} 
                 </div>
               </div>
             </div>
