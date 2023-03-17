@@ -30,12 +30,12 @@
                 <span> €{{ sensor.price }}</span>
               </p>
             
-            <a href="{{ object.get_add_to_cart_url }}" class="btn btn-primary btn-md my-0 p">
+            <a href="{{ sensor.get_add_to_cart_url }}" class="btn btn-primary btn-md my-0 p">
               Add to cart
               <i class="fas fa-shopping-cart ml-1"></i>
             </a>
 
-            <a href="{{ object.get_remove_from_cart_url }}" class="btn btn-danger btn-md my-0 p">
+            <a href="{{ sensor.get_remove_from_cart_url }}" class="btn btn-danger btn-md my-0 p">
               Remove from cart
             </a>
           </div>
@@ -63,9 +63,9 @@
           </thead><tbody>
             <tr>
               <td>{{ sensor.reference_partner  }}</td>
-              <td><a href="{{ object.project_website  }}" target="_blank" style="color: blue;" >{{ object.project_name }}</a></td>
+              <td><a href="{{ sensor.project_website  }}" target="_blank" style="color: blue;" >{{ object.project_name }}</a></td>
               <td>{{ object.project_year }}</td> 
-                <td><a href="{{ object.reference_paper  }}" target="_blank" style="color: blue;" >{{ object.reference_paper }}</a></td>               
+                <td><a href="{{ sensor.reference_paper  }}" target="_blank" style="color: blue;" >{{ object.reference_paper }}</a></td>               
                <td><p>
                 {% for parameter in sensor.monitored_parameter.all %}
                 {{ parameter }}

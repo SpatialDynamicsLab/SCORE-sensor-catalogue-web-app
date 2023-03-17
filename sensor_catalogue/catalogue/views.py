@@ -12,22 +12,22 @@ import weasyprint
 
 from django.utils import timezone
 
-from django.views.generic import ListView, DetailView, View
+from django.views.generic import View
 
 from .forms import CheckoutForm
 
 from .models import Sensor, OrderSensor, Order, Hazard, MonitoredParameter, InstallationOperation, SensorImage
 
-from catalogue.filters import SensorFilter
-
+from .filters import SensorFilter
 
 def is_valid_query(param):
+    # Helper function to check if a query is valid
     return param != '' and param is not None
 
 
 def home_page(request):
     """
-    This view serves as the main landing page.
+    This view serves the main landing page.
     Besides, it also does the fucntion of filtering data, retrning a 
     queryset with either the whole data or as a filter that is 
     then rendered to the template.
@@ -41,6 +41,7 @@ def home_page(request):
     install_ops_complexities = InstallationOperation.objects.all()
     monitored_parameters = MonitoredParameter.objects.order_by('name').all()
     hazards = Hazard.objects.order_by('name').all
+    install_operation_difficulties = InstallationOperation.objects.order_by('name').all()
        
     hazard_contains_query = request.GET.get('hazard_contains')
     monitored_parameter_contains_query = request.GET.get('monitored_parameter')
@@ -55,7 +56,7 @@ def home_page(request):
     installation_operation_query = request.GET.get('installation_operation')
     
 
-    if is_valid_query(hazard_contains_query):
+    if is_valid_query(hazard_contains_query) and hazard_contains_query !='Filter by Hazards...':
         qs=qs.filter(hazard__name__icontains=hazard_contains_query)
 
     elif is_valid_query(reference_partner_query):
@@ -80,18 +81,52 @@ def home_page(request):
         qs=qs.filter(monitored_parameter__name__icontains=monitored_parameter_contains_query)
 
 
+
+    myFilter = SensorFilter(request.GET, queryset=qs)
+
+    qs= myFilter.qs
+
     context = {
         'queryset':qs,
         'install_ops_complexities':install_ops_complexities,
         'monitored_parameters':monitored_parameters,
-        'hazards':hazards
-
+        'hazards':hazards,
+        'install_operation_difficulties':install_operation_difficulties,
+        'myFilter':myFilter
     }
     return render(request, 'index.html', context)
 
 
+# def multi_select(request):
+#     if request.method=="POST":
+#         hazard = request.POST.get('hazard_contains')
+#         monitored_parameter = request.POST.get('monitored_parameter')
+#         installation_operation = request.POST.get('installation_operation')
+
+#         sensor_objects = Sensor.objects.raw('SELECT * FROM SENSORS WHERE hazard="'+hazard_contains_query+'" and monitored_parameter="'+monitored_parameter+'" and installation_operation="'+installation_operation+'"')
+
+#         context = {
+#             'sensor_objects': sensor_objects
+#         }
+
+#         return 
+    
+#     else:
+#         pass
+
+
+
+
+
+
+
+
 def detail_view(request, slug):
+    """
+    View for each sensor data in details.
+    """
     sensor =  get_object_or_404(Sensor, slug=slug)
+    # print(sensor)
     photos = SensorImage.objects.filter(sensor__slug=slug)
     context = {
         'sensor':sensor,
@@ -101,6 +136,7 @@ def detail_view(request, slug):
 
 
 def hazard_list(request):
+    # List of hazards 
 
     hazards = Hazard.objects.all()
     context = {'hazards': hazards}
@@ -108,47 +144,81 @@ def hazard_list(request):
 
 
 def hazard_sensor_list(request, slug):
-    hazard = get_object_or_404(Hazard, slug=slug)
-    sensors = Sensor.objects.filter(hazard__slug=slug)
-    print(hazard)
-    print(sensors)
-    context = {'hazard': hazard, 
-               'sensors':sensors}
-    return render(request, 'hazard_sensor_list.html', context)
+    """
+    Pulls a list of hazards and sensors related to them
+    """
+    if(Hazard.objects.filter(slug=slug)):
+        sensors = Sensor.objects.filter(hazard__slug=slug)
+        hazard  = Hazard.objects.filter(slug=slug).first()
 
-
-def parameter_list(request):
-    parameters = MonitoredParameter.objects.all()
-    context = {'parameters': parameters}
-    return render(request, 'parameters.html', context)
-
-
-def parameter_sensor_list(request, slug):
-    if(MonitoredParameter.objects.filter(slug=slug)):
-        sensors = Sensor.objects.filter(monitored_parameter__slug=slug)
-        parameter  = MonitoredParameter.objects.filter(slug=slug).first()
-        context = {'sensors':sensors,
-                   'parameter':parameter}
-        return render(request, 'parameters_sensors_list.html', context)
+        context = {'hazard': hazard, 
+                   'sensors':sensors}
+        return render(request, 'hazard_sensor_list.html', context)
     else:
-        messages.warning(request, "No such parameter found")
-        return redirect("catalogue:parameter_list")
+        return redirect("catalogue:hazards_list")
+        
+
+# def parameter_list(request):
+#     # List of monitored parameters
+    
+#     parameters = MonitoredParameter.objects.all()
+#     context = {'parameters': parameters}
+#     return render(request, 'parameters.html', context)
+
+
+# def parameter_sensor_list(request, slug):
+
+#     # Pulls a list of parameters and sensors related to them
+
+#     if(MonitoredParameter.objects.filter(slug=slug)):
+#         sensors = Sensor.objects.filter(monitored_parameter__slug=slug)
+#         parameter  = MonitoredParameter.objects.filter(slug=slug).first()
+#         context = {'sensors':sensors,
+#                    'parameter':parameter}
+#         return render(request, 'parameters_sensors_list.html', context)
+#     else:
+#         messages.warning(request, "No such parameter found")
+#         return redirect("catalogue:parameter_list")
+    
+
+# def install_difficulty_list(request):
+#     # Install operation difficluties
+    
+#     install_operation_difficulties = InstallationOperation.objects.all()
+#     print(install_operation_difficulties)
+#     context = {'install_operation_difficulties': install_operation_difficulties}
+#     return render(request, 'install_operation_difficulty.html', context)
+
+
+# def install_difficulty_sensor_list(request, name):
+
+#     # Pulls a list of installation difficulties with ralated sensors
+
+#     if(InstallationOperation.objects.filter(name=name)):
+#         sensors = Sensor.objects.filter(installation_operation__name=name)
+#         parameter  = InstallationOperation.objects.filter(name=name).first()
+#         context = {'sensors':sensors,
+#                    'parameter':parameter}
+#         return render(request, 'Installation_operation__sensors_list.html', context)
+#     else:
+#         messages.warning(request, "No such parameter found")
+#         return redirect("catalogue:install_difficulty_list")
 
 
 
 class OrderSummaryView(LoginRequiredMixin,View):
+    #Summary of a sensor order
     def get(self, *args, **kwargs):
         try:
             order = Order.objects.get(user=self.request.user, ordered=False)
             context = {
-                'object': order
+                'order': order
             }
             return render(self.request, 'order_summary.html', context )
 
         except ObjectDoesNotExist:
             messages.warning(self.request, "You do not have an active order")
             return redirect("/")
-
 
 
 @login_required
@@ -161,6 +231,7 @@ def add_to_cart(request, slug):
     order_qs = Order.objects.filter(user=request.user, ordered=False)
 
     if order_qs.exists():
+        # print(order_qs)
         order = order_qs[0]
         # Now check if the order sensor is in the order
         if order.sensors.filter(sensor__slug=sensor.slug).exists():
@@ -169,6 +240,7 @@ def add_to_cart(request, slug):
             messages.info(request, "This sensor quantity was updated.")
         else:
             order.sensors.add(order_sensor)
+            # print("No order created")
     else:
         ordered_date = timezone.now()
         order = Order.objects.create(user=request.user, ordered_date=ordered_date)
@@ -241,7 +313,7 @@ def checkout(request):
 
 class CheckoutView(View):
 
-
+# Orders checkout view 
     def get(self,*args, **kwargs):
         # add the form here
         form = CheckoutForm()
@@ -271,12 +343,12 @@ class CheckoutView(View):
             messages.warning(self.request,"Email not sent. We are working to fix this functionality.")
             return redirect('catalogue:checkout')
         except ObjectDoesNotExist:
-            message.error(self.request, "You do not have an active order")
+            messages.error(self.request, "You do not have an active order")
             return redirect("catalogue:order-summary")
-
 
 @login_required
 def admin_order_pdf(request, order_id):
+    # Create a pdf page from the order and send to  logged user as an email attatchment
     order = get_object_or_404(Order, id=order_id)
     html= render_to_string('pdf.html',
                            {'order':order})

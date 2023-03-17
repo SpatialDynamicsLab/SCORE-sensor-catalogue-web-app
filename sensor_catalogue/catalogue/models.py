@@ -122,6 +122,11 @@ class CommonInfo(models.Model):
          max_length=2,
          blank=True,
          default=None)
+     slug = AutoSlugField(
+              populate_from='name', 
+              max_length=200,
+              unique=True, 
+              null=True )
      
      class Meta:
         abstract = True
@@ -388,6 +393,8 @@ class Sensor(models.Model):
          return reverse("catalogue:remove-from-cart", kwargs = {
               'slug':self.slug
          })
+    
+
 
 class SensorImage(models.Model):
     sensor = models.ForeignKey(Sensor, default=None, on_delete=models.CASCADE)

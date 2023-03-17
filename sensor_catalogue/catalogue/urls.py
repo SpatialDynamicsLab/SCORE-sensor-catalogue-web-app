@@ -12,8 +12,12 @@ urlpatterns =[
 
     path('hazards/<slug:slug>', views.hazard_sensor_list, name='hazard_sensor_list'),
 
-    path('parameters/', views.parameter_list, name='parameter_list'),
-    path('parameters/<slug:slug>', views.parameter_sensor_list, name= 'parameter_sensor_list'),
+    # path('parameters/', views.parameter_list, name='parameter_list'),
+    # path('parameters/<slug:slug>', views.parameter_sensor_list, name= 'parameter_sensor_list'),
+
+
+    # path('install-difficulty/', views.install_difficulty_list, name='install_difficulty_list'),
+    # path('install-difficulty/<str:name>', views.install_difficulty_sensor_list, name= 'install_difficulty_sensor_list'),
 
 
     path('checkout/',views.CheckoutView.as_view(), name='checkout'),
@@ -26,5 +30,5 @@ urlpatterns =[
     path('remove-from-cart/<slug>/', views.remove_from_cart,name='remove-from-cart'),
     path('remove-sensor-from-cart/<slug>/', views.remove_single_sensor_from_cart,name='remove-single-sensor-from-cart'),
     # path('send-order-email/<int:order_id>/pdf', views.admin_order_pdf, name='admin-order-pdf')
-    
+
 ]

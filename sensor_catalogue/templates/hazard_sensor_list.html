@@ -1,69 +1,12 @@
 {% extends 'base.html' %}
-
 {% load static %}
-
 {% block content %}
-
-
+{% load humanize %} 
 {% include 'navbar.html' %}
-
-    <style>
-  .flip-card {
-      background-color: transparent;
-      /* width: 300px;
-      height: 300px; */
-      width: 270px;
-      height: 390px;
-      perspective: 1000px;
-      margin-left: auto; 
-      margin-right: auto;
-      margin-top:15px;
-    }
-    
-    .flip-card-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      text-align: center;
-      transition: transform 0.6s;
-      transform-style: preserve-3d;
-      box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    }
-    
-    .flip-card:hover .flip-card-inner {
-      transform: rotateY(180deg);
-      
-    }
-    
-    .flip-card-front, .flip-card-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
-    }
-    
-    .flip-card-front {
-      background-color: #bbb;
-      color: black;
-    }
-    
-    .flip-card-back {
-      background-color: #2980b9;
-      color: white;
-      transform: rotateY(180deg);
-      border-radius: 10px;
-      font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-      font-size: small;
-    }
-        
-    </style>
-</head>
 <body>
   <main role="main" class="container">
-
   <br>
-  <h4>{{hazard.name}}</h4>
+  <h4>Hazard: {{hazard.name}}</h4>
   <div class="text-center">
       <hr>
       {% if sensors %}
@@ -71,23 +14,25 @@
          {% for sensor in sensors %}        
            <!-- <div class="col-lg-3 col-md-4 mb-3"> -->
            <div class="col-lg-4 col-md-12 mb-4">
-           <div class="card" style="height:400px">
-             <div class="column" style="height: 80px;">
+           <div class="card">
+             <!-- <div class="column" style="height: 80px;">
                <div class="row align-items-center" >
-                 
                  {% for item in sensor.hazard.all %}
                  <img src="{% if item.image %}{{ item.image.url }} {% else %}{% static "images/no_image.png" %} {% endif %}" alt="{{ item.name}}" style="float: left; width:75px;height:50px; margin-left: auto;margin-right: auto; display: block;" class="w-" >
                {% endfor %}
                </div>
-             </div>
+             </div> -->
                <div class="flip-card"> 
                  <div class="flip-card-inner">
+              
                    <div class="flip-card-front">
-                     <img src="{% if sensor.image %}{{ sensor.image.url }}{% else %}{% static "images/no_image.png" %}{% endif %}" alt="{{ sensor.name}}" style="width:50%;height:50%; margin-left: auto;margin-right: auto; display: block;" class="w-">
+                     <img src="{% if sensor.image %}{{ sensor.image.url }}{% else %}{% static "images/no_image.png" %}{% endif %}" alt="{{ sensor.name}}" style="width:100%;height:100%; margin-left: auto;margin-right: auto; display: block;" class="w-">
                    </div>
                    <div class="flip-card-back">
-                   
-                     <p>{{ sensor.description_summary }}</p> 
+        
+                    <span>{{ sensor.description_summary }}</span>
+
+                 
                    </div>
                  </div>
                </div>
@@ -95,13 +40,14 @@
                <a href="{{ sensor.get_absolute_url }}" class="text-reset">
                  <h5 class="card-title mb-2" style="color: blue;font-size: medium;">{{sensor.sensor_name}}</h5>
                </a>
-               <h6 class="mb-3 price">Cost €:{{sensor.price}}</h6>
+               <h6 class="mb-3 price">Cost €:{{sensor.price | intcomma}}</h6>
+               <h6 class="mb-3 install_difficulty"> Installation {{sensor.get_installation_operation_name_display }}</h6>
              </div>
            </div>
          </div>  
          {% endfor %}
          {% else %}
-         <h5 style="color: darkred;"> No data available under {{hazard.name}} hazards! </h5>
+         <h5 style="color: darkred;"> No data available under {{hazard.name}} hazard! </h5>
          {% endif %}
   
 <!-- Pagination -->
