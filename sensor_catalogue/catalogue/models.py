@@ -16,11 +16,10 @@ OPERATION_CHOICES = (
     ('VE', 'Very easy'))
 
 INSTALLATION_COST_CHOICES = (
-    
     ('H', 'High'),
     ('M', 'Medium'),
-    ('L', 'Low')
-)
+    ('L', 'Low'))
+
 
 
 HAZARD_CHOICES = (
@@ -371,11 +370,11 @@ class Sensor(models.Model):
               return self.sensor_name[:26]+"..."
     
 
-    def description_summary(self):
-         if len(self.short_description) < 200:
+    def short_summary(self):
+         if len(self.short_description) < 180:
               return self.short_description
          else:
-              return self.full_description[:200]+"..."
+              return self.short_description[:180]+"..."
     
 
     def get_absolute_url(self):
@@ -394,7 +393,6 @@ class Sensor(models.Model):
               'slug':self.slug
          })
     
-
 
 class SensorImage(models.Model):
     sensor = models.ForeignKey(Sensor, default=None, on_delete=models.CASCADE)

@@ -82,9 +82,9 @@ def home_page(request):
 
 
 
-    myFilter = SensorFilter(request.GET, queryset=qs)
+    sensor_filter = SensorFilter(request.GET, queryset=qs)
 
-    qs= myFilter.qs
+    qs= sensor_filter.qs
 
     context = {
         'queryset':qs,
@@ -92,7 +92,7 @@ def home_page(request):
         'monitored_parameters':monitored_parameters,
         'hazards':hazards,
         'install_operation_difficulties':install_operation_difficulties,
-        'myFilter':myFilter
+        'sensor_filter':sensor_filter
     }
     return render(request, 'index.html', context)
 
@@ -115,10 +115,26 @@ def home_page(request):
 #         pass
 
 
+def home(request):
+    hazard = request.GET.get('hazard')
+    if hazard == None:
+        sensors = Sensor.objects.order_by('price')
+    else:
+        sensors = Sensor.objects.filter(hazard__slug=hazard)
 
+    hazards = Hazard.objects.all()
 
+    sensor_filter = SensorFilter(request.GET, queryset=sensors)
 
+    sensors = sensor_filter.qs
 
+    context = {
+        'sensors':sensors,
+        'hazards':hazards,
+        'sensor_filter':sensor_filter
+    }
+
+    return render(request, 'index.html', context)
 
 
 def detail_view(request, slug):
