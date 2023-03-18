@@ -7,7 +7,10 @@ app_name  = 'catalogue'
 urlpatterns =[
 
 
-    path('', views.home_page, name='home_page'),
+    # path('', views.home_page, name='home_page'), Main landing page. Do not mess up
+
+    path('', views.home, name='home'),
+
     path('hazards/', views.hazard_list, name='hazards_list'),
 
     path('hazards/<slug:slug>', views.hazard_sensor_list, name='hazard_sensor_list'),
