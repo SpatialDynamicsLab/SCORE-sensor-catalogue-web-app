@@ -11,7 +11,6 @@
           <div class="d-flex justify-content-center align-items-center" style="height: 50vh">
             <div class="text-center">
               <img
-           
               src="{% static "images/score-sensors-catalogue-big-logo.png" %}"
               height="250"
               alt="SCORE-LOGO-web"
@@ -26,51 +25,34 @@
         </div>
         <hr>
       </div>
-
 <div class="container">
-
 <div class = "row">
   <div class="col-md-3">
     <h5>Hazards</h5>
     <hr>
 <br>
 <br>
-    <!-- <h5>{{ hazard.name }}</h5> -->
           <a class="list-group-item" href="{% url 'catalogue:home' %}">All</a>
         {% for hazard in hazards %}
-
         <a href="{% url 'catalogue:home' %}?hazard={{ hazard.slug }}">
           <li class="list-group-item">
             <img src="{% if hazard.image %}{{ hazard.image.url }} {% else %}{% static "images/no_image.pn" %} {% endif %}" alt="{{ hazard.name}}" style="float: left; width:50px;height:50px; margin-left: auto;margin-right: auto; display: block;" class="w-" >
             <h6>{{ hazard.name }}</h6>
-            <!-- <p>{{ hazard.name }}</p> -->
         </a>
-          <!-- <li class="list-group-item" style="height: fit-content; text-align: left; align-content: baseline;"> -->
-            
-            <!-- <img src="{% if category.image %}{{ category.image.url }} {% else %}{% static "images/no_image.pn" %} {% endif %}" alt="{{ category.name}}" style="float: left; width:50px;height:50px; margin-left: auto;margin-right: auto; display: block;" class="w-" > -->
-            <!-- <a class="btn btn-primary" href="{% url 'catalogue:home' %}?hazard={{ hazard.slug }}">{{ hazard.name }}</a> -->
-            <!-- <a class="w-" img src="{% if category.image %}{{ category.image.url }} {% else %}{% static "images/no_image.pn" %} {% endif %}" alt="{{ category.name}}" style="float: left; width:50px;height:50px; margin-left: auto;margin-right: auto; display: block;"> href="{% url 'catalogue:home' %}?hazard={{ hazard.slug }}">{{ hazard.name }}</a> -->
-
-
-              <!-- <h6>{{ hazard.name }}</h6> -->
           </li>
         {% endfor %}
-
-        <h5>Multi filters</h5>
+        <!-- <h5 style="text-align: left;">Multi filters</h5> -->
         <div class="container">
           <div class="form">
             <div class="col-md-2">
                 <form method="get" >
-                  {{sensor_filter.form | crispy  }}
+                  {{sensor_filter.form.as_p  }}
                   <button class="btn btn-primary" type="submit">SEARCH</button>
                 </form>
             </div>
           </div>
         </div>
   </div>
-
-
-
   <div class="col-md-9">
 
     <h5>Sensors</h5>
@@ -105,9 +87,7 @@
       <h6 style="color: darkred;"> No sensors currently available under the {{sensor.hazards.all}} hazard in your filter!</h6>
       {% endif %}
     </div>
-
-
 </div>
-
 </div>
+<!-- </div> -->
 {% endblock content%}
