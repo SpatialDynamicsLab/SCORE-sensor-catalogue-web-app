@@ -1,6 +1,9 @@
 
 body{
-    font-family: "montserrat","sans-serif";
+    /* font-family: "montserrat","sans-serif"; */
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-size: 13px;
     background-color: #cbd5da;
 }
 
@@ -78,10 +81,10 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 30px;
-
-    
-    font-family: "montserrat","sans-serif";
+    padding: 30px;    
+    /* font-family: "montserrat","sans-serif"; */
+    /* font-family: "montserrat"; */
+    font-family: 'Open Sans';
     
     /* font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; */
     /* font-size: small; */
@@ -101,4 +104,12 @@ body{
     width: fit-content;
     height: fit-content;
     /* background-color: red; */
+  }
+  .checkout-card{
+    background-color:cyan;
+    border: cornsilk;
+  }
+
+  .table-responsive{
+    background-color: cadetblue;
   }

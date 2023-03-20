@@ -356,7 +356,7 @@ class CheckoutView(View):
                 # save_info = form.cleaned_data.get('save_info')
                 order.save()
                 return redirect('catalogue:checkout')
-            messages.warning(self.request,"Email not sent. We are working to fix this functionality.")
+            messages.warning(self.request,"Email not sent. We are currently building this functionality.")
             return redirect('catalogue:checkout')
         except ObjectDoesNotExist:
             messages.error(self.request, "You do not have an active order")

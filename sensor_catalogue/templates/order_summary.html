@@ -1,13 +1,14 @@
 {% extends "base.html" %}
-
+{% load crispy_forms_tags %}
+{% load static %}
 {% block content %}
-
 {% load humanize %} 
-
-
 {% include 'navbar.html' %}
-  <main>
+  <!-- <main> -->
     <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="d-flex justify-content-center align-items-center">
         <div class="table-responsive">
             <h2>Cost Summary</h2>
             <table class="table">
@@ -70,11 +71,13 @@
                   {% endif %}
               </tbody>
             </table>
+            </div>
+            </div>
 
-
+</div>
           </div>
-    
-    </div>
-  </main>
+        <!-- </div> -->
+    <!-- </div> -->
+  <!-- </main> -->
 
 {% endblock content %}
