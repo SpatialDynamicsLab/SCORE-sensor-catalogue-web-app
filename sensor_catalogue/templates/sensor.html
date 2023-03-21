@@ -4,7 +4,7 @@
 
 {% include 'navbar.html' %}
 
-  <main class="mt-5 pt-4">
+  <!-- <main class="mt-5 pt-4"> -->
     <div class="container dark-grey-text mt-5">
 
       <!--Grid row-->
@@ -89,7 +89,6 @@
               <td>{{ sensor.targeted_user  }}</td>
             </tr>
           </tbody>
-  
         </table>
       </div>
 
@@ -103,17 +102,22 @@
            <h4> Additional pictures </43>
 
         </div>
+
+        <div class="container">
+          {% if photos %}
+
+          {% include 'additional_pictures.html'%}
+    
+          {% else %}
+    
+          <p style="text-align: center;"> {{sensor}} currently, does not have any additional pictures </p>
+    
+          {% endif %}
+
+        </div>
    
-      {% if photos %}
 
-      {% include 'additional_pictures.html'%}
-
-      {% else %}
-
-      <p style="text-align: center;"> {{sensor}} currently does not have any additional pictures </p>
-
-      {% endif %}
 
     </div>
-  </main>
+  <!-- </main> -->
 {% endblock content %}

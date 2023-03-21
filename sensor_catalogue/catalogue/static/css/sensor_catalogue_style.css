@@ -2,8 +2,8 @@
 body{
     /* font-family: "montserrat","sans-serif"; */
     font-family: 'Open Sans';
-    font-style: normal;
-    font-size: 13px;
+    /* font-style: normal; */
+    /* font-size: 13px; */
     background-color: #cbd5da;
 }
 
@@ -106,10 +106,10 @@ body{
     /* background-color: red; */
   }
   .checkout-card{
-    background-color:cyan;
-    border: cornsilk;
+    /* background-color:cyan;
+    border: cornsilk; */
   }
 
   .table-responsive{
-    background-color: cadetblue;
+    /* background-color: cadetblue; */
   }

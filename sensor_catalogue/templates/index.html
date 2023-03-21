@@ -28,32 +28,40 @@
 <div class="container">
 <div class = "row">
   <div class="col-md-3">
-    <h5>Hazards</h5>
+    <h5>Filter by Hazards</h5>
     <hr>
 <br>
 <br>
           <a class="list-group-item" href="{% url 'catalogue:home' %}">All</a>
         {% for hazard in hazards %}
-        <a href="{% url 'catalogue:home' %}?hazard={{ hazard.slug }}">
-          <li class="list-group-item">
-            <img src="{% if hazard.image %}{{ hazard.image.url }} {% else %}{% static "images/no_image.pn" %} {% endif %}" alt="{{ hazard.name}}" style="float: left; width:50px;height:50px; margin-left: auto;margin-right: auto; display: block;" class="w-" >
+        <a href="{% url 'catalogue:home' %}?hazard={{ hazard.id }}">
+          <li class="list-group-item" style="align-items:normal">
+            <img src="{% if hazard.image %}{{ hazard.image.url }} {% else %}{% static "images/no_image.pn" %} {% endif %}" alt="{{ hazard.id}}" style="float: left; width:50px;height:50px; margin-left: auto;margin-right: auto; display: block;" class="w-" >
             <h6>{{ hazard.name }}</h6>
         </a>
           </li>
         {% endfor %}
         <!-- <h5 style="text-align: left;">Multi filters</h5> -->
+<hr>
+        <div class="container">
+          <h5>Multiple fields filter</h5>
+        </div>
+        <hr>
         <div class="container">
           <div class="form">
             <div class="col-md-2">
                 <form method="get" >
-                  {{sensor_filter.form.as_p  }}
-                  <button class="btn btn-primary" type="submit">SEARCH</button>
+                  {{sensor_filter.form.as_table  }}
+                  <button class="btn btn-primary" type="submit">Filter</button>
+                  <button class="btn btn-warning" type = "button" onclick='window.location="/";'>Clear</button>
+
                 </form>
             </div>
+
           </div>
         </div>
   </div>
-  <div class="col-md-9">
+  <div class="col-md-9" style="border-left-color: azure;">
 
     <h5>Sensors</h5>
     <hr>
@@ -89,5 +97,6 @@
     </div>
 </div>
 </div>
+
 <!-- </div> -->
 {% endblock content%}
