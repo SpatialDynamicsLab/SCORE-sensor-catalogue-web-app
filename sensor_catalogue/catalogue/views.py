@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from django.http import HttpResponse
 from django.template.loader import render_to_string
@@ -20,112 +21,24 @@ from .models import Sensor, OrderSensor, Order, Hazard, MonitoredParameter, Inst
 
 from .filters import SensorFilter
 
-def is_valid_query(param):
-    # Helper function to check if a query is valid
-    return param != '' and param is not None
-
-
-def home_page(request):
-    """
-    This view serves the main landing page.
-    Besides, it also does the fucntion of filtering data, retrning a 
-    queryset with either the whole data or as a filter that is 
-    then rendered to the template.
-
-    # TO DO.
-
-    Further code refactoring.
-    """
-
-    qs = Sensor.objects.order_by('price').all()
-    install_ops_complexities = InstallationOperation.objects.all()
-    monitored_parameters = MonitoredParameter.objects.order_by('name').all()
-    hazards = Hazard.objects.order_by('name').all
-    install_operation_difficulties = InstallationOperation.objects.order_by('name').all()
-       
-    hazard_contains_query = request.GET.get('hazard_contains')
-    monitored_parameter_contains_query = request.GET.get('monitored_parameter')
-    reference_partner_query = request.GET.get('reference_partner')
-
-    price_min_query = request.GET.get('price_min')
-    price_max_query = request.GET.get('price_max')
-
-    project_min_year_query = request.GET.get('project_min_year')
-    project_max_year_query = request.GET.get('project_min_year')
-
-    installation_operation_query = request.GET.get('installation_operation')
-    
-
-    if is_valid_query(hazard_contains_query) and hazard_contains_query !='Filter by Hazards...':
-        qs=qs.filter(hazard__name__icontains=hazard_contains_query)
-
-    elif is_valid_query(reference_partner_query):
-        qs=qs.filter(reference_partner__icontains=reference_partner_query)
-
-    if is_valid_query(price_min_query):
-        qs = qs.filter(price__gte=price_min_query)
-
-    if is_valid_query(price_max_query):
-        qs = qs.filter(price__lt=price_max_query)
-
-    if is_valid_query(project_min_year_query):
-        qs = qs.filter(project_year__iexact=project_min_year_query)
-
-    if is_valid_query(project_max_year_query):
-        qs = qs.filter(project_year__iexact=project_max_year_query)
-
-    if is_valid_query(installation_operation_query) and installation_operation_query !='Select...':
-        qs = qs.filter(installation_operation__name=installation_operation_query)
-    
-    if is_valid_query(monitored_parameter_contains_query) and monitored_parameter_contains_query !='Select...':
-        qs=qs.filter(monitored_parameter__name__icontains=monitored_parameter_contains_query)
-
-
-
-    sensor_filter = SensorFilter(request.GET, queryset=qs)
-
-    qs= sensor_filter.qs
-
-    context = {
-        'queryset':qs,
-        'install_ops_complexities':install_ops_complexities,
-        'monitored_parameters':monitored_parameters,
-        'hazards':hazards,
-        'install_operation_difficulties':install_operation_difficulties,
-        'sensor_filter':sensor_filter
-    }
-    return render(request, 'index.html', context)
-
-
-# def multi_select(request):
-#     if request.method=="POST":
-#         hazard = request.POST.get('hazard_contains')
-#         monitored_parameter = request.POST.get('monitored_parameter')
-#         installation_operation = request.POST.get('installation_operation')
-
-#         sensor_objects = Sensor.objects.raw('SELECT * FROM SENSORS WHERE hazard="'+hazard_contains_query+'" and monitored_parameter="'+monitored_parameter+'" and installation_operation="'+installation_operation+'"')
-
-#         context = {
-#             'sensor_objects': sensor_objects
-#         }
-
-#         return 
-    
-#     else:
-#         pass
-
-
 def home(request):
     hazard = request.GET.get('hazard')
     if hazard == None:
         sensors = Sensor.objects.order_by('price')
+        # paginator = Paginator(sensors,9) # 9 sensors per page
+        # page = request.GET.get("page")
+        # print(request.GET)
+        # try:
+        #     sensors = paginator.page(page)
+        # except PageNotAnInteger:
+        #     sensors  = paginator.page(1)
+        # except EmptyPage:
+        #     sensors  =  paginator.page(paginator.num_pages)
     else:
-        sensors = Sensor.objects.filter(hazard__slug=hazard)
+        sensors = Sensor.objects.filter(hazard__id=hazard)
 
     hazards = Hazard.objects.all()
-
     sensor_filter = SensorFilter(request.GET, queryset=sensors)
-
     sensors = sensor_filter.qs
 
     context = {
@@ -133,6 +46,8 @@ def home(request):
         'hazards':hazards,
         'sensor_filter':sensor_filter
     }
+
+    
 
     return render(request, 'index.html', context)
 
