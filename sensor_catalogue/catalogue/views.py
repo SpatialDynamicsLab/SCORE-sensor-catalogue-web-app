@@ -9,7 +9,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-import weasyprint
+#import weasyprint
 
 from django.utils import timezone
 
