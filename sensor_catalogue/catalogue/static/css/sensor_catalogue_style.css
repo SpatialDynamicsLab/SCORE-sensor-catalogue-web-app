@@ -4,7 +4,11 @@ body{
     font-family: 'Open Sans';
     /* font-style: normal; */
     /* font-size: 13px; */
-    background-color: #cbd5da;
+    background-color: #eef5f8;
+}
+
+a {
+    color: #454343;
 }
 
 .card{
@@ -18,8 +22,12 @@ body{
 
 
 .card-title{
-  color: blue;
+  color: #3ab2ca;
   font-size: medium;
+}
+
+.card-subtitle {
+    font-size: 1em;
 }
 
 .flip-card {
@@ -72,7 +80,7 @@ body{
   }
   
   .flip-card-back {
-    background-color: dodgerblue;
+    background-color: #3ab2ca;
     /* background-color: rgb(255, 30, 68); */
     color: white;
     transform: rotateY(180deg);
