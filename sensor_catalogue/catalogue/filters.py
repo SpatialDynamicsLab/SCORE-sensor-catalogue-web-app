@@ -26,7 +26,7 @@ class SensorFilter(django_filters.FilterSet):
     price = django_filters.RangeFilter(widget=RangeWidget(attrs={'placeholder':'Enter min/max cost'}))
     # enter_min_max_price = django_filters.RangeFilter(field_name='price',widget=RangeWidget())
 
-    installation_complexity = django_filters.ChoiceFilter(field_name='installation_operation__name',label="Installation Complexity", choices=OPERATION_CHOICES)
+    installation_complexity = django_filters.ChoiceFilter(field_name='deployment_operation__name',label="Installation Complexity", choices=OPERATION_CHOICES)
 
     class Meta:
         model = Sensor
