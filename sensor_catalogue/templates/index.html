@@ -32,6 +32,7 @@
     <hr>
 <br>
 <br>
+<!-- <nav id="sidebarMenu">
           <a class="list-group-item" href="{% url 'catalogue:home' %}">All</a>
         {% for hazard in hazards %}
         <a href="{% url 'catalogue:home' %}?hazard={{ hazard.id }}">
@@ -41,6 +42,40 @@
         </a>
           </li>
         {% endfor %}
+
+      </nav> -->
+
+      <!--Main Navigation-->
+<!-- <header>
+  <!-- Sidebar -->
+
+  <div class="container">
+  <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
+    <div class="position-sticky">
+      <div class="list-group list-group-flush mx-3 mt-4">
+        <a class="list-group-item " href="{% url 'catalogue:home' %}">All</a>
+       
+        {% for hazard in hazards %}
+       
+        <a style="display: flex;align-items: center;"
+          href="{% url 'catalogue:home' %}?hazard={{ hazard.id }}"
+          class="list-group-item list-group-item-action py-2 ripple"
+          aria-current="true"
+        >
+          <img src="{% if hazard.image %}{{ hazard.image.url }} {% else %}{% static "images/no_image.pn" %} {% endif %}" alt="{{ hazard.name}}" style="float: left; width:50px;height:50px; margin-left: auto;margin-right: auto; display: block;text-align:justify;" class="w-" >
+           <div class="container">
+            <h6 style="align-items: center;">{{ hazard.name }}</h6>
+           </div>
+        </a>
+
+        {% endfor %}
+   
+      </div>
+    </div>
+  </nav>
+
+</header>
+
         <!-- <h5 style="text-align: left;">Multi filters</h5> -->
 <hr>
         <div class="container">
@@ -54,13 +89,14 @@
                   {{sensor_filter.form.as_table  }}
                   <button class="btn btn-primary" type="submit">Filter</button>
                   <button class="btn btn-warning" type = "button" onclick='window.location="/";'>Clear</button>
-
                 </form>
             </div>
 
           </div>
         </div>
   </div>
+
+</div>
   <div class="col-md-9" style="border-left-color: azure;">
 
     <h5>Sensors</h5>
