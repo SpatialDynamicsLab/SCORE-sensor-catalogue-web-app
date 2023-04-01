@@ -211,20 +211,24 @@ class UserProfile(models.Model):
 
 class Sensor(models.Model):
     id_old = models.CharField(
+         blank=True,
          max_length=20, 
          verbose_name="Sensor Old ID")
     tested_with_score = models.BooleanField(
          default=True, 
          verbose_name="Tested with SCORE")
     reference_partner = models.CharField(
+         blank=True,
          max_length=150, 
          verbose_name="Reference partner")
     sensor_name = models.CharField(
          max_length= 250, 
          verbose_name= "Name")
     short_description = models.TextField(
+         blank=True,
          verbose_name="Short Description")
-    full_description = models.TextField(blank=True,
+    full_description = models.TextField(
+         blank=True,
          verbose_name="Detailed Description")
     monitored_parameter = models.ManyToManyField(
          MonitoredParameter,
@@ -248,6 +252,7 @@ class Sensor(models.Model):
          max_digits=10, 
          decimal_places=2,
          blank=True,
+         default=0.00,
          verbose_name="Cost(€)")
     sensor_website = models.URLField(
          blank=True, 
@@ -268,14 +273,17 @@ class Sensor(models.Model):
     reference_paper = models.URLField(
          blank=True, 
          verbose_name="Reference Paper")
-    unit_of_measurement = models.CharField(
-         blank=True,null=True,
-         max_length=10, 
-         verbose_name="Unit of Measurement")
+    
     accuracy = models.CharField(
          blank=True,null=True,
-         max_length=15, 
-         verbose_name="Sensor Accuracy")
+         max_length=250, 
+         verbose_name="Accuracy (error of the measurements)")
+    
+    unit_of_measurement = models.CharField(
+         blank=True,null=True,
+         max_length=250, 
+         verbose_name="Unit of Measurement")
+
     data_refresh_time= models.PositiveIntegerField(blank=True,null=True,
          default=5, 
          verbose_name="Data Refresh Duration (Minutes)")
@@ -316,19 +324,29 @@ class Sensor(models.Model):
          blank=True,
          null=True,
          verbose_name="Assembly Operations Complexity")
+
+    assembly_operation_public_involvement = models.CharField(
+         max_length=300, 
+         blank=True,
+         verbose_name="Public Involvement & Assembly Operations")
     
-    installation_operation = models.ForeignKey(
+    deployment_operation = models.ForeignKey(
          InstallationOperation,
          on_delete=models.CASCADE,
          default=None,
          max_length=2, blank=True,null=True,
-         verbose_name="Installation Operation Complexity ")
+         verbose_name="Deployment operation Complexity")
     
-    installation_costs = models.CharField(
+    deployment_operation_public_involvement = models.CharField(
+         max_length=300, 
+         blank=True,
+         verbose_name="Public Involvement & Deployment Operations")
+    
+    deployment_costs = models.CharField(
          choices=INSTALLATION_COST_CHOICES, 
          max_length=1, blank=True,
          default=None, null=True,
-         verbose_name="Installation Cost")
+         verbose_name="Deployment Cost")
     
     data_analysis_operation = models.ForeignKey(
          DataAnalysisOperation,
@@ -336,6 +354,11 @@ class Sensor(models.Model):
          default=None,      
          max_length=2, blank=True,null=True,
          verbose_name="Data Analysis Operations Complexity")
+    
+    data_analysis_public_involvement = models.CharField(
+         max_length=300,
+          blank=True,
+         verbose_name="Public Involvement & Data Analysis Operations")
     
     citizen_science_operation = models.ForeignKey(
          CitizenScienceOperation,
@@ -354,6 +377,10 @@ class Sensor(models.Model):
          unique=True, 
          null=True, 
          default=None)
+    published = models.BooleanField(
+         default=False,
+         null=False
+    )
     
     class Meta:
          verbose_name = "Sensor"

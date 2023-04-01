@@ -24,7 +24,7 @@ from .filters import SensorFilter
 def home(request):
     hazard = request.GET.get('hazard')
     if hazard == None:
-        sensors = Sensor.objects.order_by('price')
+        sensors = Sensor.objects.filter(published=True).order_by('price')
         # paginator = Paginator(sensors,9) # 9 sensors per page
         # page = request.GET.get("page")
         # print(request.GET)
@@ -35,7 +35,7 @@ def home(request):
         # except EmptyPage:
         #     sensors  =  paginator.page(paginator.num_pages)
     else:
-        sensors = Sensor.objects.filter(hazard__id=hazard)
+        sensors = Sensor.objects.filter(published=True).filter(hazard__id=hazard)
 
     hazards = Hazard.objects.all()
     sensor_filter = SensorFilter(request.GET, queryset=sensors)
