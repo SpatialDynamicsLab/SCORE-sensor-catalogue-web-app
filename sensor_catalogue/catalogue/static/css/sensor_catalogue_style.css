@@ -1,11 +1,17 @@
 
 body{
-    /* font-family: "montserrat","sans-serif"; */
-    font-family: 'Open Sans';
+    font-family: "Montserrat","sans-serif";
+    /*  font-family: 'Open Sans'; */
     /* font-style: normal; */
     /* font-size: 13px; */
     /* background-color: #cbd5da; */
     background-color: #eef5f8;
+    background-color: #eef5f8;
+}
+
+a {
+  color: #454343;
+  font-size: 16px;
 }
 
 a {
@@ -31,14 +37,21 @@ a {
   /* margin:0%; */
   margin-top: 50px;
   /* text-align: center; */
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 }
-
 
 .card-title{
   /* color: blue; */
   color:#3ab2ca;
   font-size: medium;
+
+  color: #3ab2ca;
+  font-size: 18px;
+}
+
+.card-subtitle {
+    font-size: 12px;
+
 }
 
 .card-subtitle {
@@ -67,6 +80,7 @@ a {
     transition: transform 0.6s;
     transform-style: preserve-3d;
     border-radius: 16px;
+    font-size: 13px;
     /* box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); */
   }
   
@@ -97,7 +111,7 @@ a {
   }
   
   .flip-card-back {
-    background-color: dodgerblue;
+    background-color: #3ab2ca;
     /* background-color: rgb(255, 30, 68); */
     color: white;
     transform: rotateY(180deg);
@@ -107,9 +121,9 @@ a {
     align-items: center;
     justify-content: center;
     padding: 30px;    
-    /* font-family: "montserrat","sans-serif"; */
+    font-family: "Montserrat","sans-serif";
     /* font-family: "montserrat"; */
-    font-family: 'Open Sans';
+    /* font-family: 'Open Sans'; */
     
     /* font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; */
     /* font-size: small; */
@@ -138,3 +152,15 @@ a {
   .table-responsive{
     /* background-color: cadetblue; */
   }
+
+  .hazard-link-icon {
+    float: left;
+    width: 45px;
+    height: 45px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
+
+.center {
+}

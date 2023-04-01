@@ -37,8 +37,8 @@
         {% for hazard in hazards %}
         <a href="{% url 'catalogue:home' %}?hazard={{ hazard.id }}">
           <li class="list-group-item" style="align-items:normal">
-            <img src="{% if hazard.image %}{{ hazard.image.url }} {% else %}{% static "images/no_image.pn" %} {% endif %}" alt="{{ hazard.id}}" style="float: left; width:50px;height:50px; margin-left: auto;margin-right: auto; display: block;" class="w-" >
-            <h6>{{ hazard.name }}</h6>
+            <img src="{% if hazard.image %}{{ hazard.image.url }} {% else %}{% static "images/no_image.pn" %} {% endif %}" alt="{{ hazard.id}}" class="hazard-link-icon" >
+            <p>{{ hazard.name }}</p>
         </a>
           </li>
         {% endfor %}
