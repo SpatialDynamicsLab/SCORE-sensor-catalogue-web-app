@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-
+{% load humanize %} 
 {% include 'navbar.html' %}
 
   <!-- <main class="mt-5 pt-4"> -->
@@ -11,23 +11,32 @@
       <div class="row wow fadeIn">
         <!--Grid column-->
         <div class="col-md-4 mb-3">
-          <img src="{% if sensor.image %} {{ sensor.image.url }} {% else %}{% static "images/no_image.png" %} {% endif %}" alt="{{ sensor.name}}" style="width:100%;height:100%; margin-left: auto;margin-right: auto; display: block;" class="w-">
+          <img src="{% if sensor.image %} {{ sensor.image.url }} {% else %}{% static "images/no_image.png" %} {% endif %}" alt="{{ sensor.sensor_name}}" style="width:300px;height:350px; margin-left: auto;margin-right: auto; display: block;" class="w-">
         </div>
         <div class="col-md-6 mb-4">
           <!--Content-->
           <div class="p-4">
             <div class="mb-3">
-              {{sensor.sensor_name}}
-              <a href="">
-                <span class="badge purple mr-1">{{ sensor.get_citizen_science_operation_display }}</span>
-              </a>
-            </div>
-            <p class="lead font-weight-bold">Details Description</p>
+              <h5>{{sensor.sensor_name}}</h5>           
+            <p> Hazards: 
+              {% for hazard in sensor.hazard.all %}
+             <li> {{ hazard }}</li>
+              {% endfor %}
+            </p>
 
-              <p>{{ sensor.full_description  }}</p>
+              <!-- <a href="">
+                <span class="badge purple mr-1">{{ sensor.get_citizen_science_operation_display }}</span>
+              </a> -->
+
+
+              </div>
+
+            <p class="lead">Description</p>
+
+              <p>{{ sensor.full_description | linebreaks  }}</p>
 
               <p class="lead">
-                <span> €{{ sensor.price }}</span>
+                <span> €{{ sensor.price | intcomma }}</span>
               </p>
             
             <a href="{{ sensor.get_add_to_cart_url }}" class="btn btn-primary btn-md my-0 p">
@@ -58,14 +67,14 @@
               <th>Specific Hazards</th>
               <th>Minimum Purchase</th>
               <th>Spatial Density</th>
-              <th>Project users</th>
+              <th>Project Users</th>
             </tr>
           </thead><tbody>
             <tr>
               <td>{{ sensor.reference_partner  }}</td>
-              <td><a href="{{ sensor.project_website  }}" target="_blank" style="color: blue;" >{{ object.project_name }}</a></td>
-              <td>{{ object.project_year }}</td> 
-                <td><a href="{{ sensor.reference_paper  }}" target="_blank" style="color: blue;" >{{ object.reference_paper }}</a></td>               
+              <td>{% if sensor.project_website %}<a href="{{ sensor.project_website }}" target="_blank" style="color: blue;" >{{ sensor.project_name }}</a>{% else %} {{ sensor.project_name }} {% endif %}</td>
+              <td>{{ sensor.project_year }}</td> 
+                <td>{% if sensor.reference_paper %}<a href="{{ sensor.reference_paper }}" target="_blank" style="color: blue;" >Reference paper</a>{% else %} Not available{% endif %}</td>               
                <td><p>
                 {% for parameter in sensor.monitored_parameter.all %}
                 {{ parameter }}
@@ -92,6 +101,15 @@
         </table>
       </div>
 
+      <hr>
+
+{% include 'complexities.html' %}
+
+      <hr>
+      <p>Assembly Public Involvement: {{ sensor.assembly_operation_public_involvement }}</p>
+      <p>Deployment Public Involvement: {{ sensor.deployment_operation_public_involvement  }}</p>
+      <p>Data analysis Public Involvement:{{ sensor.data_analysis_public_involvement  }}</p>
+
       <hr/>
       <!--Grid row-->
       <div class="row d-flex justify-content-center wow fadeIn">
@@ -114,10 +132,10 @@
     
           {% endif %}
 
-        </div>
+        <!-- </div> -->
    
 
 
-    </div>
+    <!-- </div> -->
   <!-- </main> -->
 {% endblock content %}

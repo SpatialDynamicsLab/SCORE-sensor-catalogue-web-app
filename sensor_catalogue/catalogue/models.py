@@ -15,7 +15,7 @@ OPERATION_CHOICES = (
     ('EA', 'Easy'),
     ('VE', 'Very easy'))
 
-INSTALLATION_COST_CHOICES = (
+DEPLOYMENT_COST_CHOICES = (
     ('H', 'High'),
     ('M', 'Medium'),
     ('L', 'Low'))
@@ -40,7 +40,7 @@ for Y in range(1990, (datetime.datetime.now().year+1)):
 class Hazard(models.Model):
          name = models.CharField(max_length=200, blank=True)
          description = models.TextField(blank=True,default='Not provided')
-         image = models.ImageField(blank=True,null=True)
+         image = models.ImageField(upload_to = 'hazards_image/%Y/%m/%d',blank=True,null=True)
          slug = AutoSlugField(
               populate_from='name', 
               max_length=200,
@@ -149,11 +149,11 @@ class AssemblyOperation(CommonInfo):
         return self.name
     
      
-class InstallationOperation(CommonInfo):
+class DeploymentOperation(CommonInfo):
     
      class Meta:
-         verbose_name = "Install Operation Complexity"
-         verbose_name_plural = "Install Operation Complexities"
+         verbose_name = "Deployment Operation Complexity"
+         verbose_name_plural = "Deployment Operation Complexities"
 
      def __str__(self):
         return self.name
@@ -167,14 +167,14 @@ class PurchaseOperation(CommonInfo):
         return self.name
      
 
-class InstallationCost(models.Model):
+class DeploymentCost(models.Model):
      name = models.CharField(
-         choices=INSTALLATION_COST_CHOICES, 
+         choices=DEPLOYMENT_COST_CHOICES, 
          max_length=1, blank=True)
 
      class Meta:
-         verbose_name = "Installation Cost"
-         verbose_name_plural = "Install Costs"
+         verbose_name = "Deployment Cost"
+         verbose_name_plural = "Deployment Costs"
 
      def __str__(self):
         return self.name
@@ -220,6 +220,7 @@ class Sensor(models.Model):
     reference_partner = models.CharField(
          blank=True,
          max_length=150, 
+         default=None, 
          verbose_name="Reference partner")
     sensor_name = models.CharField(
          max_length= 250, 
@@ -259,6 +260,7 @@ class Sensor(models.Model):
          verbose_name="Sensor Web Page")
     project_name = models.CharField(
          max_length=250, 
+         default=None, 
          verbose_name="Project Name",
          blank=True)
     project_year = models.IntegerField(
@@ -269,6 +271,7 @@ class Sensor(models.Model):
 
     project_website = models.URLField(
          blank=True, 
+         null=True,
          verbose_name="Project Website")
     reference_paper = models.URLField(
          blank=True, 
@@ -328,24 +331,29 @@ class Sensor(models.Model):
     assembly_operation_public_involvement = models.CharField(
          max_length=300, 
          blank=True,
+         null=True,
+         default=None, 
          verbose_name="Public Involvement & Assembly Operations")
     
     deployment_operation = models.ForeignKey(
-         InstallationOperation,
+         DeploymentOperation,
          on_delete=models.CASCADE,
-         default=None,
          max_length=2, blank=True,null=True,
+         default=None, 
          verbose_name="Deployment operation Complexity")
     
     deployment_operation_public_involvement = models.CharField(
          max_length=300, 
          blank=True,
+         default=None, 
+         null=True,
          verbose_name="Public Involvement & Deployment Operations")
     
-    deployment_costs = models.CharField(
-         choices=INSTALLATION_COST_CHOICES, 
-         max_length=1, blank=True,
-         default=None, null=True,
+    deployment_costs = models.ForeignKey(
+         DeploymentCost,
+         on_delete=models.CASCADE,
+         max_length=2, blank=True,null=True,
+         default=None, 
          verbose_name="Deployment Cost")
     
     data_analysis_operation = models.ForeignKey(
@@ -357,7 +365,9 @@ class Sensor(models.Model):
     
     data_analysis_public_involvement = models.CharField(
          max_length=300,
-          blank=True,
+         blank=True,
+         default=None, 
+         null=True,
          verbose_name="Public Involvement & Data Analysis Operations")
     
     citizen_science_operation = models.ForeignKey(
@@ -371,7 +381,7 @@ class Sensor(models.Model):
     targeted_user = models.CharField(
          max_length=250, blank=True,
          verbose_name="Targeted Users")
-    image = models.ImageField(blank=True,null=True)
+    image = models.ImageField(upload_to='sensor_images/%Y/%m/%d',blank=True,null=True)
     slug =  AutoSlugField(
          populate_from='sensor_name', 
          unique=True, 
@@ -423,7 +433,7 @@ class Sensor(models.Model):
 
 class SensorImage(models.Model):
     sensor = models.ForeignKey(Sensor, default=None, on_delete=models.CASCADE)
-    images = models.FileField(upload_to = 'sensor_images/%Y/%m/%d',blank=True)
+    images = models.ImageField(upload_to = 'sensor_images/%Y/%m/%d',blank=True)
  
     def __str__(self):
         return self.sensor.sensor_name
@@ -432,18 +442,18 @@ class SensorImage(models.Model):
     class Meta:
          verbose_name = "Sensor Image"
          verbose_name_plural = "Sensor Images"
-     
-    
+
 class OrderSensor(models.Model):
         user = models.ForeignKey(
              settings.AUTH_USER_MODEL, 
              on_delete=models.CASCADE, blank=True, null=True)
-        ordered = models.BooleanField(
-             default=False)
-        sensor = models.ForeignKey(
-             Sensor, 
+     #    order = models.ForeignKey(Order, related_name='order',
+     #                              on_delete=models.CASCADE)
+        sensor = models.ForeignKey(Sensor, 
              on_delete=models.CASCADE)
         quantity = models.IntegerField(default=1)
+        ordered = models.BooleanField(
+             default=False)
 
         def __str__(self):
             return f"{self.quantity} of {self.sensor.sensor_name}"
@@ -455,14 +465,23 @@ class OrderSensor(models.Model):
          verbose_name = "Order Sensor"
          verbose_name_plural = "Order Sensors"
 
+
+
 class Order(models.Model):
         user = models.ForeignKey(
              settings.AUTH_USER_MODEL, 
              on_delete=models.CASCADE)
-        sensors = models.ManyToManyField(OrderSensor)
+
+     #    sensors = models.ManyToManyField(OrderSensor)
         start_date = models.DateTimeField(auto_now_add=True)
         ordered_date = models.DateTimeField()
         ordered = models.BooleanField(default=False)
+     #    first_name
+     #    last_name
+     #    street_address
+     #    postal_code
+     #    city
+     #    country
 
 
         def __str__(self):
@@ -476,8 +495,10 @@ class Order(models.Model):
              return total
 
         class Meta:
+            ordering = ['-ordered_date']
             verbose_name = "Order"
             verbose_name_plural = "Orders"
+
 
 
 

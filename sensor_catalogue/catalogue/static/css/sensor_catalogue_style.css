@@ -6,10 +6,13 @@ body{
     /* font-size: 13px; */
     /* background-color: #cbd5da; */
     background-color: #eef5f8;
+    margin-left: 100px;
+    margin-right: 100px;
 }
 
 a {
-  color: #454343;}
+  color: #454343;
+  font-size: 16px;}
 
 
 /* 
@@ -98,7 +101,6 @@ a {
   
   .flip-card-back {
     background-color: dodgerblue;
-    /* background-color: rgb(255, 30, 68); */
     color: white;
     transform: rotateY(180deg);
     border-radius: 16px;
@@ -106,13 +108,8 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 30px;    
-    /* font-family: "montserrat","sans-serif"; */
-    /* font-family: "montserrat"; */
-    font-family: 'Open Sans';
-    
-    /* font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; */
-    /* font-size: small; */
+    padding: 20px;  
+    font-size: 14px; 
   }
 
   .card-legend{
@@ -137,4 +134,17 @@ a {
 
   .table-responsive{
     /* background-color: cadetblue; */
+  }
+  .form-label{
+    font-size: 16px; 
+  }
+
+
+  .form-select{
+    font-size: 14px; 
+  }
+
+  .sidebar{
+    font-size: 14px; 
+
   }

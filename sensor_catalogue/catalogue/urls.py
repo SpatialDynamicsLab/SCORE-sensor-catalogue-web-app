@@ -32,6 +32,9 @@ urlpatterns =[
     path('add-to-cart/<slug>/', views.add_to_cart,name='add-to-cart'),
     path('remove-from-cart/<slug>/', views.remove_from_cart,name='remove-from-cart'),
     path('remove-sensor-from-cart/<slug>/', views.remove_single_sensor_from_cart,name='remove-single-sensor-from-cart'),
-    # path('send-order-email/<int:order_id>/pdf', views.admin_order_pdf, name='admin-order-pdf')
+    # path('order/<int:order_id>/pdf/', views.admin_order_pdf, name='order-pdf')
+    # path('order/<int:order_id>/', views.admin_order_pdf, name='order-pdf'),
+    # path('order/<int:order_id>/', views.admin_order_pdf, name='order-pdf'),
+    path('order/<int:order_id>/', views.order_detail, name='order-detail'),
 
 ]

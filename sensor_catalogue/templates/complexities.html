@@ -1,0 +1,30 @@
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+{% load humanize %} 
+
+
+<div class="col-md-12 mb-2">
+
+    Sensor Complexities
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Assembly</th>
+          <th>Deployment</th>
+          <th>Cost</th>
+          <th>Data Analysis</th>
+          <th>Citizen science </th>
+        </tr>
+      </thead><tbody>
+        <tr>
+          <td>{{ sensor.assembly_operation.get_name_display  }}</td>
+          <td>{{ sensor.deployment_operation.get_name_display  }}</td>
+          <td>{{ sensor.deployment_costs.get_name_display }}</td>
+          <td>{{ sensor.data_analysis_operation.get_name_display  }}</td>
+          <td>{{ sensor.citizen_science_operation.get_name_display  }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  {% endblock %}

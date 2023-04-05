@@ -10,7 +10,6 @@ class SensorFilter(django_filters.FilterSet):
     # price_values = [s.price for s in Sensor.objects.all()] 
     # min_price = min(price_values)
     # max_price = max(price_values)
-  
 
 
     OPERATION_CHOICES = (
@@ -23,12 +22,10 @@ class SensorFilter(django_filters.FilterSet):
    
 
     # price = django_filters.RangeFilter(label="Enter price range(€):")
-    price = django_filters.RangeFilter(widget=RangeWidget(attrs={'placeholder':'Enter min/max cost'}))
-    # enter_min_max_price = django_filters.RangeFilter(field_name='price',widget=RangeWidget())
-
-    installation_complexity = django_filters.ChoiceFilter(field_name='deployment_operation__name',label="Installation Complexity", choices=OPERATION_CHOICES)
+    price = django_filters.RangeFilter(field_name = 'price',label='Price Range(€)',widget=RangeWidget(attrs={'placeholder':'Enter min/max cost'}))
+    deployment_complexity = django_filters.MultipleChoiceFilter(field_name='deployment_operation__name',label="Deployment Complexity", choices=OPERATION_CHOICES)
 
     class Meta:
         model = Sensor
-        fields = ['hazard','monitored_parameter','installation_complexity']
+        fields = ['hazard','monitored_parameter','deployment_complexity']
     

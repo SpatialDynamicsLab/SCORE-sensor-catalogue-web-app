@@ -1,6 +1,6 @@
 <html>
 <body>
-  <h1>Sensor Catalogue</h1>
+  <h1>SCORE Sensor Catalogue</h1>
   <p>
     Invoice no. {{ order.id }}<br>
     <span class="secondary">
@@ -9,9 +9,10 @@
   </p>
   <h3>Bill to</h3>
   <p>
-    {{ request.user}}<br>
+    {{ request.user.email}}<br>
+  
   </p>
-  <h3>Items bought</h3>
+  <h3>Sensor List</h3>
   <table>
     <thead>
       <tr>
@@ -25,9 +26,9 @@
       {% for order_sensor in object.sensors.all}
         <tr class="row{% cycle "1" "2" %}">
           <td>{{order_sensor.sensor.sensor_name}}</td>
-          <td class="num">${{order_sensor.sensor.price }}</td>
+          <td class="num">€{{order_sensor.sensor.price }}</td>
           <td class="num">{{ item.quantity }}</td>
-          <td class="num">${{ item.get_cost }}</td>
+          <td class="num">€{{ item.get_cost }}</td>
         </tr>
       {% endfor %}
       <tr class="total">
