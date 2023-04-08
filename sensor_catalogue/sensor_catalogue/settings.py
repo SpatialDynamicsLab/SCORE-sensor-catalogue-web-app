@@ -211,7 +211,7 @@ STATIC_URL = '/static/'
 
 
 MEDIA_ROOT = BASE_DIR / 'images'
-MEDIA_URL = '/images/'
+MEDIA_URL = 'https://score-sensor-catalogue.spatialdynamicslab.xyz/images/'
 
 # CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
