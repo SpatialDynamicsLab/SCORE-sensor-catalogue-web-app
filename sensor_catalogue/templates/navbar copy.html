@@ -1,5 +1,5 @@
 {% load cart_template_tags %}
-{% load humanize %} 
+
 {% load static %}
 
 <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
@@ -32,20 +32,13 @@
               </a>
 
             <li class="nav-item">
-              {% with total_items=cart|length %}
-              {% if total_items > 0 %}
-              <a href="{% url "cart:cart_detail" %}" class="nav-link waves-effect">
+              <a href="{% url 'catalogue:order-summary' %}" class="nav-link waves-effect">
+                <!-- <span class="badge red z-depth-1 mr-1"> {{ request.user|cart_item_count }} </span> -->
+                <span class="badge red z-depth-1 mr-1"> {{ request.user }} </span>
+                <i class="fas fa-shopping-cart"></i>
 
                 <span class="clearfix d-none d-sm-inline-block"> Cart </span>
-                <i class="fas fa-shopping-cart"></i>
-                <span class="badge red z-depth-1 mr-1">{{total_items}} item{{total_items | pluralize}}, </span>               
-                €{{cart.get_total_price |  intcomma }}
-                </a>       
-                  {% else %}
-                  Your cart is empty.
-                  {% endif %}
-                {% endwith %}
-                
+              </a>
             </li>
 
             <li class="nav-item">

@@ -443,36 +443,11 @@ class SensorImage(models.Model):
          verbose_name = "Sensor Image"
          verbose_name_plural = "Sensor Images"
 
-class OrderSensor(models.Model):
-        user = models.ForeignKey(
-             settings.AUTH_USER_MODEL, 
-             on_delete=models.CASCADE, blank=True, null=True)
-     #    order = models.ForeignKey(Order, related_name='order',
-     #                              on_delete=models.CASCADE)
-        sensor = models.ForeignKey(Sensor, 
-             on_delete=models.CASCADE)
-        quantity = models.IntegerField(default=1)
-        ordered = models.BooleanField(
-             default=False)
-
-        def __str__(self):
-            return f"{self.quantity} of {self.sensor.sensor_name}"
-        
-        def get_total_sensor_price(self):
-             return self.quantity *self.sensor.price
-        
-        class Meta:
-         verbose_name = "Order Sensor"
-         verbose_name_plural = "Order Sensors"
-
-
-
 class Order(models.Model):
         user = models.ForeignKey(
              settings.AUTH_USER_MODEL, 
              on_delete=models.CASCADE)
-
-     #    sensors = models.ManyToManyField(OrderSensor)
+     #    sensors = models.ManyToMa`nyField(OrderSensor)
         start_date = models.DateTimeField(auto_now_add=True)
         ordered_date = models.DateTimeField()
         ordered = models.BooleanField(default=False)
@@ -499,6 +474,25 @@ class Order(models.Model):
             verbose_name = "Order"
             verbose_name_plural = "Orders"
 
+class OrderSensor(models.Model):
+        user = models.ForeignKey(
+             settings.AUTH_USER_MODEL, 
+             on_delete=models.CASCADE, blank=True, null=True)
+        order = models.ForeignKey(Order, related_name='order',
+                                  on_delete=models.CASCADE)
+        sensor = models.ForeignKey(Sensor, 
+             on_delete=models.CASCADE)
+        price = models.DecimalField(max_digits=10,decimal_places=2)
+        quantity = models.IntegerField(default=1)
+     #    ordered = models.BooleanField(
+     #         default=False)
 
-
-
+        def __str__(self):
+            return f"{self.quantity} of {self.sensor.sensor_name}"
+        
+        def get_total_sensor_price(self):
+             return self.quantity * self.price
+        
+        class Meta:
+         verbose_name = "Order Sensor"
+         verbose_name_plural = "Order Sensors"

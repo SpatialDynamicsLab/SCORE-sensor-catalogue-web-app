@@ -1,7 +1,5 @@
 from django.urls import path 
-
-from .  import views
-
+from . import views
 
 app_name  = 'catalogue'
 urlpatterns =[
@@ -25,12 +23,20 @@ urlpatterns =[
 
     path('checkout/',views.CheckoutView.as_view(), name='checkout'),
     path('order-summary/', views.OrderSummaryView.as_view(), name='order-summary'),
+    # path('cart-details/', views.cart_detail, name='cart_detail'),
     # path('sensor/<slug>/',views.SensorDetailView.as_view(), name='sensor'),
 
     path('sensor/<slug>/',views.detail_view, name='sensor'),
 
     path('add-to-cart/<slug>/', views.add_to_cart,name='add-to-cart'),
+    # path('add_to_cart/<slug>/', views.cart_add,name='cart_add'),
+  
+
+
+
     path('remove-from-cart/<slug>/', views.remove_from_cart,name='remove-from-cart'),
+    # path('remove_from_cart/<slug>/', views.cart_remove,name='cart_remove'),
+
     path('remove-sensor-from-cart/<slug>/', views.remove_single_sensor_from_cart,name='remove-single-sensor-from-cart'),
     # path('order/<int:order_id>/pdf/', views.admin_order_pdf, name='order-pdf')
     # path('order/<int:order_id>/', views.admin_order_pdf, name='order-pdf'),

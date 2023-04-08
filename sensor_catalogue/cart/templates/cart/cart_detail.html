@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+{% load humanize %} 
+{% include 'navbar.html' %}
+  <!-- <main> -->
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="d-flex justify-content-center align-items-center">
+        <div class="table-responsive">
+            <h2>Cost Summary</h2>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Picture</th>
+                  <th scope="col">Sensor Name</th>
+                  <th scope="col">Price</th>
+                  <!-- <th scope="col">Min Purchase</th> -->
+                  <th scope="col">Quantity</th>
+                  <th scope="col">Total Price</th>
+                  <th scope="col">Remove</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in cart %}
+                {% with sensor=item.sensor %}
+                <tr>
+                  <th scope="row">{{ forloop.counter }}</th>
+                  <td>
+                    <a href="{{ sensor.get_absolute_url }}">
+                    <img src="{% if sensor.image %}{{ sensor.image.url }}
+                    {% else %}{% static "images/no_image.png" %}{% endif %}" style="width: 50px; height:50px ;">
+                    </a>
+                    </td>
+                  <td>{{item.sensor.sensor_name | linebreaks }}</td>
+                  <td>€{{item.sensor.price  | intcomma }}</td>
+                  <!-- <td>{{item.sensor.minimum_purchase_quantity }}</td>   -->
+                  <td>
+                   <form action="{% url "cart:cart_add" sensor.slug %}" method="post">
+                    {{item.update_quantity_form.quantity}}
+                    {{item.update_quantity_form.override}}
+                    <input type="submit" value="Update" %}">
+                    {% csrf_token %}
+                   </form>
+                   </td> 
+                   <td>€{{ item.total_price  | intcomma }}</td>     
+                </td>  
+                <td>
+                  <form action="{% url "cart:cart_remove" sensor.slug %}">
+                    <input type="submit" value="Remove">
+                    {% csrf_token %}
+                  </form>
+                </td>
+                  </tr>
+                  {% endwith %}
+                  {% endfor %}
+              </tbody>
+            </table>          
+              <a class='btn btn-warning float-right ml-2' href="/checkout/"> Proceed to checkout </a>
+              <a class='btn btn-primary float-right' href="{% url "catalogue:home" %}" > Continue </a>
+            </div>
+            </div>
+
+</div>
+          </div>
+        <!-- </div> -->
+    <!-- </div> -->
+  <!-- </main> -->
+
+{% endblock content %}

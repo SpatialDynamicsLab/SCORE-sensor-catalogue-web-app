@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import send_mail
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -9,9 +10,8 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-from django.core.mail import EmailMessage
-from io import BytesIO
 
+from cart.forms import CartAddProductForm
 import weasyprint
 
 from django.utils import timezone
@@ -23,6 +23,9 @@ from .forms import CheckoutForm
 from .models import Sensor, OrderSensor, Order, Hazard, SensorImage
 
 from .filters import SensorFilter
+from  cart.cart import Cart
+
+from django.views.decorators.http import require_POST, require_GET
 
 def home(request):
     hazard = request.GET.get('hazard')
@@ -59,10 +62,14 @@ def detail_view(request, slug):
     """
     sensor =  get_object_or_404(Sensor, slug=slug)
     # print(sensor)
+    # cart = Cart()
+    cart_sensor_form= CartAddProductForm()
     photos = SensorImage.objects.filter(sensor__slug=slug)
     context = {
         'sensor':sensor,
-        'photos':photos
+        'photos':photos,
+        'cart_sensor_form': cart_sensor_form,
+        # 'cart':cart,
         }
     return render(request, 'sensor.html', context)
 
@@ -108,7 +115,7 @@ class OrderSummaryView(LoginRequiredMixin,View):
 @login_required
 def add_to_cart(request, slug):
     sensor = get_object_or_404(Sensor, slug=slug)
-    order_sensor,created = OrderSensor.objects.get_or_create(
+    order_sensor = OrderSensor.objects.get_or_create(
         sensor=sensor,
         user=request.user,
         ordered=False)
@@ -194,7 +201,6 @@ def remove_single_sensor_from_cart(request, slug):
 
 
 class CheckoutView(View):
-
 # Orders checkout view 
     def get(self,*args, **kwargs):
         # add the form here
@@ -230,6 +236,7 @@ class CheckoutView(View):
             messages.error(self.request, "You do not have an active order")
             return redirect("catalogue:order-summary")
 
+
 def order_detail(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     form = CheckoutForm()
@@ -237,6 +244,18 @@ def order_detail(request, order_id):
                'form':form}
     return render(request,'order_detail.html', context)
 
+def cart_detail(request):
+    cart =  Cart(request)
+    for item in cart:
+        item['update_quantity_form'] = CartAddProductForm(initial={
+            'quantity':item['quantity'],
+            'override':True
+            }
+        )
+        context = {
+            'cart':cart,
+        }
+        return render(request,'cart_detail.html', context)
 
 
 @login_required
@@ -253,4 +272,24 @@ def admin_order_pdf(order_id):
     )])
     return response
 
+
+# @require_POST
+# def cart_add(request, slug):
+#     cart = Cart(request)
+#     sensor = get_object_or_404(Sensor, slug=slug)
+#     form = CartAddProductForm(request.POST)
+#     if form.is_valid():
+#         clean_data = form.cleaned_data
+#         cart.add(sensor=sensor,
+#                  quantity=clean_data['quantity'],
+#                  quantity_override=clean_data['override'])
+#     return redirect('catalogue:cart_detail')
+
+
+# @require_GET
+# def cart_remove(request, slug):
+#     cart = Cart(request)
+#     sensor = get_object_or_404(Sensor, slug=slug)
+#     cart.remove(sensor)
+#     return redirect('catalogue:cart_detail')
 

@@ -1,5 +1,7 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load static %}
+{% load crispy_forms_tags %}
 {% block content %}
 {% load humanize %} 
 {% include 'navbar.html' %}
@@ -23,14 +25,7 @@
              <li> {{ hazard }}</li>
               {% endfor %}
             </p>
-
-              <!-- <a href="">
-                <span class="badge purple mr-1">{{ sensor.get_citizen_science_operation_display }}</span>
-              </a> -->
-
-
               </div>
-
             <p class="lead">Description</p>
 
               <p>{{ sensor.full_description | linebreaks  }}</p>
@@ -38,15 +33,22 @@
               <p class="lead">
                 <span> €{{ sensor.price | intcomma }}</span>
               </p>
-            
-            <a href="{{ sensor.get_add_to_cart_url }}" class="btn btn-primary btn-md my-0 p">
+              <p>
+                Minimum Quantity : {{ sensor.minimum_purchase_quantity  }}
+              </p>
+            <form action="{% url "cart:cart_add" sensor.slug %}" method="post">
+              {{cart_sensor_form}}
+              {% csrf_token %}
+              <input type="submit" value="{% trans "Add to cart" %}">
+            </form>
+            <!-- <a href="{{ sensor.get_add_to_cart_url }}" class="btn btn-primary btn-md my-0 p">
               Add to cart
               <i class="fas fa-shopping-cart ml-1"></i>
-            </a>
+            </a> -->
 
-            <a href="{{ sensor.get_remove_from_cart_url }}" class="btn btn-danger btn-md my-0 p">
+            <!-- <a href="{{ sensor.get_remove_from_cart_url }}" class="btn btn-danger btn-md my-0 p">
               Remove from cart
-            </a>
+            </a> -->
           </div>
           <div>
           </div>
