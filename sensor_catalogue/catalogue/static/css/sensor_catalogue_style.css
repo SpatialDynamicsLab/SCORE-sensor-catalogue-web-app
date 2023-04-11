@@ -139,11 +139,43 @@ a {
     height: fit-content;
     /* background-color: red; */
   }
-  .checkout-card{
-    /* background-color:cyan;
-    border: cornsilk; */
+
+
+  ul,li {
+    list-style-type: none;
+    color: aqua;
+
   }
 
-  .table-responsive{
-    /* background-color: cadetblue; */
-  }
+
+.order-info {
+    float:right;
+    width:300px;
+    background:#efefef;
+    padding:10px 20px;
+    color:#333;
+    border-bottom:4px solid #5993bb;
+}
+
+.order-info h3 {
+    color:#5993bb;
+}
+
+.order-info ul li {
+    margin:0;
+    padding:0;
+    font-size:14px;
+}
+
+.order-info p {
+    font-weight:bold;
+    float:right;
+}
+
+.order-info span {
+    float:right;
+}
+
+.order-form {
+  float:left;
+}

@@ -45,27 +45,21 @@
                   Your cart is empty.
                   {% endif %}
                 {% endwith %}
-                
             </li>
-
             <li class="nav-item">
               <a class="nav-link waves-effect" href="{% url 'account_logout' %}">
                 <span class="clearfix d-none d-sm-inline-block"> Logout </span>
               </a>
             </li>
-
             {% else %}
-
             <a class="nav-link waves-effect">
               <span class="clearfix d-none d-sm-inline-block"> You are not logged in! </span>
             </li>
             </a>
-
             <a class="nav-link waves-effect" href="{% url 'account_login' %}">
               <span class="clearfix d-none d-sm-inline-block"> Login </span>
             </li>
             </a>
-    
             <li class="nav-item">
               <a class="nav-link waves-effect" href="{% url 'account_signup' %}">
                 <span class="clearfix d-none d-sm-inline-block"> Signup </span>
@@ -73,7 +67,6 @@
             {% endif %}
             </li>
           </ul>
-    
         </div>
         <!-- Right elements -->
       </div>

@@ -22,7 +22,9 @@
               <h5>{{sensor.sensor_name}}</h5>           
             <p> Hazards: 
               {% for hazard in sensor.hazard.all %}
-             <li> {{ hazard }}</li>
+              <li><a href="{% url 'catalogue:home' %}?hazard={{ hazard.id }}">
+             {{ hazard }}</a></li>
+         
               {% endfor %}
             </p>
               </div>
@@ -41,14 +43,6 @@
               {% csrf_token %}
               <input type="submit" value="{% trans "Add to cart" %}">
             </form>
-            <!-- <a href="{{ sensor.get_add_to_cart_url }}" class="btn btn-primary btn-md my-0 p">
-              Add to cart
-              <i class="fas fa-shopping-cart ml-1"></i>
-            </a> -->
-
-            <!-- <a href="{{ sensor.get_remove_from_cart_url }}" class="btn btn-danger btn-md my-0 p">
-              Remove from cart
-            </a> -->
           </div>
           <div>
           </div>

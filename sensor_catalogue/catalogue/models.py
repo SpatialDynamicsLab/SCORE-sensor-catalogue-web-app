@@ -443,6 +443,7 @@ class SensorImage(models.Model):
          verbose_name = "Sensor Image"
          verbose_name_plural = "Sensor Images"
 
+"""
 class Order(models.Model):
         user = models.ForeignKey(
              settings.AUTH_USER_MODEL, 
@@ -496,3 +497,5 @@ class OrderSensor(models.Model):
         class Meta:
          verbose_name = "Order Sensor"
          verbose_name_plural = "Order Sensors"
+
+"""

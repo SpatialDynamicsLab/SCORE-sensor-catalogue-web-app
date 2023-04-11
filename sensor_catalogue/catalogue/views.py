@@ -1,31 +1,23 @@
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+
 from django.db.models import Q
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
-from django.http import HttpResponse
-from django.template.loader import render_to_string
+
 
 from cart.forms import CartAddProductForm
-import weasyprint
 
-from django.utils import timezone
 
-from django.views.generic import View
-
-from .forms import CheckoutForm
-
-from .models import Sensor, OrderSensor, Order, Hazard, SensorImage
+from .models import Sensor, Hazard, SensorImage
 
 from .filters import SensorFilter
-from  cart.cart import Cart
 
-from django.views.decorators.http import require_POST, require_GET
+
+
 
 def home(request):
     hazard = request.GET.get('hazard')
@@ -97,199 +89,9 @@ def hazard_sensor_list(request, slug):
         return redirect("catalogue:hazards_list")
         
 
-class OrderSummaryView(LoginRequiredMixin,View):
-    #Summary of a sensor order
-    def get(self, *args, **kwargs):
-        try:
-            order = Order.objects.get(user=self.request.user, ordered=False)
-            context = {
-                'order': order
-            }
-            return render(self.request, 'order_summary.html', context )
-
-        except ObjectDoesNotExist:
-            messages.warning(self.request, "You do not have an active order")
-            return redirect("/")
 
 
-@login_required
-def add_to_cart(request, slug):
-    sensor = get_object_or_404(Sensor, slug=slug)
-    order_sensor = OrderSensor.objects.get_or_create(
-        sensor=sensor,
-        user=request.user,
-        ordered=False)
-    order_qs = Order.objects.filter(user=request.user, ordered=False)
-
-    if order_qs.exists():
-        order = order_qs[0]
-        # Check if the order sensor is in the order
-        if order.sensors.filter(sensor__slug=sensor.slug).exists():
-            order_sensor.quantity += 1
-            order_sensor.save()
-            messages.info(request, "This sensor quantity was updated.")
-        else:
-            order.sensors.add(order_sensor)
-    else:
-        ordered_date = timezone.now()
-        order = Order.objects.create(user=request.user, ordered_date=ordered_date)
-        order.sensors.add(order_sensor)
-        messages.info(request, "This sensor was added to your cart.")
-    return redirect("catalogue:order-summary")
-
-@login_required
-def remove_from_cart(request, slug):
-    sensor = get_object_or_404(Sensor, slug=slug)
-    order_qs=Order.objects.filter(
-        user=request.user,
-        ordered = False
-    )
-    if order_qs.exists():
-        order = order_qs[0]
-        # check if order sensor is in the order
-        if order.sensors.filter(sensor__slug=sensor.slug).exists():
-            order_sensor = OrderSensor.objects.filter(
-                sensor=sensor,
-                user = request.user,
-                ordered=False
-            )[0]
-            order.sensors.remove(order_sensor)
-            # order_sensor.delete()
-            messages.info(request, "This sensor was removed from your cart.")
-            return redirect("catalogue:order-summary")
-        else:
-            messages.info(request, "This sensor was not in your cart.")
-            return redirect("catalogue:sensor", slug=slug)
-    else:
-        messages.info(request, "You do not have an active order.")
-        return redirect("catalogue:sensor",slug=slug)
 
 
-@login_required
-def remove_single_sensor_from_cart(request, slug):
-    sensor = get_object_or_404(Sensor, slug=slug)
-    order_qs=Order.objects.filter(
-        user=request.user,
-        ordered = False
-    )
-    if order_qs.exists():
-        order = order_qs[0]
-        # check if order sensor is in the order
-        if order.sensors.filter(sensor__slug=sensor.slug).exists():
-            order_sensor = OrderSensor.objects.filter(
-                sensor=sensor,
-                user = request.user,
-                ordered=False
-            )[0]
 
-            if order_sensor.quantity >1:
-                order_sensor.quantity -= 1
-                order_sensor.save()
-            else:
-                order.sensors.remove(order_sensor)
-            messages.info(request, "This sensor quantity was updated.")
-            return redirect("catalogue:order-summary")
-        else:
-            messages.info(request, "This sensor was not in your cart.")
-            return redirect("catalogue:order-summary", slug=slug)
-    else:
-        messages.info(request, "You do not have an active order.")
-        return redirect("catalogue:order-summary",slug=slug)
-
-# def checkout(request):
-#     return render(request,'checkout.html')
-
-
-class CheckoutView(View):
-# Orders checkout view 
-    def get(self,*args, **kwargs):
-        # add the form here
-        form = CheckoutForm()
-        order = Order.objects.get(user=self.request.user, ordered=False)
-        context = {
-            'form':form,
-            'order':order
-        }
-        return render(self.request, "checkout.html", context)
-
-    def post(self, *args, **kwargs):
-
-        form = CheckoutForm(self.request.POST or None)
-
-        try:
-            order = Order.objects.get(user = self.request.user, ordered=False)
-            
-            if form.is_valid():
-                first_name = form.cleaned_data.get('first_name')
-                last_name = form.cleaned_data.get('last_name')
-                street_address = form.cleaned_data.get('street_address')
-                postal_code = form.cleaned_data.get('postal_code')
-                city = form.cleaned_data.get('city')
-                country = form.cleaned_data.get('country')
-                order.save()
-                # return redirect('catalogue:checkout')
-                return redirect("catalogue:order-detail")
-            # messages.warning(self.request,"Email not sent. We are currently building this functionality.")
-            # return redirect('catalogue:checkout')
-            return redirect("catalogue:order-detail")
-        except ObjectDoesNotExist:
-            messages.error(self.request, "You do not have an active order")
-            return redirect("catalogue:order-summary")
-
-
-def order_detail(request, order_id):
-    order = get_object_or_404(Order, id=order_id)
-    form = CheckoutForm()
-    context = {'order': order,
-               'form':form}
-    return render(request,'order_detail.html', context)
-
-def cart_detail(request):
-    cart =  Cart(request)
-    for item in cart:
-        item['update_quantity_form'] = CartAddProductForm(initial={
-            'quantity':item['quantity'],
-            'override':True
-            }
-        )
-        context = {
-            'cart':cart,
-        }
-        return render(request,'cart_detail.html', context)
-
-
-@login_required
-def admin_order_pdf(order_id):
-    order = get_object_or_404(Order,order_id)
-    context = {
-        'order':order,
-    }
-    html = render_to_string('pdf.html',context)
-    response  = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition']= f'filename=order_{order.id}.pdf'
-    weasyprint.HTML(string=html).write_pdf(response,stylesheets=[weasyprint.CSS(
-        settings.STATIC_ROOT /'css/pdf.css'
-    )])
-    return response
-
-
-# @require_POST
-# def cart_add(request, slug):
-#     cart = Cart(request)
-#     sensor = get_object_or_404(Sensor, slug=slug)
-#     form = CartAddProductForm(request.POST)
-#     if form.is_valid():
-#         clean_data = form.cleaned_data
-#         cart.add(sensor=sensor,
-#                  quantity=clean_data['quantity'],
-#                  quantity_override=clean_data['override'])
-#     return redirect('catalogue:cart_detail')
-
-
-# @require_GET
-# def cart_remove(request, slug):
-#     cart = Cart(request)
-#     sensor = get_object_or_404(Sensor, slug=slug)
-#     cart.remove(sensor)
-#     return redirect('catalogue:cart_detail')
 

@@ -19,7 +19,6 @@
                   <th scope="col">Picture</th>
                   <th scope="col">Sensor Name</th>
                   <th scope="col">Price</th>
-                  <!-- <th scope="col">Min Purchase</th> -->
                   <th scope="col">Quantity</th>
                   <th scope="col">Total Price</th>
                   <th scope="col">Remove</th>
@@ -29,7 +28,7 @@
                 {% for item in cart %}
                 {% with sensor=item.sensor %}
                 <tr>
-                  <th scope="row">{{ forloop.counter }}</th>
+                  <td scope="row">{{ forloop.counter }}</td>
                   <td>
                     <a href="{{ sensor.get_absolute_url }}">
                     <img src="{% if sensor.image %}{{ sensor.image.url }}
@@ -38,17 +37,19 @@
                     </td>
                   <td>{{item.sensor.sensor_name | linebreaks }}</td>
                   <td>€{{item.sensor.price  | intcomma }}</td>
-                  <!-- <td>{{item.sensor.minimum_purchase_quantity }}</td>   -->
+            
                   <td>
-                   <form action="{% url "cart:cart_add" sensor.slug %}" method="post">
+
+                    {{item.quantity}}
+                   <!-- <form action="{% url "cart:cart_add" sensor.slug %}" method="post">
                     {{item.update_quantity_form.quantity}}
                     {{item.update_quantity_form.override}}
-                    <input type="submit" value="Update" %}">
+                    <input type="submit" value="Update">
                     {% csrf_token %}
-                   </form>
+                   </form> -->
                    </td> 
                    <td>€{{ item.total_price  | intcomma }}</td>     
-                </td>  
+               
                 <td>
                   <form action="{% url "cart:cart_remove" sensor.slug %}">
                     <input type="submit" value="Remove">
@@ -59,15 +60,22 @@
                   {% endwith %}
                   {% endfor %}
               </tbody>
-            </table>          
-              <a class='btn btn-warning float-right ml-2' href="/checkout/"> Proceed to checkout </a>
-              <a class='btn btn-primary float-right' href="{% url "catalogue:home" %}" > Continue </a>
+            </table>   
+            <p class="text-right">
+              <a href="{% url "orders:create_order" %}" class="btn btn-warning float-right">
+                Checkout
+              </a>
+              <a href="{% url "catalogue:home" %}" class="btn btn-primary float-right">Continue</a>
+              </p>
+              
+              
+              <!-- <a class='btn btn-warning float-right ml-2' href="/checkout/"> Proceed to checkout </a>
+              <a class='btn btn-primary float-right' href="{% url "catalogue:home" %}" > Continue </a> -->
             </div>
             </div>
-
-</div>
+            </div>
           </div>
-        <!-- </div> -->
+        </div>
     <!-- </div> -->
   <!-- </main> -->
 

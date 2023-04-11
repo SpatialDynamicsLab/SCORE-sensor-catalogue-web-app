@@ -4,8 +4,6 @@ from django.utils.safestring import mark_safe
 
 from catalogue.models import (
     Sensor,
-    Order,
-    OrderSensor,
     MonitoredParameter,
     HazardSpecific,
     UserProfile,
@@ -21,8 +19,13 @@ from catalogue.models import (
 )
 
 
-admin.site.register(Order)
-admin.site.register(OrderSensor)
+# from cart.models import (
+#     Order,
+#     OrderSensor,
+# )
+
+# admin.site.register(Order)
+# admin.site.register(OrderSensor)
 admin.site.register(MonitoredParameter)
 admin.site.register(HazardSpecific)
 admin.site.register(UserProfile)

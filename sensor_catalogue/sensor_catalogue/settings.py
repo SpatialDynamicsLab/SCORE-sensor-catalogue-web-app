@@ -79,6 +79,7 @@ INSTALLED_APPS = [
 
     "catalogue",
     "cart",
+    "orders",
 
 
 ]
@@ -211,7 +212,8 @@ STATIC_URL = '/static/'
 
 
 MEDIA_ROOT = BASE_DIR / 'images'
-MEDIA_URL = 'https://score-sensor-catalogue.spatialdynamicslab.xyz/images/'
+# MEDIA_URL = 'https://score-sensor-catalogue.spatialdynamicslab.xyz/images/'
+MEDIA_URL = '/images/'
 
 # CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
