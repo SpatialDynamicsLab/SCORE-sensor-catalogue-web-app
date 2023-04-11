@@ -3,7 +3,6 @@
 {% load static %}
 {% block content %}
 {% load humanize %} 
-
 {% include 'navbar.html' %}
 <div class="container">
       <div class="row">
@@ -18,18 +17,17 @@
               title="SCORE-Sensors Catalogue"
               />
               <h5 class="mb-3">Catalogue of low-cost sensors viable for citizen science activities.</h5>
-              <!-- <p class="mb-3">Sensor Catalogue Team</p> -->
             </div>
           </div>
         </div>
         </div>
-        <hr>
+        <!-- <hr> -->
       </div>
 <div class="container">
 <div class = "row">
   <div class="col-md-3">
-    <h5>Filter by Hazards</h5>
-    <hr>
+    <!-- <h5>Filter by Hazards</h5> -->
+    <!-- <hr> -->
 <br>
 <br>
 <!-- <nav id="sidebarMenu">
@@ -37,8 +35,8 @@
         {% for hazard in hazards %}
         <a href="{% url 'catalogue:home' %}?hazard={{ hazard.id }}">
           <li class="list-group-item" style="align-items:normal">
-            <img src="{% if hazard.image %}{{ hazard.image.url }} {% else %}{% static "images/no_image.pn" %} {% endif %}" alt="{{ hazard.id}}" class="hazard-link-icon" >
-            <p>{{ hazard.name }}</p>
+            <img src="{% if hazard.image %}{{ hazard.image.url }} {% else %}{% static "images/no_image.pn" %} {% endif %}" alt="{{ hazard.id}}" style="float: left; width:50px;height:50px; margin-left: auto;margin-right: auto; display: block;" class="w-" >
+            <h6>{{ hazard.name }}</h6>
         </a>
           </li>
         {% endfor %}
@@ -50,22 +48,28 @@
   <!-- Sidebar -->
 
   <div class="container">
+    <h5>Filter by Hazards</h5>
   <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
+ 
     <div class="position-sticky">
       <div class="list-group list-group-flush mx-3 mt-4">
-        <a class="list-group-item " href="{% url 'catalogue:home' %}">All</a>
+        <a class="list-group-item " href="{% url 'catalogue:home' %}">All Sensors</a>
        
         {% for hazard in hazards %}
        
-        <a style="display: flex;align-items: center;"
+        <a style="display: flex;align-items: center; font-size: 16px"
           href="{% url 'catalogue:home' %}?hazard={{ hazard.id }}"
           class="list-group-item list-group-item-action py-2 ripple"
           aria-current="true"
+        
         >
-          <img src="{% if hazard.image %}{{ hazard.image.url }} {% else %}{% static "images/no_image.pn" %} {% endif %}" alt="{{ hazard.name}}" style="float: left; width:50px;height:50px; margin-left: auto;margin-right: auto; display: block;text-align:justify;" class="w-" >
+          <img src="{% if hazard.image %}{{ hazard.image.url }} {% else %}{% static "images/no_image.pn" %} {% endif %}" alt="{{ hazard.name}}" style="float: left; width:50px;height:50px; margin-left: auto;margin-right: auto; display: block;text-align:justify;" class="w-"; >
            <div class="container">
             <h6 style="align-items: center;">{{ hazard.name }}</h6>
+            
            </div>
+
+           
         </a>
 
         {% endfor %}
@@ -78,15 +82,15 @@
 
         <!-- <h5 style="text-align: left;">Multi filters</h5> -->
 <hr>
-        <div class="container">
+        <div class="container-multi-filter">
           <h5>Multiple fields filter</h5>
         </div>
         <hr>
         <div class="container">
           <div class="form">
-            <div class="col-md-2">
+            <div class="col-md-2" style="font-size: medium;display: flex; text-align:left;">
                 <form method="get" >
-                  {{sensor_filter.form.as_table  }}
+                  {{sensor_filter.form | crispy  }}
                   <button class="btn btn-primary" type="submit">Filter</button>
                   <button class="btn btn-warning" type = "button" onclick='window.location="/";'>Clear</button>
                 </form>
@@ -98,11 +102,8 @@
 
 </div>
   <div class="col-md-9" style="border-left-color: azure;">
-
-    <h5>Sensors</h5>
-    <hr>
-
 {% if sensors %}
+
    <div class="row align-items-center">
       {% for sensor in sensors %}        
         <!-- <div class="col-lg-3 col-md-4 mb-3"> -->

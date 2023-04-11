@@ -1,36 +1,38 @@
 from django import forms
+from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
+# from catalogue.models import Sensor, Hazard, MonitoredParameter, InstallationOperation
 
 class CheckoutForm(forms.Form):
     first_name = forms.CharField(max_length=50, required=True, 
         widget=forms.TextInput(
-        attrs={'placeholder': 'John'}
+        attrs={'placeholder': 'First Name'}
     ))
     last_name = forms.CharField(max_length=50, required=True, 
         widget=forms.TextInput(
-        attrs={'placeholder': 'Doe'}
+        attrs={'placeholder': 'Last Name'}
     ))
     street_address  = forms.CharField(required=True,
                                           widget=forms.TextInput(
         attrs={'placeholder': '1234 Main St'}
     ))
-    apartment_address = forms.CharField(required=False,
+    postal_code = forms.CharField(required=True,
                                         widget=forms.TextInput(
-        attrs={'placeholder': 'Apartment or suite'}
+        attrs={'placeholder': 'Dublin 4'}
     ))
+
+    city = forms.CharField(required=True,
+                                        widget=forms.TextInput(
+        attrs={'placeholder': 'Dublin'}
+    ))
+
     country = CountryField(blank_label='(select country)').formfield(
-        required=False,
+        required=True,
         widget=CountrySelectWidget(attrs={
             'class': 'custom-select d-block w-100',
         }))
-    
-    zip_code = forms.CharField(widget=forms.TextInput(attrs={
-        'class':'form-control'
-    }))
     save_info = forms.BooleanField(widget=forms.CheckboxInput())
 
 
 
-class SensorFilterForm(forms.Form):
-    hazard =  forms.CharField()

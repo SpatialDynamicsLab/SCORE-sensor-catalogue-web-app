@@ -78,6 +78,8 @@ INSTALLED_APPS = [
     # ...
 
     "catalogue",
+    "cart",
+    "orders",
 
 
 ]
@@ -111,6 +113,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                'cart.context_processors.cart',
             ],
         },
     },
@@ -209,7 +212,8 @@ STATIC_URL = '/static/'
 
 
 MEDIA_ROOT = BASE_DIR / 'images'
-MEDIA_URL = 'https://score-sensor-catalogue.spatialdynamicslab.xyz/images/'
+# MEDIA_URL = 'https://score-sensor-catalogue.spatialdynamicslab.xyz/images/'
+MEDIA_URL = '/images/'
 
 # CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -220,4 +224,6 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+
+CART_SESSION_ID = 'cart'
 

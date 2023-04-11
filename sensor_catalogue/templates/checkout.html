@@ -9,70 +9,63 @@
     <div class="container">
       <div class="row">
     <div class="container wow fadeIn">
-      <h2 class="my-5 h2 text-center">Sensor Quotation Form</h2>
+      <h3 class="my-5 h2 text-center">Sensor Quotation Form</h3>
       <div class="row">
-        <div class="col-md-8 mb-4">
+        <div class="col-md-6 mb-4">
        
           <div class="checkout-card">
             <form method="POST" class="card-body">
               {% csrf_token %}
-              <h3>Address</h3>
+              <h4>Address</h4>
 
               <div class='hideable_shipping_form'>
 
 
-                <div class="md-form mb-4">
-                  <!-- <input type='text' placeholder='First Name' id='shipping_address' name='shipping_address' class='form-control' /> -->
+                <div class="md-form mb-3">
                   {{form.first_name}}
                   <label for="first_name" class="">First Name</label>
                 </div>
 
-                <div class="md-form mb-4">
-                  <!-- <input type='text' placeholder='Last Name' id='shipping_address' name='shipping_address' class='form-control' /> -->
+                <div class="md-form mb-3">
                   {{form.last_name}}
                   <label for="last_name" class="">Last Name</label>
                 </div>
 
-                <div class="md-form mb-4">
-                  <!-- <input type='text' placeholder='1234 Main St' id='shipping_address' name='shipping_address' class='form-control' /> -->
+                <div class="md-form mb-3">
                   {{form.street_address}}
-                  <label for="shipping_address" class="">Address</label>
+                  <label for="street_address" class="">Address</label>
                 </div>
 
-                <div class="md-form mb-5">
-                  <!-- <input type='text' placeholder='Apartment or suite' id='shipping_address2' name='shipping_address2' class='form-control' /> -->
-                  {{form.apartment_address}}
-                  <label for="shipping_address2" class="">Address 2 (optional)</label>
+                <div class="md-form mb-3">
+                  {{form.postal_code}}
+                  <label for="postal_code" class="">Postal Code</label>
                 </div>
-
+                <div class="md-form mb-3">
+                  {{form.city}}
+                  <label for="city" class="">City</label>
+                </div>
+                
                 <div class="row">
-                  <div class="col-lg-4 col-md-12 mb-4">
+                  <div class="col-lg-4 col-md- mb-3">
                     <label for="country">Country</label>
                     {{ form.country }}
                     <div class="invalid-feedback">
                       Please select a valid country.
                     </div>
                   </div>
-                  <div class="col-lg-4 col-md-6 mb-4">
-                    <label for="shipping_zip">Zip Code</label>
-                    <!-- <input type='text' placeholder='Zip code' id='shipping_zip' name='shipping_zip' class='form-control' /> -->
-                    {{form.zip_code}}
-                    <div class="invalid-feedback">
-                      Zip code required.
-                    </div>
-                  </div>
                 </div>
 
               </div>
-              <button class="btn btn-primary btn-lg btn-block" type="submit">Send To Email</button>
-
+              <!-- <button class="btn btn-primary" type="submit">Send To Email</button> -->
+              <a class="btn btn-primary" href="{% url 'catalogue:order-detail' order.id %}">Send To Email</a>
+ 
             </form>
 
           </div>
 
         </div>
 
-        <div class="col-md-4 mb-4">
+        <div class="col-md-5 mb-4">
           {% include "order_snippet.html" %}
         </div>
 
@@ -85,7 +78,7 @@
 {% endblock content %}
 
 {% block extra_scripts %}
-<script>
+<!-- <script>
 var hideable_shipping_form = $('.hideable_shipping_form');
 var hideable_billing_form = $('.hideable_billing_form');
 
@@ -108,5 +101,5 @@ use_default_billing.addEventListener('change', function() {
   }
 })
 
-</script>
+</script> -->
 {% endblock extra_scripts %}

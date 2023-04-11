@@ -23,7 +23,7 @@
                 </tr>
               </thead>
               <tbody>
-                {% for order_sensor in order.sensors.all  %}
+                {% for order_sensor in order_item.sensors.all  %}
                 <tr>
                   <th scope="row">{{ forloop.counter }}</th>
                   <td>{{order_sensor.sensor.sensor_name}}</td>
@@ -55,7 +55,7 @@
                 </tr>
                 {% endfor %}
 
-                {% if order.get_order_total %}
+                {% if order_item.get_order_total %}
 
                 <tr>
                     <td colspan="4"><b><strong>Total Cost</strong></b></td>
