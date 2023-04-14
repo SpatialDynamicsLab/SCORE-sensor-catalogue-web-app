@@ -36,7 +36,7 @@
         {% for hazard in hazards %}
         <a href="{% url 'catalogue:home' %}?hazard={{ hazard.id }}">
           <li class="list-group-item" style="align-items:normal">
-            <img src="{% if hazard.image %}{{ hazard.image.url }} {% else %}{% static "images/no_image.pn" %} {% endif %}" alt="{{ hazard.id}}" style="float: left; width:50px;height:50px; margin-left: auto;margin-right: auto; display: block;" class="w-" >
+            <img src="{% if hazard.image %}{{ hazard.image.url }} {% else %}{% static "images/no_image.pn" %} {% endif %}" alt="{{ hazard.id}}" class="w-" >
             <h6>{{ hazard.name }}</h6>
         </a>
           </li>
@@ -51,7 +51,7 @@
           <div class="form">
             <div class="col-md-2">
                 <form method="get" >
-                  {{sensor_filter.form.as_table  }}
+                  {{ sensor_filter.form.as_table }}
                   <button class="btn btn-primary" type="submit">Filter</button>
                   <button class="btn btn-warning" type = "button" onclick='window.location="/";'>Clear</button>
 
@@ -84,19 +84,19 @@
             </div>
             <div class="card-body" style="text-align: center;">
             <a href="{{ sensor.get_absolute_url }}" class="text-reset">
-              <h5 class="card-title mb-2">{{sensor.name_summary}}</h5>
+              <h5 class="card-title mb-2">{{ sensor.name_summary }}</h5>
             </a>
-            <h6 class="card-subtitle mt-1">Cost €:{{sensor.price | intcomma}}</h6>
+            <h6 class="card-subtitle mt-1">Cost €:{{ sensor.price|intcomma }}</h6>
           </div>
         </div>
       </div>  
       {% endfor %}
       {% else %}
-      <h6 style="color: darkred;"> No sensors currently available under the {{sensor.hazards.all}} hazard in your filter!</h6>
+      <h6 style="color: rgb(87, 87, 87);"> No sensors currently available under the {{ sensor.hazards.all }} hazard in your filter!</h6>
       {% endif %}
     </div>
 </div>
 </div>
 
 <!-- </div> -->
-{% endblock content%}
+{% endblock content %}

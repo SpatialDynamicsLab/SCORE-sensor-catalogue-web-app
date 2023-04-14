@@ -21,35 +21,47 @@ from .models import Sensor, OrderSensor, Order, Hazard, MonitoredParameter, Inst
 
 from .filters import SensorFilter
 
-def home(request):
-    hazard = request.GET.get('hazard')
-    if hazard == None:
-        sensors = Sensor.objects.order_by('price')
-        # paginator = Paginator(sensors,9) # 9 sensors per page
-        # page = request.GET.get("page")
-        # print(request.GET)
-        # try:
-        #     sensors = paginator.page(page)
-        # except PageNotAnInteger:
-        #     sensors  = paginator.page(1)
-        # except EmptyPage:
-        #     sensors  =  paginator.page(paginator.num_pages)
-    else:
-        sensors = Sensor.objects.filter(hazard__id=hazard)
+import math
 
+def home(request):
+    sensors = Sensor.objects.order_by('price')
     hazards = Hazard.objects.all()
-    sensor_filter = SensorFilter(request.GET, queryset=sensors)
-    sensors = sensor_filter.qs
+    monitored = MonitoredParameter.objects.all()
+
+    # TODO No way for db, maybe it's better to add a 'title' field in InstallationOperation model?
+    # titles and loop can be removed in that case, passing only the queryset complexity_qs in complexity
+    titles = {
+        'VD': 'Very difficult',
+        'DI': 'Difficult',
+        'NE': 'Neutral',
+        'EA': 'Easy',
+        'VE': 'Very easy'
+    }
+    complexity_qs = InstallationOperation.objects.all()
+    complexities = []
+    for x in complexity_qs:
+        complexity = dict()
+        complexity['id'] = x.id
+        complexity['title'] = titles[x.name]
+        complexities.append(complexity)
+    # END TODO 
+
+    price_step = 100
+    min_price = 0 if not sensors.first() or not sensors.first().price else sensors.first().price
+    min_price = int(math.floor(min_price / price_step) * price_step)
+    max_price = 0 if not sensors.last() or not sensors.last().price else sensors.last().price
+    max_price = int(math.ceil(max_price / price_step) * price_step)
 
     context = {
-        'sensors':sensors,
         'hazards':hazards,
-        'sensor_filter':sensor_filter
+        'monitored':monitored,
+        'complexities':complexities,
+        'sensors':sensors,
+        'min_price':min_price,
+        'max_price':max_price,
+        'price_step':price_step
     }
-
-    
-
-    return render(request, 'index.html', context)
+    return render(request, 'homepage.html', context)
 
 
 def detail_view(request, slug):
@@ -62,13 +74,12 @@ def detail_view(request, slug):
     context = {
         'sensor':sensor,
         'photos':photos
-        }
+    }
     return render(request, 'sensor.html', context)
 
 
 def hazard_list(request):
     # List of hazards 
-
     hazards = Hazard.objects.all()
     context = {'hazards': hazards}
     return render(request, 'hazard_list.html', context)

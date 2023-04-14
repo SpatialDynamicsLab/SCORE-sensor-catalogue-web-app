@@ -13,3 +13,10 @@ def cart_sensor_count(user):
         if qs.exists():
             return qs[0].sensors.count()
     return 0
+
+import math
+@register.filter
+def prices_node(value, step):
+    if not value: 
+        return "P0"
+    return f"P{int(math.floor(value / step))}"

@@ -382,6 +382,16 @@ class Sensor(models.Model):
               'slug':self.slug
          })
     
+    def hazards_filters(self):
+         return self.hazard.all().values_list("id", flat=True)
+    
+    def monitored_filters(self):
+         return self.monitored_parameter.all().values_list("id", flat=True)
+    
+    def complexity_filter(self):
+        if self.installation_operation:
+            return self.installation_operation.id
+        return
 
     def get_add_to_cart_url(self):
          return reverse("catalogue:add-to-cart", kwargs = {
