@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from catalogue.models import (
     Sensor,
     Order,
@@ -33,13 +32,13 @@ admin.site.register(DataAnalysisOperation)
 admin.site.register(InstallationCost)
 admin.site.register(CitizenScienceOperation)
 
+admin.site.site_header = "SCORE Sensors catalogue"
 
 
 class SensorImageInline(admin.TabularInline):
     model = SensorImage
     readonly_fields = (
         'id',
-
     )
 
     extra = 1
@@ -48,4 +47,3 @@ class SensorImageInline(admin.TabularInline):
 @admin.register(Sensor)
 class SenorImageAdmin(admin.ModelAdmin):
     inlines = [SensorImageInline]
-
