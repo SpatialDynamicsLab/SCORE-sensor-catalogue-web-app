@@ -426,19 +426,13 @@ class Sensor(models.Model):
          return self.monitored_parameter.all().values_list("id", flat=True)
     
     def complexity_filter(self):
-        if self.installation_operation:
-            return self.installation_operation.id
+          #  Installation operation was renamed to deployment operation.
+          #  The next line is therefore updated to 
+     
+     #    if self.installation_operation:
+        if self.deployment_operation:  
+            return self.deployment_operation.id
         return
-
-    def get_add_to_cart_url(self):
-         return reverse("catalogue:add-to-cart", kwargs = {
-              'slug':self.slug
-         })
-
-    def get_remove_from_cart_url(self):
-         return reverse("catalogue:remove-from-cart", kwargs = {
-              'slug':self.slug
-         })
     
 
 class SensorImage(models.Model):
@@ -452,60 +446,3 @@ class SensorImage(models.Model):
     class Meta:
          verbose_name = "Sensor Image"
          verbose_name_plural = "Sensor Images"
-
-"""
-class Order(models.Model):
-        user = models.ForeignKey(
-             settings.AUTH_USER_MODEL, 
-             on_delete=models.CASCADE)
-     #    sensors = models.ManyToMa`nyField(OrderSensor)
-        start_date = models.DateTimeField(auto_now_add=True)
-        ordered_date = models.DateTimeField()
-        ordered = models.BooleanField(default=False)
-     #    first_name
-     #    last_name
-     #    street_address
-     #    postal_code
-     #    city
-     #    country
-
-
-        def __str__(self):
-             return self.user.username
-        
-
-        def get_order_total(self):
-             total = 0
-             for order_sensor in self.sensors.all():
-                  total += order_sensor.get_total_sensor_price()
-             return total
-
-        class Meta:
-            ordering = ['-ordered_date']
-            verbose_name = "Order"
-            verbose_name_plural = "Orders"
-
-class OrderSensor(models.Model):
-        user = models.ForeignKey(
-             settings.AUTH_USER_MODEL, 
-             on_delete=models.CASCADE, blank=True, null=True)
-        order = models.ForeignKey(Order, related_name='order',
-                                  on_delete=models.CASCADE)
-        sensor = models.ForeignKey(Sensor, 
-             on_delete=models.CASCADE)
-        price = models.DecimalField(max_digits=10,decimal_places=2)
-        quantity = models.IntegerField(default=1)
-     #    ordered = models.BooleanField(
-     #         default=False)
-
-        def __str__(self):
-            return f"{self.quantity} of {self.sensor.sensor_name}"
-        
-        def get_total_sensor_price(self):
-             return self.quantity * self.price
-        
-        class Meta:
-         verbose_name = "Order Sensor"
-         verbose_name_plural = "Order Sensors"
-
-"""

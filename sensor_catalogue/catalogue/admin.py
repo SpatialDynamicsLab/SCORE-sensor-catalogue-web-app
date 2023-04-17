@@ -10,10 +10,10 @@ from catalogue.models import (
     HazardCategory,
     SensorImage,
     Hazard,
+    DeploymentOperation,
+    DeploymentCost,
     PurchaseOperation,
     AssemblyOperation,
-    InstallationOperation,
-    InstallationCost,
     DataAnalysisOperation,
     CitizenScienceOperation
 )
@@ -32,10 +32,10 @@ admin.site.register(UserProfile)
 admin.site.register(HazardCategory)
 admin.site.register(PurchaseOperation)
 admin.site.register(Hazard)
+admin.site.register(DeploymentOperation)
+admin.site.register(DeploymentCost)
 admin.site.register(AssemblyOperation)
-admin.site.register(InstallationOperation)
 admin.site.register(DataAnalysisOperation)
-admin.site.register(InstallationCost)
 admin.site.register(CitizenScienceOperation)
 
 admin.site.site_header = "SCORE Sensors catalogue"

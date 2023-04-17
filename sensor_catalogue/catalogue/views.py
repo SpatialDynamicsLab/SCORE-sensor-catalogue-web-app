@@ -12,7 +12,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from cart.forms import CartAddProductForm
 
 
-from .models import Sensor, OrderSensor, Order, Hazard, MonitoredParameter, InstallationOperation, SensorImage
+from .models import Sensor, Hazard, MonitoredParameter, SensorImage, DeploymentOperation
 
 from .filters import SensorFilter
 
@@ -25,6 +25,11 @@ def home(request):
 
     # TODO No way for db, maybe it's better to add a 'title' field in InstallationOperation model?
     # titles and loop can be removed in that case, passing only the queryset complexity_qs in complexity
+
+    """
+    This is the current implemtation where we have a name field as an OPERATION_CHOICES in the model. 
+    These choices are used by a number of fields in the sensor table.
+    """
     titles = {
         'VD': 'Very difficult',
         'DI': 'Difficult',
@@ -32,7 +37,7 @@ def home(request):
         'EA': 'Easy',
         'VE': 'Very easy'
     }
-    complexity_qs = InstallationOperation.objects.all()
+    complexity_qs = DeploymentOperation.objects.all()
     complexities = []
     for x in complexity_qs:
         complexity = dict()
@@ -64,16 +69,13 @@ def detail_view(request, slug):
     View for each sensor data in details.
     """
     sensor =  get_object_or_404(Sensor, slug=slug)
-    # print(sensor)
     # cart = Cart()
     cart_sensor_form= CartAddProductForm()
     photos = SensorImage.objects.filter(sensor__slug=slug)
     context = {
         'sensor':sensor,
-        'photos':photos
-    }
         'photos':photos,
-        'cart_sensor_form': cart_sensor_form,
+        'cart_sensor_form': cart_sensor_form
         # 'cart':cart,
         }
     return render(request, 'sensor.html', context)
