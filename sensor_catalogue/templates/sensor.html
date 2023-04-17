@@ -20,17 +20,27 @@
           <div class="p-4">
             <div class="mb-3">
               <h5>{{sensor.sensor_name}}</h5>           
-            <p> Hazards: 
-              {% for hazard in sensor.hazard.all %}
-              <li><a href="{% url 'catalogue:home' %}?hazard={{ hazard.id }}">
-             {{ hazard }}</a></li>
-         
-              {% endfor %}
-            </p>
+
               </div>
             <p class="lead">Description</p>
 
               <p>{{ sensor.full_description | linebreaks  }}</p>
+
+              <p><strong>Monitored Parameters:</strong> 
+
+                {% for param in sensor.monitored_parameter.all %}
+                  {{param}}
+                {% endfor %}
+              </p>
+
+              {% if sensor.hazard %}
+              <p><strong>Hazards:</strong> 
+
+                {% for hazard in sensor.hazard.all %}
+                  <li>{{hazard}}</li>
+                {% endfor %}
+              </p>
+  {% endif %}
 
               <p class="lead">
                 <span> €{{ sensor.price | intcomma }}</span>
@@ -50,63 +60,11 @@
       </div>
       <!--Grid row-->
       <hr>
-      <div class="col-md-12 mb-2">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Partners</th>
-              <th>Project Name</th>
-              <th>Project Year</th>
-              <th>Reference Paper</th>
-              <th>Monitored Parameters</th>
-              <th>Hazard Category</th>
-              <th>Specific Hazards</th>
-              <th>Minimum Purchase</th>
-              <th>Spatial Density</th>
-              <th>Project Users</th>
-            </tr>
-          </thead><tbody>
-            <tr>
-              <td>{{ sensor.reference_partner  }}</td>
-              <td>{% if sensor.project_website %}<a href="{{ sensor.project_website }}" target="_blank" style="color: blue;" >{{ sensor.project_name }}</a>{% else %} {{ sensor.project_name }} {% endif %}</td>
-              <td>{{ sensor.project_year }}</td> 
-                <td>{% if sensor.reference_paper %}<a href="{{ sensor.reference_paper }}" target="_blank" style="color: blue;" >Reference paper</a>{% else %} Not available{% endif %}</td>               
-               <td><p>
-                {% for parameter in sensor.monitored_parameter.all %}
-                {{ parameter }}
-                 {% endfor %}
-               </p>
-              </td>
-              <td><p>
-                {% for hazard in sensor.hazard_category.all %}
-                {{ hazard }}
-                 {% endfor %}
-               </p>
-              </td>
-              <td><p>
-                {% for specific in sensor.hazard_specific.all %}
-                {{ specific }}
-                 {% endfor %}
-               </p>
-              </td>
-              <td>{{ sensor.minimum_purchase_quantity  }}</td>
-              <td>{{ sensor.spatial_density_per_area  }}</td>
-              <td>{{ sensor.targeted_user  }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+         
+      {% include 'additional_sensor_information.html' %}
 
-      <hr>
-
-{% include 'complexities.html' %}
-
-      <hr>
-      <p>Assembly Public Involvement: {{ sensor.assembly_operation_public_involvement }}</p>
-      <p>Deployment Public Involvement: {{ sensor.deployment_operation_public_involvement  }}</p>
-      <p>Data analysis Public Involvement:{{ sensor.data_analysis_public_involvement  }}</p>
-
-      <hr/>
+       <hr>
+    
       <!--Grid row-->
       <div class="row d-flex justify-content-center wow fadeIn">
 

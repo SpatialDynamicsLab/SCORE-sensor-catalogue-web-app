@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 
 from django.db.models import Q
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-
+from cart.cart import Cart
 
 
 from cart.forms import CartAddProductForm
@@ -69,14 +69,12 @@ def detail_view(request, slug):
     View for each sensor data in details.
     """
     sensor =  get_object_or_404(Sensor, slug=slug)
-    # cart = Cart()
     cart_sensor_form= CartAddProductForm()
     photos = SensorImage.objects.filter(sensor__slug=slug)
     context = {
         'sensor':sensor,
         'photos':photos,
-        'cart_sensor_form': cart_sensor_form
-        # 'cart':cart,
+        'cart_sensor_form': cart_sensor_form,
         }
     return render(request, 'sensor.html', context)
 

@@ -5,24 +5,24 @@
 
 
 <div class="col-md-12 mb-2">
-
-    Sensor Complexities
     <table class="table">
       <thead>
         <tr>
-          <th>Assembly</th>
-          <th>Deployment</th>
-          <th>Cost</th>
-          <th>Data Analysis</th>
-          <th>Citizen science </th>
+          <th>Purchase operations complexity</th>
+          <th>Assembly/Calibration Operations Complexity</th>
+          <th>Deployment operation Complexity </th>
+          <th>Deployment Cost</th>
+          <th>Data Analysis Operations Complexity</th>
+     
         </tr>
       </thead><tbody>
         <tr>
+          <td>{{ sensor.purchase_operation.get_name_display  }}</td>
           <td>{{ sensor.assembly_operation.get_name_display  }}</td>
           <td>{{ sensor.deployment_operation.get_name_display  }}</td>
           <td>{{ sensor.deployment_costs.get_name_display }}</td>
           <td>{{ sensor.data_analysis_operation.get_name_display  }}</td>
-          <td>{{ sensor.citizen_science_operation.get_name_display  }}</td>
+     
         </tr>
       </tbody>
     </table>

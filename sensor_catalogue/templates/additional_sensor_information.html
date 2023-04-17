@@ -1,0 +1,123 @@
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+{% load humanize %} 
+
+<diV>
+
+
+
+    <!-- <h4>Additional Properties</h4> -->
+
+
+<button class="accordion">Sensor Properties</button>
+<div class="panel">
+    <table class="table">
+        <thead>
+            <tr>
+            <th>Accuracy (error of the measurements)</th>
+            <th>Unit of measurement</th>
+            <th>Data Refresh Time (mins)</th>
+            <th>Wi-Fi Connection</th>
+            <th>4G Connection</th>
+            <th>External Power Supply</th>
+            </tr>
+        </thead><tbody>
+            <tr>
+            <td>{{ sensor.accuracy   }}</td>
+            <td>{{ sensor.unit_of_measurement  }}</td>
+            <td>{{ sensor.data_refresh_time }}</td>
+            <td>{{ sensor.wifi_connection  }}</td>
+            <td>{{ sensor.mobile_data_connection }}</td>
+            <td>{{ sensor.external_power_supply  }}</td>
+            </tr>
+        </tbody>
+        </table>
+    </div>
+
+
+
+<button class="accordion">Historical Information</button>
+
+
+<div class="panel">
+    <div class="col-md-12 mb-2">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Reference Partners</th>
+              <th>Project Name</th>
+              <th>Project Year</th>
+              <th>Reference Paper</th>
+              <th>Monitored Parameters</th>
+              <th>Minimum Purchase</th>
+              <th>Spatial Density</th>
+            </tr>
+          </thead><tbody>
+            <tr>
+              <td>{{ sensor.reference_partner  }}</td>
+              <td>{% if sensor.project_website %}<a href="{{ sensor.project_website }}" target="_blank" style="color: blue;" >{{ sensor.project_name }}</a>{% else %} {{ sensor.project_name }} {% endif %}</td>
+              <td>{{ sensor.project_year }}</td> 
+                <td>{% if sensor.reference_paper %}<a href="{{ sensor.reference_paper }}" target="_blank" style="color: blue;" >Reference paper</a>{% else %} Not available{% endif %}</td>               
+               <td><p>
+                {% for parameter in sensor.monitored_parameter.all %}
+                {{ parameter }}
+                 {% endfor %}
+               </p>
+              </td>
+              <td>{{ sensor.minimum_purchase_quantity  }}</td>
+              <td>{{ sensor.spatial_density_per_area  }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+</div>
+
+<button class="accordion">Operation Complexities</button>
+<div class="panel">
+    {% include 'complexities.html' %}
+</div>
+
+<button class="accordion">Citizen Science</button>
+<div class="panel">
+    <table class="table">
+        <thead>
+          <tr>
+            <th>Citizen Science Activities Complexity</th>
+            <th>Assembly Public Involvement</th>
+            <th>Deployment Public Involvement</th>
+            <th>Data analysis Public Involvement</th>
+            <th>Target Users</th>
+          </tr>
+        </thead><tbody>
+          <tr>
+            <td>{{ sensor.citizen_science_operation.get_name_display   }}</td>
+            <td>{{ sensor.assembly_operation_public_involvement  }}</td>
+            <td>{{ sensor.deployment_operation_public_involvement }}</td>
+            <td>{{ sensor.data_analysis_public_involvement  }}</td>
+            <td>{{ sensor.targeted_user  }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    </div>
+  </div>
+  <script>
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+    
+    for (i = 0; i < acc.length; i++) {
+      acc[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var panel = this.nextElementSibling;
+        if (panel.style.display === "block") {
+          panel.style.display = "none";
+        } else {
+          panel.style.display = "block";
+        }
+      });
+    }
+    </script>
+
+  {% endblock %}
