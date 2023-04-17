@@ -92,7 +92,6 @@ class HazardSpecific(models.Model):
         return self.hazard_specific_name
     
 
-
 class MonitoredParameter(models.Model):
     name = models.CharField(max_length=100)
     slug = AutoSlugField(
@@ -130,13 +129,14 @@ class CommonInfo(models.Model):
      class Meta:
         abstract = True
 
+
 class PurchaseOperation(CommonInfo):
      class Meta:
          verbose_name = "Assembly Operation"
          verbose_name_plural = "Assembly Operations"
 
      def __str__(self):
-        return self.name
+        return self.get_name_display()
 
 
 class AssemblyOperation(CommonInfo):
@@ -146,7 +146,7 @@ class AssemblyOperation(CommonInfo):
          verbose_name_plural = "Assembly Operations"
 
      def __str__(self):
-        return self.name
+        return self.get_name_display()
     
      
 class InstallationOperation(CommonInfo):
@@ -156,15 +156,16 @@ class InstallationOperation(CommonInfo):
          verbose_name_plural = "Install Operation Complexities"
 
      def __str__(self):
-        return self.name
-     
+        return self.get_name_display()
+
+
 class PurchaseOperation(CommonInfo):
      class Meta:
          verbose_name = "Purchase Operation Complexity"
          verbose_name_plural = "Purchase Operation Complexities"
 
      def __str__(self):
-        return self.name
+        return self.get_name_display()
      
 
 class InstallationCost(models.Model):
@@ -180,14 +181,13 @@ class InstallationCost(models.Model):
         return self.name
      
 
-
 class DataAnalysisOperation(CommonInfo):    
      class Meta:
          verbose_name = "Data Analysis Operation Complexity"
          verbose_name_plural = "Data Analysis Operation Complexities"
 
      def __str__(self):
-        return self.name
+        return self.get_name_display()
      
     
 class CitizenScienceOperation(CommonInfo):
@@ -197,7 +197,7 @@ class CitizenScienceOperation(CommonInfo):
          verbose_name_plural = "Citizen Science Operation Complexities"
 
      def __str__(self):
-        return self.name
+        return self.get_name_display()
      
     
 
