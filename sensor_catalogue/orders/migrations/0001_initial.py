@@ -8,9 +8,9 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ('catalogue', '0002_alter_deploymentcost_options_alter_order_options_and_more'),
-    ]
+    # dependencies = [
+    #     ('catalogue', '0002_alter_deploymentcost_options_alter_order_options_and_more'),
+    # ]
 
     operations = [
         migrations.CreateModel(

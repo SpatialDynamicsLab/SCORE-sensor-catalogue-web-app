@@ -15,7 +15,7 @@ OPERATION_CHOICES = (
     ('EA', 'Easy'),
     ('VE', 'Very easy'))
 
-DEPLOYMENT_COST_CHOICES = (
+INSTALLATION_COST_CHOICES = (
     ('H', 'High'),
     ('M', 'Medium'),
     ('L', 'Low'))
@@ -149,7 +149,7 @@ class AssemblyOperation(CommonInfo):
         return self.get_name_display()
     
      
-class DeploymentOperation(CommonInfo):
+class InstallationOperation(CommonInfo):
     
      class Meta:
          verbose_name = "Deployment Operation Complexity"
@@ -168,9 +168,9 @@ class PurchaseOperation(CommonInfo):
         return self.get_name_display()
      
 
-class DeploymentCost(models.Model):
+class InstallationCost(models.Model):
      name = models.CharField(
-         choices=DEPLOYMENT_COST_CHOICES, 
+         choices=INSTALLATION_COST_CHOICES,
          max_length=1, blank=True)
 
      class Meta:
@@ -253,7 +253,6 @@ class Sensor(models.Model):
          max_digits=10, 
          decimal_places=2,
          blank=True,
-         default=0.00,
          verbose_name="Cost(€)")
     sensor_website = models.URLField(
          blank=True, 
@@ -329,32 +328,29 @@ class Sensor(models.Model):
          verbose_name="Assembly Operations Complexity")
 
     assembly_operation_public_involvement = models.CharField(
-         max_length=300, 
+         max_length=300,
          blank=True,
          null=True,
-         default=None, 
          verbose_name="Public Involvement & Assembly Operations")
     
-    deployment_operation = models.ForeignKey(
-         DeploymentOperation,
+    installation_operation = models.ForeignKey(
+         InstallationOperation,
          on_delete=models.CASCADE,
          max_length=2, blank=True,null=True,
          default=None, 
          verbose_name="Deployment operation Complexity")
     
     deployment_operation_public_involvement = models.CharField(
-         max_length=300, 
+         max_length=300,
          blank=True,
-         default=None, 
          null=True,
          verbose_name="Public Involvement & Deployment Operations")
-    
-    deployment_costs = models.ForeignKey(
-         DeploymentCost,
-         on_delete=models.CASCADE,
-         max_length=2, blank=True,null=True,
-         default=None, 
-         verbose_name="Deployment Cost")
+
+    installation_costs = models.CharField(
+        choices=INSTALLATION_COST_CHOICES,
+        max_length=1, blank=True,
+        default=None, null=True,
+        verbose_name="Installation Cost")
     
     data_analysis_operation = models.ForeignKey(
          DataAnalysisOperation,
@@ -366,7 +362,6 @@ class Sensor(models.Model):
     data_analysis_public_involvement = models.CharField(
          max_length=300,
          blank=True,
-         default=None, 
          null=True,
          verbose_name="Public Involvement & Data Analysis Operations")
     

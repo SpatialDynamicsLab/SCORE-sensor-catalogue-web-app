@@ -12,7 +12,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from cart.forms import CartAddProductForm
 
 
-from .models import Sensor, OrderSensor, Order, Hazard, MonitoredParameter, InstallationOperation, SensorImage
+from .models import Sensor, Hazard, MonitoredParameter, InstallationOperation, SensorImage
 
 from .filters import SensorFilter
 
@@ -70,8 +70,6 @@ def detail_view(request, slug):
     photos = SensorImage.objects.filter(sensor__slug=slug)
     context = {
         'sensor':sensor,
-        'photos':photos
-    }
         'photos':photos,
         'cart_sensor_form': cart_sensor_form,
         # 'cart':cart,
