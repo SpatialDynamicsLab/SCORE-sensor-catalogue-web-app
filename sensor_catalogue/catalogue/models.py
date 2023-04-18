@@ -146,7 +146,7 @@ class AssemblyOperation(CommonInfo):
         return self.get_name_display()
     
      
-class InstallationOperation(CommonInfo):
+class DeploymentOperation(CommonInfo):
     
      class Meta:
          verbose_name = "Deployment Operation Complexity"
@@ -165,7 +165,7 @@ class PurchaseOperation(CommonInfo):
         return self.get_name_display()
      
 
-class InstallationCost(models.Model):
+class DeploymentCost(models.Model):
     name = models.CharField(
      choices=INSTALLATION_COST_CHOICES,
      max_length=1, blank=True)
@@ -329,8 +329,8 @@ class Sensor(models.Model):
          null=True,
          verbose_name="Public Involvement & Assembly Operations")
     
-    installation_operation = models.ForeignKey(
-         InstallationOperation,
+    deployment_operation = models.ForeignKey(
+         DeploymentOperation,
          on_delete=models.CASCADE,
          max_length=2, blank=True,null=True,
          default=None, 
@@ -416,10 +416,10 @@ class Sensor(models.Model):
     
     def complexity_filter(self):
           #  Installation operation was renamed to deployment operation.
-          #  The next line is therefore needs to be updated 
-     
-     #    if self.installation_operation:
-        if self.deployment_operation:  
+          #  The next line is therefore needs to be updated
+
+        # if self.installation_operation:
+        if self.deployment_operation:
             return self.deployment_operation.id
         return
     
