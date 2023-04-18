@@ -15,7 +15,7 @@ class Order(models.Model):
     country = CountryField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    paid = models.BooleanField(default=False)
+    
 
     class Meta:
         verbose_name = "Order"

@@ -31,7 +31,7 @@ def cart_detail(request):
     for item in cart:
         item['update_quantity_form'] = CartAddProductForm(initial={
             'quantity':item['quantity'],
-            'override':True
+            'override': True
             }
         )
         context = {

@@ -15,13 +15,14 @@
             <table class="table">
               <thead>
                 <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Picture</th>
-                  <th scope="col">Sensor Name</th>
-                  <th scope="col">Price</th>
-                  <th scope="col">Quantity</th>
-                  <th scope="col">Total Price</th>
-                  <th scope="col">Remove</th>
+                  <th>#</th>
+                  <th>Picture</th>
+                  <th>Sensor Name</th>
+                  <th>Price</th>
+                  <th>Minimum Purchase Quantity</th>
+                  <th>Quantity</th>
+                  <th>Total Price</th>
+                  <th>Remove</th>
                 </tr>
               </thead>
               <tbody>
@@ -37,28 +38,27 @@
                     </td>
                   <td>{{item.sensor.sensor_name | linebreaks }}</td>
                   <td>€{{item.sensor.price  | intcomma }}</td>
-            
+                  <td style="text-align: center;">{{item.sensor.minimum_purchase_quantity }}</td>
                   <td>
-
-                    {{item.quantity}}
-                   <!-- <form action="{% url "cart:cart_add" sensor.slug %}" method="post">
+                   <form action ="{% url "cart:cart_add" sensor.slug %}" method="post">
                     {{item.update_quantity_form.quantity}}
                     {{item.update_quantity_form.override}}
                     <input type="submit" value="Update">
                     {% csrf_token %}
-                   </form> -->
+                   </form>
                    </td> 
                    <td>€{{ item.total_price  | intcomma }}</td>     
-               
                 <td>
                   <form action="{% url "cart:cart_remove" sensor.slug %}">
                     <input type="submit" value="Remove">
                     {% csrf_token %}
                   </form>
                 </td>
+                {% endwith %}
+                {% endfor %}
                   </tr>
-                  {% endwith %}
-                  {% endfor %}
+                  
+                 
               </tbody>
             </table>   
             <p class="text-right">
@@ -67,10 +67,6 @@
               </a>
               <a href="{% url "catalogue:home" %}" class="btn btn-primary float-right">Continue</a>
               </p>
-              
-              
-              <!-- <a class='btn btn-warning float-right ml-2' href="/checkout/"> Proceed to checkout </a>
-              <a class='btn btn-primary float-right' href="{% url "catalogue:home" %}" > Continue </a> -->
             </div>
             </div>
             </div>

@@ -427,13 +427,15 @@ class Sensor(models.Model):
     
     def complexity_filter(self):
           #  Installation operation was renamed to deployment operation.
-          #  The next line is therefore updated to 
+          #  The next line is therefore needs to be updated 
      
      #    if self.installation_operation:
         if self.deployment_operation:  
             return self.deployment_operation.id
         return
     
+#     def get_minimum_quantity(self):
+#         return self.minimum_purchase_quantity
 
 class SensorImage(models.Model):
     sensor = models.ForeignKey(Sensor, default=None, on_delete=models.CASCADE)

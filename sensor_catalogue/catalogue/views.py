@@ -1,11 +1,8 @@
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
-from django.core.mail import send_mail
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 
-from django.db.models import Q
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+
 from cart.cart import Cart
 
 
@@ -27,7 +24,7 @@ def home(request):
     # titles and loop can be removed in that case, passing only the queryset complexity_qs in complexity
 
     """
-    This is the current implemtation where we have a name field as an OPERATION_CHOICES in the model. 
+    This is the current implementation where we have a name field as an OPERATION_CHOICES in the model. 
     These choices are used by a number of fields in the sensor table.
     """
     titles = {

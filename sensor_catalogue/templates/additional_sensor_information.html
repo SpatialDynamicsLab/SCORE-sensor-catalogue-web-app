@@ -49,7 +49,6 @@
               <th>Project Name</th>
               <th>Project Year</th>
               <th>Reference Paper</th>
-              <th>Monitored Parameters</th>
               <th>Minimum Purchase</th>
               <th>Spatial Density</th>
             </tr>
@@ -59,12 +58,6 @@
               <td>{% if sensor.project_website %}<a href="{{ sensor.project_website }}" target="_blank" style="color: blue;" >{{ sensor.project_name }}</a>{% else %} {{ sensor.project_name }} {% endif %}</td>
               <td>{{ sensor.project_year }}</td> 
                 <td>{% if sensor.reference_paper %}<a href="{{ sensor.reference_paper }}" target="_blank" style="color: blue;" >Reference paper</a>{% else %} Not available{% endif %}</td>               
-               <td><p>
-                {% for parameter in sensor.monitored_parameter.all %}
-                {{ parameter }}
-                 {% endfor %}
-               </p>
-              </td>
               <td>{{ sensor.minimum_purchase_quantity  }}</td>
               <td>{{ sensor.spatial_density_per_area  }}</td>
             </tr>

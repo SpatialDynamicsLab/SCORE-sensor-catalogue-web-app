@@ -40,7 +40,7 @@
                   <li>{{hazard}}</li>
                 {% endfor %}
               </p>
-  {% endif %}
+              {% endif %}
 
               <p class="lead">
                 <span> €{{ sensor.price | intcomma }}</span>
@@ -48,11 +48,11 @@
               <p>
                 Minimum Quantity : {{ sensor.minimum_purchase_quantity  }}
               </p>
-            <form action="{% url "cart:cart_add" sensor.slug %}" method="post">
-              {{cart_sensor_form}}
-              {% csrf_token %}
-              <input type="submit" value="{% trans "Add to cart" %}">
-            </form>
+              <form action="{% url "cart:cart_add" sensor.slug %}" method="post" >
+                {{cart_sensor_form }}
+                {% csrf_token %}
+                <input type="submit" value="Add to cart">
+              </form>
           </div>
           <div>
           </div>
