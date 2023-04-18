@@ -1,7 +1,6 @@
 from django.db import models
-from django.db.models import Model,CharField
+from django.db.models import Model, CharField
 from django.conf import settings
-# import uuid
 from autoslug import AutoSlugField
 import datetime
 
@@ -19,7 +18,6 @@ INSTALLATION_COST_CHOICES = (
     ('H', 'High'),
     ('M', 'Medium'),
     ('L', 'Low'))
-
 
 
 HAZARD_CHOICES = (
@@ -106,7 +104,6 @@ class MonitoredParameter(models.Model):
 
     def __str__(self):
         return self.name
-    
 
     def get_absolute_url(self):
          return reverse("catalogue:measured_parameter_list", kwargs={
@@ -169,17 +166,17 @@ class PurchaseOperation(CommonInfo):
      
 
 class InstallationCost(models.Model):
-     name = models.CharField(
-         choices=INSTALLATION_COST_CHOICES,
-         max_length=1, blank=True)
+    name = models.CharField(
+     choices=INSTALLATION_COST_CHOICES,
+     max_length=1, blank=True)
 
-     class Meta:
-         verbose_name = "Deployment Cost"
-         verbose_name_plural = "Deployment Costs"
+    class Meta:
+     verbose_name = "Deployment Cost"
+     verbose_name_plural = "Deployment Costs"
 
-     def __str__(self):
-        return self.name
-     
+    def __str__(self):
+        return self.get_name_display()
+
 
 class DataAnalysisOperation(CommonInfo):    
      class Meta:
@@ -199,7 +196,6 @@ class CitizenScienceOperation(CommonInfo):
      def __str__(self):
         return self.get_name_display()
      
-    
 
 class UserProfile(models.Model):
     user = models.OneToOneField(
@@ -208,6 +204,7 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
 
 class Sensor(models.Model):
     id_old = models.CharField(
@@ -327,8 +324,7 @@ class Sensor(models.Model):
          null=True,
          verbose_name="Assembly Operations Complexity")
 
-    assembly_operation_public_involvement = models.CharField(
-         max_length=300,
+    assembly_operation_public_involvement = models.TextField(
          blank=True,
          null=True,
          verbose_name="Public Involvement & Assembly Operations")
@@ -340,8 +336,7 @@ class Sensor(models.Model):
          default=None, 
          verbose_name="Deployment operation Complexity")
     
-    deployment_operation_public_involvement = models.CharField(
-         max_length=300,
+    deployment_operation_public_involvement = models.TextField(
          blank=True,
          null=True,
          verbose_name="Public Involvement & Deployment Operations")
@@ -359,8 +354,7 @@ class Sensor(models.Model):
          max_length=2, blank=True,null=True,
          verbose_name="Data Analysis Operations Complexity")
     
-    data_analysis_public_involvement = models.CharField(
-         max_length=300,
+    data_analysis_public_involvement = models.TextField(
          blank=True,
          null=True,
          verbose_name="Public Involvement & Data Analysis Operations")
