@@ -1,12 +1,15 @@
 
 from django import forms
+from django.core.validators import MinValueValidator
+from django.forms import widgets
 
 class CartAddProductForm(forms.Form):
-    QUANTITY_CHOICES = [(i, str(i)) for i in range(1, 30)]
-    quantity = forms.TypedChoiceField(
-                                choices=QUANTITY_CHOICES,
-                                coerce=int,
-                                label = ('Quantity'))
+    quantity= forms.IntegerField(
+        widget=widgets.NumberInput(attrs={'type': 'number', 'min': 0,'default':0}),
+        validators=[MinValueValidator(0)]
+    )
     override = forms.BooleanField(required=False,
                                   initial=False,
                                   widget=forms.HiddenInput)
+    
+

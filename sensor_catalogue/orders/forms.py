@@ -4,7 +4,7 @@ from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
 
 class OrderCreateForm(forms.ModelForm):
-    country = CountryField()
+    # country = CountryField()
     class Meta:
         model = Order
         fields = ('first_name','second_name','address',

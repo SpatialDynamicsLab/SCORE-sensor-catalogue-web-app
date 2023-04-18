@@ -31,11 +31,13 @@ def cart_detail(request):
     for item in cart:
         item['update_quantity_form'] = CartAddProductForm(initial={
             'quantity':item['quantity'],
-            'override':True
+            'override': True
             }
         )
         context = {
             'cart':cart,
         }
         return render(request,'cart/cart_detail.html', context)
+    else:
+        return redirect('catalogue:home')
     
