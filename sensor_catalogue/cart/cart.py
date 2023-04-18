@@ -40,18 +40,18 @@ class Cart:
         """
         return sum(item['quantity'] for item in self.cart.values())
 
-    def add(self,sensor, quantity=1, quantity_override=False):
+    def add(self, sensor, quantity=1, quantity_override=False):
         """
         Add a product to the cart or update the quantity
         """
-        sensor_slug = str(sensor.slug)
-        if sensor_slug not in self.cart:
-            self.cart[sensor_slug] = {'quantity':0,
+        slug = str(sensor.slug)
+        if slug not in self.cart:
+            self.cart[slug] = {'quantity': 0,
                                         'price':str(sensor.price)}
         if quantity_override:
-            self.cart[sensor_slug]['quantity'] = quantity
+            self.cart[slug]['quantity'] = quantity
         else:
-            self.cart[sensor_slug]['quantity'] += quantity
+            self.cart[slug]['quantity'] += quantity
         self.save()
 
     def save(self):
@@ -62,9 +62,9 @@ class Cart:
         """
         Remove a sensor from the cart
         """
-        sensor_slug = str(sensor.slug)
-        if sensor_slug in self.cart:
-            del self.cart[sensor_slug]
+        slug = str(sensor.slug)
+        if slug in self.cart:
+            del self.cart[slug]
             self.save()
     
     def get_total_price(self):

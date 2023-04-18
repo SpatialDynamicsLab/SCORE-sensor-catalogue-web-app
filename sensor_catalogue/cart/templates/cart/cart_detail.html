@@ -26,39 +26,52 @@
                 </tr>
               </thead>
               <tbody>
+
+        
                 {% for item in cart %}
                 {% with sensor=item.sensor %}
-                <tr>
-                  <td scope="row">{{ forloop.counter }}</td>
-                  <td>
-                    <a href="{{ sensor.get_absolute_url }}">
+              <tr>
+
+                <td scope="row">{{ forloop.counter }}</td>
+                <td>
+                  <a href="{{ sensor.get_absolute_url }}">
                     <img src="{% if sensor.image %}{{ sensor.image.url }}
                     {% else %}{% static "images/no_image.png" %}{% endif %}" style="width: 50px; height:50px ;">
                     </a>
-                    </td>
-                  <td>{{item.sensor.sensor_name | linebreaks }}</td>
-                  <td>€{{item.sensor.price  | intcomma }}</td>
-                  <td style="text-align: center;">{{item.sensor.minimum_purchase_quantity }}</td>
+                </td>
+                <td>{{item.sensor.sensor_name | linebreaks }}</td>
+                <td>€{{item.sensor.price  | intcomma }}</td>
+
+              
+                <td style="text-align: center;">{{item.sensor.minimum_purchase_quantity }}</td>
+                
                   <td>
-                   <form action ="{% url "cart:cart_add" sensor.slug %}" method="post">
-                    {{item.update_quantity_form.quantity}}
-                    {{item.update_quantity_form.override}}
+                    {{item.quantity}}
+                  
+                 <!-- <form action="{% url "cart:cart_add" sensor.slug %}" method="post">
+                    {{item.quantity}}
+                    {{ item.update_quantity_form.quantity }}
+                    {{ item.update_quantity_form.override }}
                     <input type="submit" value="Update">
                     {% csrf_token %}
-                   </form>
-                   </td> 
-                   <td>€{{ item.total_price  | intcomma }}</td>     
+                  </form> -->
+                </td>
+
+      
+                <td>€{{ item.total_price  | intcomma }}</td> 
                 <td>
-                  <form action="{% url "cart:cart_remove" sensor.slug %}">
-                    <input type="submit" value="Remove">
+                  <form action="{% url "cart:cart_remove" sensor.slug %}" method="get">
+                    <input type="submit"  value="Remove">
                     {% csrf_token %}
                   </form>
                 </td>
+              </tr>
                 {% endwith %}
                 {% endfor %}
-                  </tr>
-                  
-                 
+
+              
+               
+                                 
               </tbody>
             </table>   
             <p class="text-right">

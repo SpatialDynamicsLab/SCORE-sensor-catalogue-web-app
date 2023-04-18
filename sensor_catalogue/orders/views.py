@@ -24,6 +24,7 @@ def create_order(request):
                 
             # Clear the cart when done.
             cart.clear()
+            request.session['order_id']  = order.id
         return render(request, 'orders/order/created.html',{'order': order})
         
     else:

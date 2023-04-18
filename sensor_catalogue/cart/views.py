@@ -38,4 +38,6 @@ def cart_detail(request):
             'cart':cart,
         }
         return render(request,'cart/cart_detail.html', context)
+    else:
+        return redirect('catalogue:home')
     
