@@ -9,10 +9,16 @@ class Migration(migrations.Migration):
 
     initial = True
 
+
     dependencies = [
         ('catalogue', '0003_remove_ordersensor_order_remove_ordersensor_sensor_and_more'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
+
+    # dependencies = [
+    #     ('catalogue', '0002_alter_deploymentcost_options_alter_order_options_and_more'),
+    # ]
+
 
     operations = [
         migrations.CreateModel(
