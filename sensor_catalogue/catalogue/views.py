@@ -1,32 +1,32 @@
-from django.conf import settings
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
-
-
-from cart.cart import Cart
-
-
-from cart.forms import CartAddProductForm
-
-
-
-from .models import Sensor, Hazard, MonitoredParameter, SensorImage, DeploymentOperation
-
-
-from .filters import SensorFilter
-
 import math
+from django.shortcuts import render, get_object_or_404, redirect
+from cart.forms import CartAddProductForm
+from .models import (
+    Sensor,
+    Hazard,
+    MonitoredParameter,
+    SensorImage,
+    DeploymentOperation
+)
+
 
 def home(request):
-    sensors = Sensor.objects.order_by('price')
+    sensors = Sensor.objects.order_by('id')
+    for sensor in sensors:
+        print(sensor.id)
+        print(sensor.id_old)
+        print(sensor.sensor_name)
     hazards = Hazard.objects.all()
     monitored = MonitoredParameter.objects.all()
 
-    # TODO No way for db, maybe it's better to add a 'title' field in InstallationOperation model?
-    # titles and loop can be removed in that case, passing only the queryset complexity_qs in complexity
+    # TODO No way for db, maybe it's better to add a 'title' field
+    #  in InstallationOperation model?
+    # titles and loop can be removed in that case, passing only the
+    # queryset complexity_qs in complexity
 
     """
-    This is the current implementation where we have a name field as an OPERATION_CHOICES in the model. 
+    This is the current implementation where we have a name field as an 
+    OPERATION_CHOICES in the model. 
     These choices are used by a number of fields in the sensor table.
     """
     titles = {
@@ -45,20 +45,23 @@ def home(request):
         complexities.append(complexity)
     # END TODO
 
-    price_step = 100
-    min_price = 0 if not sensors.first() or not sensors.first().price else sensors.first().price
+    sensors_by_price = Sensor.objects.order_by('price')
+    price_step = sensors_by_price.last().price/8
+    min_price = 0 if not sensors_by_price.first() or not \
+        sensors_by_price.first().price else sensors_by_price.first().price
     min_price = int(math.floor(min_price / price_step) * price_step)
-    max_price = 0 if not sensors.last() or not sensors.last().price else sensors.last().price
+    max_price = 0 if not sensors_by_price.last() or not \
+        sensors_by_price.last().price else sensors_by_price.last().price
     max_price = int(math.ceil(max_price / price_step) * price_step)
 
     context = {
-        'hazards':hazards,
-        'monitored':monitored,
-        'complexities':complexities,
-        'sensors':sensors,
-        'min_price':min_price,
-        'max_price':max_price,
-        'price_step':price_step
+        'hazards': hazards,
+        'monitored': monitored,
+        'complexities': complexities,
+        'sensors': sensors,
+        'min_price': min_price,
+        'max_price': max_price,
+        'price_step': price_step
     }
     return render(request, 'homepage.html', context)
 
@@ -67,12 +70,12 @@ def detail_view(request, slug):
     """
     View for each sensor data in details.
     """
-    sensor =  get_object_or_404(Sensor, slug=slug)
-    cart_sensor_form= CartAddProductForm()
+    sensor = get_object_or_404(Sensor, slug=slug)
+    cart_sensor_form = CartAddProductForm()
     photos = SensorImage.objects.filter(sensor__slug=slug)
     context = {
-        'sensor':sensor,
-        'photos':photos,
+        'sensor': sensor,
+        'photos': photos,
         'cart_sensor_form': cart_sensor_form,
         }
     return render(request, 'sensor.html', context)
@@ -89,9 +92,9 @@ def hazard_sensor_list(request, slug):
     """
     Pulls a list of hazards and sensors related to them
     """
-    if(Hazard.objects.filter(slug=slug)):
+    if Hazard.objects.filter(slug=slug):
         sensors = Sensor.objects.filter(hazard__slug=slug)
-        hazard  = Hazard.objects.filter(slug=slug).first()
+        hazard = Hazard.objects.filter(slug=slug).first()
 
         context = {'hazard': hazard, 
                    'sensors':sensors}
