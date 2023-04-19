@@ -12,10 +12,6 @@ from .models import (
 
 def home(request):
     sensors = Sensor.objects.order_by('id')
-    for sensor in sensors:
-        print(sensor.id)
-        print(sensor.id_old)
-        print(sensor.sensor_name)
     hazards = Hazard.objects.all()
     monitored = MonitoredParameter.objects.all()
 
@@ -46,12 +42,13 @@ def home(request):
     # END TODO
 
     sensors_by_price = Sensor.objects.order_by('price')
-    price_step = sensors_by_price.last().price/8
+    price_step = sensors_by_price.last().price/20
     min_price = 0 if not sensors_by_price.first() or not \
         sensors_by_price.first().price else sensors_by_price.first().price
     min_price = int(math.floor(min_price / price_step) * price_step)
-    max_price = 0 if not sensors_by_price.last() or not \
-        sensors_by_price.last().price else sensors_by_price.last().price
+    max_price = 1000 if not sensors_by_price.last() or \
+                        sensors_by_price.last().price > 1000 \
+        else sensors_by_price.last().price
     max_price = int(math.ceil(max_price / price_step) * price_step)
 
     context = {

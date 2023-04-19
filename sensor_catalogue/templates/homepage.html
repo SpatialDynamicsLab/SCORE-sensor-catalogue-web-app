@@ -26,6 +26,9 @@
         background: #fff0;
         color: #000;
     }
+    .select2-container--classic .select2-search__field {
+        background-color: #ddf1f3;
+    }
 </style>
 {% endblock extra_style %}
 
@@ -113,7 +116,7 @@
                 <img src="{% if sensor.image %}{{ sensor.image.url }}{% else %}{% static "images/no_image.png" %}{% endif %}" alt="{{ sensor.sensor_name }}"/>
                 <div class="gallery-title">
                     <div class="left">
-                        <div class="simple-article size-4 uppercase color col-xs-b5">CATEGORY TODO</div>
+                        <div class="simple-article size-4 uppercase color col-xs-b5"></div>
                         <h3 class="simple-article size-5 uppercase">{{ sensor.name_summary }}</h3>
                         <p>{{ sensor.short_summary }}</p>
                     </div>
@@ -198,9 +201,15 @@ function retrieve_data_filters(){
 
     // a price range is always enabled
     function populate_price_range(hmc_filter, price_range_filters){
-        hmcp_filter = '' 
+        // when max range is fixed to 1000 from the backend, if selected,
+        // the filter is including until 2000
+        if (price_range_filters.length == 11) {
+            price_range_filters.push('.P11', '.P12', '.P13', '.P14',
+                '.P15','.P16', '.P17', '.P18', 'P.19º', '.P20')
+        }
+        hmcp_filter = ''
         for (var j=0;j<price_range_filters.length;j++) {
-            hmcp_filter += hmc_filter + price_range_filters[j] +', ' 
+            hmcp_filter += hmc_filter + price_range_filters[j] +', '
         }
         return hmcp_filter
     }
