@@ -13,13 +13,13 @@
       <div class="row wow fadeIn">
         <!--Grid column-->
         <div class="col-md-4 mb-3">
-          <img src="{% if sensor.image %} {{ sensor.image.url }} {% else %}{% static "images/no_image.png" %} {% endif %}" alt="{{ sensor.sensor_name}}" style="width:300px;height:350px; margin-left: auto;margin-right: auto; display: block;" class="w-">
+          <img src="{% if sensor.image %} {{ sensor.image.url }} {% else %}{% static "images/no_image.png" %} {% endif %}" alt="{{ sensor.sensor_name}}" style="width:100%;height:350px; margin-left: auto;margin-right: auto; display: block;" class="w-">
         </div>
         <div class="col-md-6 mb-4">
           <!--Content-->
           <div class="p-4">
             <div class="mb-3">
-              <h5>{{sensor.sensor_name}}</h5>           
+              <h3 class="simple-article size-5 uppercase">{{sensor.sensor_name}}</h3>          
 
               </div>
             <p class="lead">Description</p>
@@ -36,9 +36,12 @@
               {% if sensor.hazard %}
               <p><strong>Hazards:</strong> 
 
-                {% for hazard in sensor.hazard.all %}
-                  <li>{{hazard}}</li>
-                {% endfor %}
+                <div class="simple-article size-4 uppercase color col-xs-b5">            
+                  {% for hazard in sensor.hazard.all %}
+                    <li>{{hazard}}</li>
+                  {% endfor %}
+                </div>
+
               </p>
               {% endif %}
 
