@@ -231,9 +231,10 @@ body ::-moz-selection {color: #30bfd1; background: #343434;}
 .title-underline.right{margin-right: 9px;}
 .title-underline.right span:before{display: none;}
 .simple-article h4, .h4 {
+  text-align: center;
   background-color: #f86d51;
   border-radius: 30px;
-  width: 61px;
+  width: 75px;
   height: 30px;
   border: solid 1px #ff4d35;
   padding: 4px 6px; 
