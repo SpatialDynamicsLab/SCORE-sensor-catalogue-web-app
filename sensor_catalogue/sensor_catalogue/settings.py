@@ -210,7 +210,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATIC_URL = '/static/'
 
 
-
 MEDIA_ROOT = BASE_DIR / 'images'
 MEDIA_URL = '/images/'
 

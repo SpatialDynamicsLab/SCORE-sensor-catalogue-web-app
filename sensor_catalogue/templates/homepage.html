@@ -38,12 +38,12 @@
 <!-- logo section -->
 <div class="container">
     <div class="row">
-        <div class="col-md-12">
-            <div class="d-flex justify-content-center align-items-center" style="height: 270px;">
+        <div class="col-md-12 mb-3">
+            <div class="d-flex justify-content-center align-items-center" style="height: 250px;">
                 <div class="text-center">
                     <img 
                         src="{% static "images/score-sensors-catalogue-big-logo.png" %}"
-                        height="250" width="auto"
+                        height="180" width="auto"
                         alt="SCORE-LOGO-web" loading="lazy"
                         title="SCORE-Sensors Catalogue"
                     />
@@ -52,17 +52,16 @@
             </div>
         </div>
     </div>
-    <hr/>
 </div>
 <!-- end logo section-->
 
 <!-- filter section-->
-<div class="container mb-5">
-    <div class="row">
+<div class="container mb-5 mt-3">
+    <div class="row mb-4">
         <div class="col-md-3 col-sm-8">
             <label for="id_select_hazard" style="width: 100%">
-                <h5>Hazards<small> - multiple selection</small></h5>
-                <select class="select_hazard form-control" id="id_select_hazard" multiple="multiple" style="width: 100%">
+                <h6>Hazards (multiple selection)</h6>
+                <select class="select_hazard form-control" id="id_select_hazard" multiple="multiple" style="width: 100%;">
                     {% for hazard in hazards %}
                         <option value="{{ hazard.id }}">{{ hazard.name }}</option>
                     {% endfor %}
@@ -71,7 +70,7 @@
         </div>
         <div class="col-md-3 col-sm-8">
             <label for="id_label_multiple_monitored" style="width: 100%">
-                <h5>Monitored parameter</h5>
+                <h6>Monitored parameter</h6>
                 <select class="select_monitored form-control" id="id_label_multiple_monitored" multiple="multiple" style="width: 100%">
                     {% for parameter in monitored %}
                         <option value="{{ parameter.id }}">{{ parameter.name }}</option>
@@ -81,7 +80,7 @@
         </div>
         <div class="col-md-3 col-sm-8">
             <label for="id_label_multiple_complexity" style="width: 100%">
-                <h5>Installation complexity</h5>
+                <h6>Installation complexity</h6>
                 <select class="select_complexity form-control" id="id_label_multiple_complexity" multiple="multiple" style="width: 100%">
                     {% for complexity in complexities %}
                         <option value="{{ complexity.id }}">{{ complexity.title }}</option>
@@ -89,15 +88,15 @@
                 </select>
             </label>
         </div>
-        <div class="col-md-3 col-sm-8"><h5>Price range</h5>
+        <div class="col-md-3 col-sm-8"><h6>Price range</h6>
             <div id="price_slider" class="mt-2"></div>
         </div>
     </div>
     <div class="row">
         <div class="col"></div>
-        <div class="col" style="display: contents;">
+        <div class="col mb-5" style="display: contents;">
             <a class="list-group-item" href="javascript:clear_data_filters()"> 
-                <img src="{% static 'img/circles-icons-filter.png' %}" style="width: 50px;height:35px;"/>
+                <img src="{% static 'img/circles-icons-filter.png' %}" style="width: 42px;height:42px;"/>
                 <h6>All items </h6>
             </a>
         </div>
@@ -107,7 +106,7 @@
 
     <!-- sensors section-->       
     <!-- isotope sensors area-->
-    <div class="empty-space col-xs-b30 col-sm-b60"></div>
+    <div class="empty-space col-xs-b30 col-sm-b60 mt-5"></div>
     <div class="sensors_grid">
         <div class="grid-sizer col-xs-6 col-sm-6 col-md-4 col-lg-4"></div>
         {% for sensor in sensors %} 
@@ -207,9 +206,9 @@ function retrieve_data_filters(){
             price_range_filters.push('.P11', '.P12', '.P13', '.P14',
                 '.P15','.P16', '.P17', '.P18', 'P.19º', '.P20')
         }
-        hmcp_filter = ''
+        hmcp_filter = '' 
         for (var j=0;j<price_range_filters.length;j++) {
-            hmcp_filter += hmc_filter + price_range_filters[j] +', '
+            hmcp_filter += hmc_filter + price_range_filters[j] +', ' 
         }
         return hmcp_filter
     }
