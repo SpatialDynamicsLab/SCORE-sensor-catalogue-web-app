@@ -14,7 +14,7 @@ OPERATION_CHOICES = (
     ('EA', 'Easy'),
     ('VE', 'Very easy'))
 
-INSTALLATION_COST_CHOICES = (
+DEPLOYMENT_COST_CHOICES = (
     ('H', 'High'),
     ('M', 'Medium'),
     ('L', 'Low'))
@@ -117,6 +117,7 @@ class CommonInfo(models.Model):
          max_length=2,
          blank=True,
          default=None)
+     image = models.ImageField(upload_to='difficulty/%Y/%m/%d',blank=True,null=True)
      slug = AutoSlugField(
               populate_from='name', 
               max_length=200,
@@ -167,8 +168,9 @@ class PurchaseOperation(CommonInfo):
 
 class DeploymentCost(models.Model):
     name = models.CharField(
-     choices=INSTALLATION_COST_CHOICES,
+     choices=DEPLOYMENT_COST_CHOICES,
      max_length=1, blank=True)
+    image = models.ImageField(upload_to='deployment/%Y/%m/%d',blank=True,null=True)
 
     class Meta:
      verbose_name = "Deployment Cost"
@@ -342,7 +344,7 @@ class Sensor(models.Model):
          verbose_name="Public Involvement & Deployment Operations")
 
     deployment_costs = models.CharField(
-        choices=INSTALLATION_COST_CHOICES,
+        choices=DEPLOYMENT_COST_CHOICES,
         max_length=1, blank=True,
         default=None, null=True,
         verbose_name="Deployment Cost")
