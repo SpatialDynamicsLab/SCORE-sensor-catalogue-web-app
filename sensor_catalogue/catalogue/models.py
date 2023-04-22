@@ -341,11 +341,11 @@ class Sensor(models.Model):
          null=True,
          verbose_name="Public Involvement & Deployment Operations")
 
-    installation_costs = models.CharField(
+    deployment_costs = models.CharField(
         choices=INSTALLATION_COST_CHOICES,
         max_length=1, blank=True,
         default=None, null=True,
-        verbose_name="Installation Cost")
+        verbose_name="Deployment Cost")
     
     data_analysis_operation = models.ForeignKey(
          DataAnalysisOperation,
