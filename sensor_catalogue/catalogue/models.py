@@ -167,16 +167,18 @@ class PurchaseOperation(CommonInfo):
      
 
 class DeploymentCost(models.Model):
-    name = models.CharField(
+     name = models.CharField(
      choices=DEPLOYMENT_COST_CHOICES,
      max_length=1, blank=True)
-    image = models.ImageField(upload_to='deployment/%Y/%m/%d',blank=True,null=True)
+     image = models.ImageField(upload_to='deployment_cost/%Y/%m/%d',blank=True,null=True)
 
-    class Meta:
-     verbose_name = "Deployment Cost"
-     verbose_name_plural = "Deployment Costs"
 
-    def __str__(self):
+     class Meta:
+          verbose_name = "Deployment Cost"
+          verbose_name_plural = "Deployment Costs"
+
+
+     def __str__(self):
         return self.get_name_display()
 
 
@@ -343,11 +345,20 @@ class Sensor(models.Model):
          null=True,
          verbose_name="Public Involvement & Deployment Operations")
 
-    deployment_costs = models.CharField(
-        choices=DEPLOYMENT_COST_CHOICES,
+#     deployment_costs = models.CharField(
+#         choices=DEPLOYMENT_COST_CHOICES,
+#         max_length=1, blank=True,
+#         default=None, null=True,
+#         verbose_name="Deployment Cost")
+    
+    deployment_costs = models.ForeignKey(
+        DeploymentCost,
+        on_delete=models.CASCADE,
         max_length=1, blank=True,
         default=None, null=True,
         verbose_name="Deployment Cost")
+    
+
     
     data_analysis_operation = models.ForeignKey(
          DataAnalysisOperation,

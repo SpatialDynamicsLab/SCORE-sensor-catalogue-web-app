@@ -5,7 +5,7 @@
 
 
 <div class="col-md-12 mb-2">
-    <table class="table">
+    <table class="complexity-table">
       <thead>
         <tr>
           <th>Purchase operations complexity</th>
@@ -17,11 +17,20 @@
         </tr>
       </thead><tbody>
         <tr>
-          <td>{{ sensor.purchase_operation.get_name_display  }}</td>
+
+          <td><img src="{% if sensor.purchase_operation.image %} {{ sensor.purchase_operation.image.url }} {% else %}{{ sensor.purchase_operation.get_name_display }} {% endif %}" alt="{{ sensor.sensor.purchase_operation.get_name_display }}"</td>
+          <td><img src="{% if sensor.assembly_operation.image %} {{ sensor.assembly_operation.image.url }} {% else %}{{ sensor.assembly_operation.get_name_display }} {% endif %}" alt="{{ sensor.assembly_operation.get_name_display }}"</td>
+          <td><img src="{% if sensor.deployment_operation.image %} {{ sensor.deployment_operation.image.url }} {% else %}{{ sensor.deployment_operation.get_name_display }} {% endif %}" alt="{{ sensor.deployment_operation.get_name_display }}"</td>
+          <td><img src="{% if sensor.deployment_costs.image %} {{ sensor.deployment_costs.image.url }} {% else %}{{ sensor.deployment_costs.get_name_display }} {% endif %}" alt="{{ sensor.deployment_costs.get_name_display }}"</td>
+          <td><img src="{% if sensor.data_analysis_operation.image %} {{ sensor.data_analysis_operation.image.url }} {% else %}{{ sensor.data_analysis_operation.get_name_display }} {% endif %}" alt="{{ sensor.data_analysis_operation.get_name_display }}"</td>
+
+
+
+          <!-- <td>{{ sensor.purchase_operation.get_name_display  }}</td>
           <td>{{ sensor.assembly_operation.get_name_display  }}</td>
           <td>{{ sensor.deployment_operation.get_name_display  }}</td>
           <td>{{ sensor.deployment_costs.get_name_display }}</td>
-          <td>{{ sensor.data_analysis_operation.get_name_display  }}</td>
+          <td>{{ sensor.data_analysis_operation.get_name_display  }}</td> -->
      
         </tr>
       </tbody>
