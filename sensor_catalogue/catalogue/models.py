@@ -288,7 +288,7 @@ class Sensor(models.Model):
          verbose_name="Data Refresh Duration (Minutes)")
     wifi_connection = models.BooleanField(
          default=True, 
-         verbose_name="WiFi Connection")
+         verbose_name="Wi-Fi Connection")
     mobile_data_connection = models.BooleanField(
          default=True, 
          verbose_name= "4G Connection")
