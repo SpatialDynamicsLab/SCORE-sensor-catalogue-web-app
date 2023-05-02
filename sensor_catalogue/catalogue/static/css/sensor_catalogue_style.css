@@ -358,3 +358,18 @@ div.gallery-grid-item.style-2 {border:solid 10px rgb(249, 253, 255) !important;}
 .active:after {
   content: "\2796"; /* Unicode character for "minus" sign (-) */
 }
+
+
+
+.image-difficulty{
+
+  width:100%;
+  height: 100%;
+}
+
+.complexity-table img{
+  width:45%;
+  height: 45%;
+}
+
+ul, ol{list-style: none;}

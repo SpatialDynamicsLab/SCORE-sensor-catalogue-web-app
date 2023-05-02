@@ -42,7 +42,11 @@
                 €{{cart.get_total_price |  intcomma }}
                 </a>       
                   {% else %}
-                  Your cart is empty.
+                  <li class="nav-item">
+                    <div class="nav-link waves-effect">
+                      <span class="clearfix d-none d-sm-inline-block">Your cart is empty.</span>
+                    </div>
+                  </li>
                   {% endif %}
                 {% endwith %}
             </li>

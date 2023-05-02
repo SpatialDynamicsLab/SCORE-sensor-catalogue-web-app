@@ -14,7 +14,7 @@ OPERATION_CHOICES = (
     ('EA', 'Easy'),
     ('VE', 'Very easy'))
 
-INSTALLATION_COST_CHOICES = (
+DEPLOYMENT_COST_CHOICES = (
     ('H', 'High'),
     ('M', 'Medium'),
     ('L', 'Low'))
@@ -117,6 +117,7 @@ class CommonInfo(models.Model):
          max_length=2,
          blank=True,
          default=None)
+     image = models.ImageField(upload_to='difficulty/%Y/%m/%d',blank=True,null=True)
      slug = AutoSlugField(
               populate_from='name', 
               max_length=200,
@@ -166,15 +167,18 @@ class PurchaseOperation(CommonInfo):
      
 
 class DeploymentCost(models.Model):
-    name = models.CharField(
-     choices=INSTALLATION_COST_CHOICES,
+     name = models.CharField(
+     choices=DEPLOYMENT_COST_CHOICES,
      max_length=1, blank=True)
+     image = models.ImageField(upload_to='deployment_cost/%Y/%m/%d',blank=True,null=True)
 
-    class Meta:
-     verbose_name = "Deployment Cost"
-     verbose_name_plural = "Deployment Costs"
 
-    def __str__(self):
+     class Meta:
+          verbose_name = "Deployment Cost"
+          verbose_name_plural = "Deployment Costs"
+
+
+     def __str__(self):
         return self.get_name_display()
 
 
@@ -288,7 +292,7 @@ class Sensor(models.Model):
          verbose_name="Data Refresh Duration (Minutes)")
     wifi_connection = models.BooleanField(
          default=True, 
-         verbose_name="WiFi Connection")
+         verbose_name="Wi-Fi Connection")
     mobile_data_connection = models.BooleanField(
          default=True, 
          verbose_name= "4G Connection")
@@ -341,11 +345,20 @@ class Sensor(models.Model):
          null=True,
          verbose_name="Public Involvement & Deployment Operations")
 
-    installation_costs = models.CharField(
-        choices=INSTALLATION_COST_CHOICES,
+#     deployment_costs = models.CharField(
+#         choices=DEPLOYMENT_COST_CHOICES,
+#         max_length=1, blank=True,
+#         default=None, null=True,
+#         verbose_name="Deployment Cost")
+    
+    deployment_costs = models.ForeignKey(
+        DeploymentCost,
+        on_delete=models.CASCADE,
         max_length=1, blank=True,
         default=None, null=True,
-        verbose_name="Installation Cost")
+        verbose_name="Deployment Cost")
+    
+
     
     data_analysis_operation = models.ForeignKey(
          DataAnalysisOperation,
