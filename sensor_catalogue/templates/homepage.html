@@ -13,7 +13,52 @@
 <style>
     .select2-container--classic .select2-selection--multiple {
         background-color: #ddf1f3;
+        border-color: #56d0db;
+        max-width: 35em; 
+        border-radius:30px;
+        border: none;
+        border: 1px solid #3bb2ca !important;
+        border-radius: 25px !important;
+        cursor: text;
+        outline: 0;
+        padding-top: 5px !important;
+        padding-bottom: 12px !important;
+        padding-right: 5px !important;
     }
+    li.select2-selection__choice {
+        border: 1px solid #17a2b8 !important;
+        border-radius: 30px !important;
+        margin-left: 5px;
+        margin-top: 8px;
+        padding: 3px;
+        }
+
+    .select2-selection__choice__display{
+          color:#ffffff;
+        }
+    .select2-container--classic .select2-selection--multiple, .select2-selection__choice__remove {
+          border: none;
+          border-top-left-radius: 4px;
+          border-bottom-left-radius: 4px;
+          color: rgb(125, 132, 136);
+          cursor: pointer;
+          font-size: 1em;
+          font-weight: bold;
+          padding: 1px 9px;
+          border-radius: 36px;
+        }
+    .select2-container--open{
+          border-color:#168095;
+        
+        }
+    .select2-selection__choice__remove {
+          color: #fff !important;
+          cursor: pointer;
+          font-size: 1em;
+          font-weight: bold;
+          padding: 1px 5px;
+          border:solid 1px #168095;
+        }
     .noUi-target {
         background: #ddf1f3;
     }
@@ -26,9 +71,6 @@
         background: #fff0;
         color: #000;
     }
-    .select2-container--classic .select2-search__field {
-        background-color: #ddf1f3;
-    }
 </style>
 {% endblock extra_style %}
 
@@ -36,22 +78,19 @@
 {% include "navbar.html" %}
 
 <!-- logo section -->
+<div class="row hero"
 <div class="container">
     <div class="row">
-        <div class="col-md-12 mb-3">
-            <div class="d-flex justify-content-center align-items-center" style="height: 250px;">
-                <div class="text-center">
-                    <img 
-                        src="{% static "images/score-sensors-catalogue-big-logo.png" %}"
-                        height="180" width="auto"
-                        alt="SCORE-LOGO-web" loading="lazy"
-                        title="SCORE-Sensors Catalogue"
-                    />
-                    <h3 class="mb-3 size-3">Catalogue of low-cost sensors viable for citizen science activities</h3>
+        <div class="col-md-12 mb-3 mt-5 pt-3">
+            <div class="d-flex" style="height: 250px;">
+                <div class="" style="margin-left:3em;">
+                    <a class="navbar-brand waves-effect" href="/"><img src="{% static "images/score-sensors-catalogue-big-logo.png" %}" height="180" width="auto"alt="SCORE-LOGO-web" loading="lazy"title="SCORE-Sensors Catalogue"/></a>
+                    <h3 class="mb-3 size-3">Low-cost sensors viable for citizen science activities</h3>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 <!-- end logo section-->
 
