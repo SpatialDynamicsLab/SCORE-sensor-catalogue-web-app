@@ -61,7 +61,10 @@
                 <td>€{{ item.total_price  | intcomma }}</td> 
                 <td>
                   <form action="{% url "cart:cart_remove" sensor.slug %}" method="get">
-                    <input type="submit"  value="Remove">
+
+                  <button type="submit" class="btn btn-sm btn-warn"
+                          style="padding:.5rem .5rem; margin-top: 0" value="Remove">Remove</button>
+
                     {% csrf_token %}
                   </form>
                 </td>

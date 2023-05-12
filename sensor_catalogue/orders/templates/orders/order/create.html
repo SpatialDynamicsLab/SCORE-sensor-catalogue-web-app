@@ -17,7 +17,10 @@
                     <div class="checkout-card">
                         <form method="post" class="order-form">
                             {{ form.as_p}}
-                            <p><input type="submit" value="Place order"></p>
+                            <p>
+                                <button type="submit"
+                                        class="btn btn-prim">Place order</button>
+                            </p>
                             {% csrf_token %}
                         </form>
                     </div>
