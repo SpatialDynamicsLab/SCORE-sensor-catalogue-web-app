@@ -528,3 +528,111 @@ ul, ol{list-style: none;}
 .zoom-image button:hover {
   text-decoration: underline;
 }
+
+
+
+
+/* .list-group-item{
+  margin: 4px 4px;
+  float: left; 
+  display: block;
+  border-radius: 30px !important;
+  padding: 3px 16px 0px 1px;
+  border:solid 2px white;
+  background-color: #17a2b842;
+}
+
+.btn-primary, .btn-default, .btn-warning:hover{
+  background-color: #30bfd1;
+  color:white;
+  border-color: #30bfd1;
+  border-radius: 30px;
+  }
+  /* .list-group-item.active{
+    background-color: #30bfd1;
+    border-color: #30bfd1;
+    color:white;
+    } */
+
+
+/* 
+.btn-primary, .btn-default, .btn-warning:hover{
+  background-color: #30bfd1;
+  color:white;
+  border-color: #30bfd1;
+  border-radius: 30px;
+  } */
+
+
+.btn-warn{
+  /* background-color: #30bfd1;
+   */
+
+  background-color: #17a2b842;
+  /* color:white; */
+  border-color: #30bfd1;
+
+}
+
+
+.btn-prim, .btn-warn, .btn-def, .sign-up{
+  border-radius: 30px;
+  /* background-color: #30bfd1; */
+  background-color: #17a2b842;
+  /* color:white; */
+  border-color: #30bfd1;
+}
+
+
+
+.reset-password, .sign-up{
+  border-radius: 16px;
+  height: 40px;
+  width: fit-content;
+  /* background-color: #30bfd1; */
+  background-color: #17a2b842;
+  /* color:white; */
+  border-color: #30bfd1;
+
+    }
+
+.add-to-cart{
+  height: 40px;
+  width: fit-content;
+  background-color: #30bfd1;
+  border-color: #30bfd1;
+  
+}
+
+.btn-prim:hover, .btn-warn:hover, .btn-def:hover, .sign-up:hover, .reset-password:hover{
+  background-color: #30bfd1;
+  color:white;
+  border-color: #30bfd1;
+}
+
+
+.btn-prim.active, .btn-warn.active, .btn-def.active, .sign-up.active, .reset-password.active{
+  background-color: #30bfd1;
+  border-color: #30bfd1;
+  color:white;
+  }
+
+
+.add-to-cart:hover{
+    background-color: #30bfd1;
+    color:white;
+    border-color: #30bfd1;
+  }
+
+
+.add-to-cart.active{
+    background-color: #30bfd1;
+    border-color: #30bfd1;
+    color:white;
+    }
+
+
+
+  
+  
+
