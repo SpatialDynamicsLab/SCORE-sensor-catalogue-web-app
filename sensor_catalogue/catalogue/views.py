@@ -43,7 +43,10 @@ def home(request):
     # END TODO
 
     sensors_by_price = Sensor.objects.order_by('price')
-    price_step = sensors_by_price.last().price/20
+    if sensors_by_price:
+        price_step = sensors_by_price.last().price/20
+    else:
+        price_step = 100
     min_price = 0 if not sensors_by_price.first() or not \
         sensors_by_price.first().price else sensors_by_price.first().price
     min_price = int(math.floor(min_price / price_step) * price_step)
