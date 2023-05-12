@@ -25,20 +25,21 @@ def home(request):
     OPERATION_CHOICES in the model. 
     These choices are used by a number of fields in the sensor table.
     """
-    titles = {
-        'VD': 'Very difficult',
-        'DI': 'Difficult',
-        'NE': 'Neutral',
-        'EA': 'Easy',
-        'VE': 'Very easy'
-    }
+    # titles = {
+    #     'VD': 'Very difficult',
+    #     'DI': 'Difficult',
+    #     'NE': 'Neutral',
+    #     'EA': 'Easy',
+    #     'VE': 'Very easy'
+    # }
     complexity_qs = DeploymentOperation.objects.all()
     complexities = []
     for x in complexity_qs:
         complexity = dict()
         complexity['id'] = x.id
-        complexity['title'] = titles[x.name]
-        complexities.append(complexity)
+        complexity['title'] = str(x)
+        if complexity['title']:
+            complexities.append(complexity)
     # END TODO
 
     sensors_by_price = Sensor.objects.order_by('price')
