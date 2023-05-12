@@ -14,7 +14,11 @@
         .select2-container--classic .select2-selection--multiple {
         background-color: #ddf1f3;
         border-color: #56d0db;
+
+        max-width: 35em; 
+
         max-width: 35em;
+
         border-radius:30px;
         border: none;
         border: 1px solid #3bb2ca !important;
@@ -72,24 +76,31 @@
         color: #000;
     }
 
+
     .select2-container--classic .select2-search__field {
         background-color: #ddf1f3;
     }
+
 </style>
 {% endblock extra_style %}
 {% block content %}
 
 <!-- logo section -->
+
 <div class="row hero">
 <div class="container">
     <div class="row">
         <div class="col-md-12 mb-3 mt-5 pt-3">
             <div class="d-flex" style="height: 250px;">
                 <div class="" style="margin-left:3em;">
+
+                    <a class="navbar-brand waves-effect" href="/"><img src="{% static "images/score-sensors-catalogue-big-logo.png" %}" height="180" width="auto"alt="SCORE-LOGO-web" loading="lazy"title="SCORE-Sensors Catalogue"/></a>
+
                     <a class="navbar-brand waves-effect" href="/">
                         <img src="{% static "images/score-sensors-catalogue-big-logo.png" %}"
                         height="180" width="auto"alt="SCORE-LOGO-web"
                         loading="lazy"title="SCORE-Sensors Catalogue"/></a>
+
                     <h3 class="mb-3 size-3">Low-cost sensors viable for citizen science activities</h3>
                 </div>
             </div>

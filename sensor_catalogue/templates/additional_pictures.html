@@ -1,4 +1,8 @@
-<div class="lightbox">
+
+{% extends 'base.html' %}
+
+{% load static %}
+<!-- <div class="lightbox">
   <div class="row">
   {% for photo in photos %}
   <div class="col-lg-3 col-md-12 mb-4">
@@ -13,4 +17,92 @@
     </div>
     </div>
 
+   -->
+
+	<!-- <title>Image Gallery</title> -->
+	<!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
+
+
+  {% block content %}
+
+
+
+  <!-- <div class="image-gallery">
+      
+
+      {% for photo in photos %}
+      <div class="image-container">
+
+			<img src="{{photo.images.url}}" onclick="zoomImage(this)">
+      </div>
+
+      {% endfor %}
+	
+	</div>
+  </div>
+  <script>
+var currentIndex = -1;
+var images = document.querySelectorAll('.image-gallery img');
+var zoomDiv = document.createElement("div");
+var zoomImg = document.createElement("img");
+var nextBtn = document.createElement("button");
+var closeBtn = document.createElement("button");
+
+function zoomImage(img) {
+    currentIndex = Array.from(images).indexOf(img);
+    zoomDiv.classList.add("zoom-image");
+    zoomImg.src = img.src;
+    zoomImg.alt = img.alt;
+    nextBtn.innerHTML = "Next";
+    closeBtn.innerHTML = "Close";
+    nextBtn.onclick = function() {
+        currentIndex++;
+        if (currentIndex >= images.length) {
+            currentIndex = 0;
+        }
+        zoomImg.src = images[currentIndex].src;
+        zoomImg.alt = images[currentIndex].alt;
+    };
+    closeBtn.onclick = function() {
+        zoomDiv.remove();
+    };
+    zoomDiv.appendChild(zoomImg);
+    zoomDiv.appendChild(nextBtn);
+    zoomDiv.appendChild(closeBtn);
+    document.body.appendChild(zoomDiv);
+}
+    </script> -->
+    <style>
+      .card {
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        transition: 0.3s;
+        border-radius: 5px;
+      }
+    
+      .card:hover {
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+      }
+    
+      .card-img-top {
+        object-fit: cover;
+        height: 200px;
+      }
+    </style>
   
+    <div class="container">
+      <div class="row">
+        {% for image in photos %}
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <img src="{{ image.images.url }}" class="card-img-top img-fluid">
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+
+
+  {% endblock %}
+
+

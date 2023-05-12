@@ -23,14 +23,6 @@
           <td><img src="{% if sensor.deployment_operation.image %} {{ sensor.deployment_operation.image.url }} {% else %}{{ sensor.deployment_operation.get_name_display }} {% endif %}" alt="{{ sensor.deployment_operation.get_name_display }}"</td>
           <td><img src="{% if sensor.deployment_costs.image %} {{ sensor.deployment_costs.image.url }} {% else %}{{ sensor.deployment_costs.get_name_display }} {% endif %}" alt="{{ sensor.deployment_costs.get_name_display }}"</td>
           <td><img src="{% if sensor.data_analysis_operation.image %} {{ sensor.data_analysis_operation.image.url }} {% else %}{{ sensor.data_analysis_operation.get_name_display }} {% endif %}" alt="{{ sensor.data_analysis_operation.get_name_display }}"</td>
-
-
-
-          <!-- <td>{{ sensor.purchase_operation.get_name_display  }}</td>
-          <td>{{ sensor.assembly_operation.get_name_display  }}</td>
-          <td>{{ sensor.deployment_operation.get_name_display  }}</td>
-          <td>{{ sensor.deployment_costs.get_name_display }}</td>
-          <td>{{ sensor.data_analysis_operation.get_name_display  }}</td> -->
      
         </tr>
       </tbody>
