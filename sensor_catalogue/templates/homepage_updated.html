@@ -1,0 +1,331 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load humanize %} 
+{% load pricesnode %}
+
+{% block css_libs %}
+    {{ block.super }}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.css" rel="stylesheet"/>
+{% endblock css_libs %}
+
+{% block extra_style %}
+<style>
+    .select2-container--classic .select2-selection--multiple {
+        background-color: #ddf1f3;
+        border-color: #56d0db;
+        max-width: 35em; 
+        border-radius:30px;
+        border: none;
+        border: 1px solid #3bb2ca !important;
+        border-radius: 25px !important;
+        cursor: text;
+        outline: 0;
+        padding-top: 5px !important;
+        padding-bottom: 12px !important;
+        padding-right: 5px !important;
+    }
+    li.select2-selection__choice {
+        border: 1px solid #17a2b8 !important;
+        border-radius: 30px !important;
+        margin-left: 5px;
+        margin-top: 8px;
+        padding: 3px;
+        }
+
+    .select2-selection__choice__display{
+          color:#ffffff;
+        }
+    .select2-container--classic .select2-selection--multiple, .select2-selection__choice__remove {
+          border: none;
+          border-top-left-radius: 4px;
+          border-bottom-left-radius: 4px;
+          color: rgb(125, 132, 136);
+          cursor: pointer;
+          font-size: 1em;
+          font-weight: bold;
+          padding: 1px 9px;
+          border-radius: 36px;
+        }
+    .select2-container--open{
+          border-color:#168095;
+        
+        }
+    .select2-selection__choice__remove {
+          color: #fff !important;
+          cursor: pointer;
+          font-size: 1em;
+          font-weight: bold;
+          padding: 1px 5px;
+          border:solid 1px #168095;
+        }
+    .noUi-target {
+        background: #ddf1f3;
+    }
+    .noUi-horizontal .noUi-tooltip {
+        bottom: -120%;
+    }
+    .noUi-tooltip {
+        border: 0px solid #D9D9D9;
+        border-radius: 3px;
+        background: #fff0;
+        color: #000;
+    }
+</style>
+{% endblock extra_style %}
+
+{% block content %}
+{% include "navbar.html" %}
+
+<!-- logo section -->
+<div class="row hero"
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 mb-3 mt-5 pt-3">
+            <div class="d-flex" style="height: 250px;">
+                <div class="" style="margin-left:3em;">
+                    <a class="navbar-brand waves-effect" href="/"><img src="{% static "images/score-sensors-catalogue-big-logo.png" %}" height="180" width="auto"alt="SCORE-LOGO-web" loading="lazy"title="SCORE-Sensors Catalogue"/></a>
+                    <h3 class="mb-3 size-3">Low-cost sensors viable for citizen science activities</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- end logo section-->
+
+<!-- filter section-->
+<div class="container mb-5 mt-5">
+    <div class="row mb-4">
+        <div class="col-md-3 col-sm-12">
+            <label for="id_select_hazard" style="width: 100%">
+                <h6>Hazards (multiple selection)</h6>
+                <select class="select_hazard form-control" id="id_select_hazard" multiple="multiple" style="width: 100%;">
+                    {% for hazard in hazards %}
+                        <option value="{{ hazard.id }}">{{ hazard.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <div class="col-md-3 col-sm-12">
+            <label for="id_label_multiple_monitored" style="width: 100%">
+                <h6>Monitored parameter</h6>
+                <select class="select_monitored form-control" id="id_label_multiple_monitored" multiple="multiple" style="width: 100%">
+                    {% for parameter in monitored %}
+                        <option value="{{ parameter.id }}">{{ parameter.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <div class="col-md-3 col-sm-8">
+            <label for="id_label_multiple_complexity" style="width: 100%">
+                <h6>Installation complexity</h6>
+                <select class="select_complexity form-control" id="id_label_multiple_complexity" multiple="multiple" style="width: 100%">
+                    {% for complexity in complexities %}
+                        <option value="{{ complexity.id }}">{{ complexity.title }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <div class="col-md-3 col-sm-8"><h6>Price range</h6>
+            <div id="price_slider" class="mt-2"></div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col mb-5 text-center" style="display: contents;">
+            <a class="list-group-item" href="javascript:clear_data_filters()"> 
+                <img src="{% static 'img/circles-icons-filter.png' %}" style="width: 42px;height:42px;"/>
+                <h6>All items </h6>
+            </a>
+        </div>
+    </div>    
+    <!-- ends filter section--> 
+
+    <!-- sensors section-->       
+    <!-- isotope sensors area-->
+    <div class="empty-space col-xs-b30 col-sm-b60 mt-5"></div>
+    <div class="sensors_grid">
+        <div class="grid-sizer col-xs-6 col-sm-6 col-md-4 col-lg-4"></div>
+        {% for sensor in sensors %} 
+        <div id="{{ sensor.id }}" class="grid-item w25 {% for x in sensor.hazards_filters %}H{{ x }} {% endfor %}{% for x in sensor.monitored_filters %}M{{ x }} {% endfor %}{% if sensor.complexity_filter %}C{{ sensor.complexity_filter }} {% endif %} {{ sensor.price|pricesnode:price_step }}">
+            <div class="gallery-grid-item style-2" onclick="window.location='{{ sensor.get_absolute_url }}'">
+                <img src="{% if sensor.image %}{{ sensor.image.url }}{% else %}{% static "images/no_image.png" %}{% endif %}" alt="{{ sensor.sensor_name }}"/>
+                <div class="gallery-title">
+                    <div class="left">
+                        <div class="simple-article size-4 uppercase color col-xs-b5">CATEGORY TODO</div>
+                        <h3 class="simple-article size-5 uppercase">{{ sensor.name_summary }}</h3>
+                        <p>{{ sensor.short_summary }}</p>
+                    </div>
+                    <div class="right">
+                        <div class="simple-article"><h4>&euro; {{ sensor.price|floatformat:"0"|intcomma }}</h4></div>
+                    </div>
+                </div>
+            </div>    
+        </div>
+        {% endfor %} 
+    </div>
+</div>
+<!-- end -->
+
+
+{% endblock content %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Shuffle/6.1.0/shuffle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js"></script>
+<script>
+var hazard_images = {}
+{% for hazard in hazards %}
+    hazard_images[{{ hazard.id }}] = '{% if hazard.image %}{{ hazard.image.url }}{% else %}{% static "images/no_image.png" %}{% endif %}'
+{% endfor %}
+
+var filters_map = {
+    hazards:{},
+    monitored: {},
+    complexity: {}
+}
+{% for hazard in hazards %}
+filters_map.hazards[{{ hazard.id }}] = {
+    hazard_image:'{% if hazard.image %}{{ hazard.image.url }}{% else %}{% static "images/no_image.png" %}{% endif %}',
+    hazard_filter:'hazard.id'
+}
+{% endfor %}
+
+function formatHazard (hazard) {
+    if (!hazard.id) {
+      return hazard.text;
+    }
+    var img_url = hazard_images[hazard.id];
+    var $hazard = $(
+      '<span><img class="img-hazard" style="height: 40px;background-color: #fff;border-radius: 30px;"/> <span></span></span>'
+    );
+  
+    // Use .text() instead of HTML string concatenation to avoid script injection issues
+    $hazard.find("span").text(hazard.text);
+    $hazard.find("img").attr("src", img_url);
+  
+    return $hazard;
+  };
+
+$('.select_hazard, .select_monitored, .select_complexity').on("change", function (e) { 
+    retrieve_data_filters()
+});
+
+function retrieve_data_filters(){
+    let selected_hazards = $('.select_hazard').select2('data')
+    let selected_monitored = $('.select_monitored').select2('data')
+    let selected_complexity = $('.select_complexity').select2('data')
+    let selected_prices = price_slider.noUiSlider.get()
+    
+    let monitored_filter = ''
+    for (var i=0;i<selected_monitored.length;i++){
+        monitored_filter += '.M' + selected_monitored[i].id // AND
+    }
+    let complexity_filter = ''
+    for (var i=0;i<selected_complexity.length;i++){
+        complexity_filter += '.C' + selected_complexity[i].id // AND
+    }
+    let price_range_filters = []
+    let min_price_node = parseInt(Math.floor(selected_prices[0] / {{ price_step }}))
+    let max_price_node = parseInt(Math.ceil(selected_prices[1] / {{ price_step }}))
+    for (var i=min_price_node;i<=max_price_node;i++){
+        price_range_filters.push('.P' + i)
+    }
+
+    // a price range is always enabled
+    function populate_price_range(hmc_filter, price_range_filters){
+        hmcp_filter = '' 
+        for (var j=0;j<price_range_filters.length;j++) {
+            hmcp_filter += hmc_filter + price_range_filters[j] +', ' 
+        }
+        return hmcp_filter
+    }
+
+    let filters = ""
+    let mc_filter = monitored_filter + complexity_filter 
+    let hlen = selected_hazards.length
+    if (hlen>0) {
+        let filter = ""
+        for (var i=0;i<selected_hazards.length;i++) {
+            hmc_filter = '.H' + selected_hazards[i].id + mc_filter
+            filters += populate_price_range(hmc_filter, price_range_filters)
+        }
+    } else {
+        filters = populate_price_range(mc_filter, price_range_filters) 
+    }
+    filters = filters.replace(/,\s*$/, "")
+    //console.log(filters)
+    $('.sensors_grid').isotope({ filter: filters })
+}
+
+function clear_data_filters(){
+    price_slider.noUiSlider.reset()
+    $('.select_monitored').select2({
+        theme: "classic",
+        placeholder: "Select parameters to filter by"
+    }).val(null).trigger('change.select2')
+    $('.select_complexity').select2({
+        theme: "classic",
+        placeholder: "Select parameters to filter by"
+    }).val(null).trigger('change.select2')
+    $('.select_hazard').select2({
+        theme: "classic",
+        placeholder: "Select Hazard to filter by",
+        templateSelection: formatHazard,
+        templateResult: formatHazard
+    }).val(null).trigger("change")
+}
+</script>
+
+{% endblock extra_scripts %}
+
+{% block ready_scripts %}
+    {{ block.super }}
+    $('.select_hazard').select2({
+        theme: "classic",
+        placeholder: "Select Hazard to filter by",
+        templateSelection: formatHazard,
+        templateResult: formatHazard
+    });
+    $('.select_complexity').select2({
+        theme: "classic",
+        placeholder: "Select parameters to filter by"
+    });
+    $('.select_monitored').select2({
+        theme: "classic",
+        placeholder: "Select parameters to filter by"
+    });
+
+    noUiSlider.create(price_slider, {
+        start: [{{ min_price }}, {{ max_price }}],
+        tooltips: [false, false],
+        step: {{ price_step }},
+        connect: true,
+        range: {
+            'min': {{ min_price }},
+            'max': {{ max_price }}
+        },
+        pips: {
+            mode: 'steps',
+            density: 10,
+            format: {
+                from: function(value) {
+                        return '€ '+parseInt(value)
+                    },
+                to: function(value) {
+                        return '€ '+parseInt(value);
+                    }
+                }
+        }
+    }).on('change', retrieve_data_filters);
+
+    var sensors_container = $('.sensors_grid').isotope({
+        itemSelector: '.grid-item',
+        masonry: {
+            columnWidth: '.grid-sizer'
+        }
+    })
+{% endblock ready_scripts %}

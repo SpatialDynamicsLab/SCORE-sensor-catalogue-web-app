@@ -531,39 +531,6 @@ ul, ol{list-style: none;}
 
 
 
-
-/* .list-group-item{
-  margin: 4px 4px;
-  float: left; 
-  display: block;
-  border-radius: 30px !important;
-  padding: 3px 16px 0px 1px;
-  border:solid 2px white;
-  background-color: #17a2b842;
-}
-
-.btn-primary, .btn-default, .btn-warning:hover{
-  background-color: #30bfd1;
-  color:white;
-  border-color: #30bfd1;
-  border-radius: 30px;
-  }
-  /* .list-group-item.active{
-    background-color: #30bfd1;
-    border-color: #30bfd1;
-    color:white;
-    } */
-
-
-/* 
-.btn-primary, .btn-default, .btn-warning:hover{
-  background-color: #30bfd1;
-  color:white;
-  border-color: #30bfd1;
-  border-radius: 30px;
-  } */
-
-
 .btn-warn{
   /* background-color: #30bfd1;
    */
@@ -575,7 +542,7 @@ ul, ol{list-style: none;}
 }
 
 
-.btn-prim, .btn-warn, .btn-def, .sign-up{
+.btn-prim, .btn-warn, .btn-def, .sign-up, .add-to-cart{
   border-radius: 30px;
   /* background-color: #30bfd1; */
   background-color: #17a2b842;
@@ -597,7 +564,8 @@ ul, ol{list-style: none;}
     }
 
 .add-to-cart{
-  height: 40px;
+  border-radius: 30px;
+  /* height: 40px; */
   width: fit-content;
   background-color: #30bfd1;
   border-color: #30bfd1;
@@ -632,7 +600,4 @@ ul, ol{list-style: none;}
     }
 
 
-
-  
-  
 
