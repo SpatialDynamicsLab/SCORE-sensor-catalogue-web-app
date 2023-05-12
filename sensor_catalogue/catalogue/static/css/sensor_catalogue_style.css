@@ -530,3 +530,76 @@ ul, ol{list-style: none;}
 .zoom-image button:hover {
   text-decoration: underline;
 }
+
+
+
+.btn-warn{
+  /* background-color: #30bfd1;
+   */
+
+  background-color: #17a2b842;
+  /* color:white; */
+  border-color: #30bfd1;
+
+}
+
+
+.btn-prim, .btn-warn, .btn-def, .sign-up, .add-to-cart{
+  border-radius: 30px;
+  /* background-color: #30bfd1; */
+  background-color: #17a2b842;
+  /* color:white; */
+  border-color: #30bfd1;
+}
+
+
+
+.reset-password, .sign-up{
+  border-radius: 16px;
+  height: 40px;
+  width: fit-content;
+  /* background-color: #30bfd1; */
+  background-color: #17a2b842;
+  /* color:white; */
+  border-color: #30bfd1;
+
+    }
+
+.add-to-cart{
+  border-radius: 30px;
+  /* height: 40px; */
+  width: fit-content;
+  background-color: #30bfd1;
+  border-color: #30bfd1;
+  
+}
+
+.btn-prim:hover, .btn-warn:hover, .btn-def:hover, .sign-up:hover, .reset-password:hover{
+  background-color: #30bfd1;
+  color:white;
+  border-color: #30bfd1;
+}
+
+
+.btn-prim.active, .btn-warn.active, .btn-def.active, .sign-up.active, .reset-password.active{
+  background-color: #30bfd1;
+  border-color: #30bfd1;
+  color:white;
+  }
+
+
+.add-to-cart:hover{
+    background-color: #30bfd1;
+    color:white;
+    border-color: #30bfd1;
+  }
+
+
+.add-to-cart.active{
+    background-color: #30bfd1;
+    border-color: #30bfd1;
+    color:white;
+    }
+
+
+

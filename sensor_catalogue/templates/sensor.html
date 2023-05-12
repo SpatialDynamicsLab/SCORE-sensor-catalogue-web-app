@@ -54,7 +54,7 @@
               <form action="{% url "cart:cart_add" sensor.slug %}" method="post" >
                 {{cart_sensor_form }}
                 {% csrf_token %}
-                <input type="submit" value="Add to cart">
+                <input type="submit" value="Add to cart" class="btn btn-warn float-right waves-effect waves-light">
               </form>
           </div>
           <div>
