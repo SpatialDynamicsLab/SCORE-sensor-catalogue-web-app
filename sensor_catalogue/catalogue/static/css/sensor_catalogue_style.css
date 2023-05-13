@@ -23,6 +23,7 @@ ul, ol{list-style: none;}
 body{
   font-family: 'Roboto', 'sans serif';
   background-color:#f7feff !important;
+
 }
 
 .hero{
@@ -48,7 +49,7 @@ a {
 }
 
 
-h5{font-weight: ;}
+/*h5{font-weight: ;}*/
 
 a {
   color: #454343;
