@@ -39,7 +39,7 @@ def send_new_order_email(order):
     recipient_list = [
         order.user.email,
         'jose.gomezbarron@ucd.ie',
-        # 'chiara.cocco@ucd.ie'
+        'chiara.cocco@ucd.ie'
     ]
     context = {
         'logo_url': 'https://sensors.score-eu-project.eu/static/images/'
