@@ -24,6 +24,7 @@ body{
   font-family: 'Roboto', 'sans serif';
   background-color:#f7feff !important;
 }
+
 .hero{
   background-image: url(/static/images/bg-1920.jpg);
   background-position-y: -115px;
@@ -42,14 +43,12 @@ body{
   color: white !important;
 }
 
-
 a {
   color: #454343;
 }
 
 
 h5{font-weight: ;}
-
 
 a {
   color: #454343;
@@ -60,7 +59,7 @@ a {
 }
 .list-group-item{
   margin: 4px 4px;
-  float: left;
+  float: left; 
   display: block;
   border-radius: 30px !important;
   padding: 3px 16px 0px 1px;
@@ -79,7 +78,7 @@ a {
     color:white;
     }
 .list-group-item h6{
-float: left;
+float: left; 
 margin-top: 13px;
 margin-left: 6px;
 margin-right: 14px;
@@ -89,7 +88,7 @@ background-color: #ffffff;
 border-radius: 30px;
 border: solid 1px rgb(255, 255, 255);
 width:40px;
-height:40px;
+height:40px; 
 float: left;
 }
 
@@ -97,7 +96,7 @@ float: left;
 max-width: 35em;
 }
 .select2-container .select2-selection--multiple {
-max-width: 35em;
+max-width: 35em; 
 }
 li.select2-selection__choice {
 background-color:#17a2b8 !important;
@@ -186,7 +185,7 @@ text-transform: uppercase;
   height: 200px;
   background-color: beige;
   border-radius: 10px;
-  margin-left: auto;
+  margin-left: auto; 
   margin-right: auto;
 }
 
@@ -271,7 +270,7 @@ body ::-moz-selection {color: #30bfd1; background: #343434;}
   width: 75px;
   height: 30px;
   border: solid 1px #ff4d35;
-  padding: 4px 6px;
+  padding: 4px 6px; 
   color: white;
   right: -10px;
   position: absolute;
@@ -284,7 +283,7 @@ h3.size-3 {font-weight: 300;color:#30bfd1;}
 
 
 /*-------------------------------------------------------------------------------------------------------------------------------*/
-/* 03 - TABULATION
+/* 03 - TABULATION 
 -------------------------------------------------------------------------------------------------------------------------------*/
 
 .tabulation-menu-wrapper{margin: 0 -20px;}
@@ -351,12 +350,11 @@ div.gallery-grid-item.style-2 {border:solid 10px rgb(249, 253, 255) !important;}
 	.gallery-grid-item:after{display: none;}
 	.gallery-grid-item{margin-bottom: 15px;}
 }
-.accordion .active{
+.accordion .active{    
   background-color: #30bfd1;
   font-size: 1em;
   color: white;
   border-bottom: 1px solid white;}
-
 
 .accordion {
   border: 1px solid #3bb2ca !important;
@@ -603,3 +601,24 @@ ul, ol{list-style: none;}
 
 
 
+  
+  .btn-check-out{
+    border-radius: 30px;
+    background-color: #17a2b842;
+
+  }
+
+
+  .btn-check-out.active{
+    background-color: #30bfd1;
+    border-color: #30bfd1;
+    color:white;
+    }
+
+
+  .btn-check-out:hover{
+      background-color: #30bfd1;
+      color:white;
+      border-color: #30bfd1;
+    }
+  
