@@ -132,6 +132,7 @@ dmypy.json
 #image fils
 sensor_catalogue/sensor_pictures/
 sensor_catalogue/staticfiles/
+sensor_catalogue/images/
 
 .idea/
 .DS_Store
