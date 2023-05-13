@@ -543,7 +543,7 @@ ul, ol{list-style: none;}
 
 
 .btn-prim, .btn-warn, .btn-def, .sign-up, .add-to-cart{
-  border-radius: 30px;
+  border-radius: 30px !important;
   /* background-color: #30bfd1; */
   background-color: #17a2b842;
   /* color:white; */
