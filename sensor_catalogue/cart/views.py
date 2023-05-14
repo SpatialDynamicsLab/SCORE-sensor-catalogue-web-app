@@ -7,8 +7,9 @@ from cart.forms import CartAddProductForm
 from .cart import Cart
 
 
-@xframe_options_exempt
+
 @require_POST
+@xframe_options_exempt
 @csrf_exempt
 def cart_add(request, slug):
     cart = Cart(request)
