@@ -10,7 +10,6 @@ from .cart import Cart
 
 @require_POST
 @xframe_options_exempt
-@csrf_exempt
 def cart_add(request, slug):
     cart = Cart(request)
     sensor = get_object_or_404(Sensor, slug=slug)
