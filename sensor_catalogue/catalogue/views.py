@@ -1,5 +1,6 @@
 import math
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.clickjacking import xframe_options_exempt
 from cart.forms import CartAddProductForm
 from .models import (
@@ -9,6 +10,7 @@ from .models import (
     SensorImage,
     DeploymentOperation
 )
+
 
 @xframe_options_exempt
 def home(request):
@@ -69,6 +71,7 @@ def home(request):
 
 
 @xframe_options_exempt
+@csrf_exempt
 def detail_view(request, slug):
     """
     View for each sensor data in details.

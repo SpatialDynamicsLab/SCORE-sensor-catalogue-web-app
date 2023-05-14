@@ -7,9 +7,9 @@ from cart.forms import CartAddProductForm
 from .cart import Cart
 
 
-
 @require_POST
 @xframe_options_exempt
+@csrf_exempt
 def cart_add(request, slug):
     cart = Cart(request)
     sensor = get_object_or_404(Sensor, slug=slug)
@@ -20,7 +20,6 @@ def cart_add(request, slug):
                  quantity=clean_data['quantity'],
                  quantity_override=clean_data['override'])
     return redirect('cart:cart_detail')
-
 
 
 @require_GET
