@@ -1,5 +1,6 @@
 import math
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views.decorators.clickjacking import xframe_options_exempt
 from cart.forms import CartAddProductForm
 from .models import (
     Sensor,
@@ -9,7 +10,7 @@ from .models import (
     DeploymentOperation
 )
 
-
+@xframe_options_exempt
 def home(request):
     sensors = Sensor.objects.order_by('id')
     hazards = Hazard.objects.all()
@@ -67,6 +68,7 @@ def home(request):
     return render(request, 'homepage.html', context)
 
 
+@xframe_options_exempt
 def detail_view(request, slug):
     """
     View for each sensor data in details.
@@ -82,6 +84,7 @@ def detail_view(request, slug):
     return render(request, 'sensor.html', context)
 
 
+@xframe_options_exempt
 def hazard_list(request):
     # List of hazards
     hazards = Hazard.objects.all()
@@ -89,6 +92,7 @@ def hazard_list(request):
     return render(request, 'hazard_list.html', context)
 
 
+@xframe_options_exempt
 def hazard_sensor_list(request, slug):
     """
     Pulls a list of hazards and sensors related to them

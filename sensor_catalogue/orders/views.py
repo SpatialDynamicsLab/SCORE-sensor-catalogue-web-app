@@ -1,6 +1,7 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
+from django.views.decorators.clickjacking import xframe_options_exempt
 from django.template.loader import render_to_string
 from orders.models import OrderItem
 from orders.forms import OrderCreateForm
@@ -8,6 +9,7 @@ from cart.cart import Cart
 
 
 @login_required
+@xframe_options_exempt
 def create_order(request):
     cart = Cart(request)
     if request.method == 'POST':
