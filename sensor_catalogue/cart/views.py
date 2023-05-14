@@ -6,8 +6,8 @@ from cart.forms import CartAddProductForm
 from .cart import Cart
 
 
-@require_POST
 @xframe_options_exempt
+@require_POST
 def cart_add(request, slug):
     cart = Cart(request)
     sensor = get_object_or_404(Sensor, slug=slug)
@@ -20,8 +20,8 @@ def cart_add(request, slug):
     return redirect('cart:cart_detail')
 
 
-@require_GET
 @xframe_options_exempt
+@require_GET
 def cart_remove(request, slug):
     cart = Cart(request)
     sensor = get_object_or_404(Sensor, slug=slug)
