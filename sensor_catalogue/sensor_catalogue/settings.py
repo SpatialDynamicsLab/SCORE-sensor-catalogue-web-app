@@ -99,7 +99,7 @@ MIDDLEWARE = [
     # ...
 ]
 
-# X_FRAME_OPTIONS = "EXEMPT"
+X_FRAME_OPTIONS = "ALLOW-FROM *"
 
 ROOT_URLCONF = "sensor_catalogue.urls"
 
