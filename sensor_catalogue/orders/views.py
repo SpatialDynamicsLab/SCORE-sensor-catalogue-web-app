@@ -8,8 +8,8 @@ from orders.forms import OrderCreateForm
 from cart.cart import Cart
 
 
-@login_required
 @xframe_options_exempt
+@login_required
 def create_order(request):
     cart = Cart(request)
     if request.method == 'POST':
