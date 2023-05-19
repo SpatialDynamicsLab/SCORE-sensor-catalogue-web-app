@@ -15,7 +15,8 @@ from catalogue.models import (
     PurchaseOperation,
     AssemblyOperation,
     DataAnalysisOperation,
-    CitizenScienceOperation
+    CitizenScienceOperation,
+    SensorFAQ
 )
 
 
@@ -49,6 +50,17 @@ class SensorImageInline(admin.TabularInline):
 
     extra = 1
 
+
+class SensorFAQInline(admin.TabularInline):
+    model = SensorFAQ
+    readonly_fields = (
+        'id',
+    )
+
+    extra = 1
+
+
+
 def order_pdf(obj):
     url = reverse('catalogue:order_pdf', args=[obj.id])
     return mark_safe(f'<a href="{url}">PDF</a>')
@@ -57,7 +69,14 @@ order_pdf.short_description = 'Invoice'
 
 @admin.register(Sensor)
 class SenorImageAdmin(admin.ModelAdmin):
-    inlines = [SensorImageInline]
+    inlines = [SensorImageInline, SensorFAQInline]
+
+
+# @admin.register(Sensor)
+# class SensorFAQInline(admin.ModelAdmin):
+#     inlines = [SensorFAQInline]
+
+
 
 # @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):

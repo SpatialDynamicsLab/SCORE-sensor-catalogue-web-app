@@ -428,10 +428,6 @@ class Sensor(models.Model):
          return self.monitored_parameter.all().values_list("id", flat=True)
     
     def complexity_filter(self):
-          #  Installation operation was renamed to deployment operation.
-          #  The next line is therefore needs to be updated
-
-        # if self.installation_operation:
         if self.deployment_operation:
             return self.deployment_operation.id
         return
@@ -450,3 +446,18 @@ class SensorImage(models.Model):
     class Meta:
          verbose_name = "Sensor Image"
          verbose_name_plural = "Sensor Images"
+
+
+class SensorFAQ(models.Model):
+    sensor = models.ForeignKey(Sensor, default=None, on_delete=models.CASCADE)
+    question = models.CharField(max_length=250, null=True, blank=True)
+    response = models.TextField(blank=True)
+ 
+    def __str__(self):
+        return self.question
+
+    class Meta:
+         verbose_name = "FAQ"
+         verbose_name_plural = "FAQ's"
+
+
