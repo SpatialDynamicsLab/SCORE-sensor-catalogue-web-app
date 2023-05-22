@@ -7,7 +7,8 @@ from .models import (
     Hazard,
     MonitoredParameter,
     SensorImage,
-    DeploymentOperation
+    DeploymentOperation,
+    SensorFAQ
 )
 
 @xframe_options_exempt
@@ -76,9 +77,11 @@ def detail_view(request, slug):
     sensor = get_object_or_404(Sensor, slug=slug)
     cart_sensor_form = CartAddProductForm()
     photos = SensorImage.objects.filter(sensor__slug=slug)
+    faqs = SensorFAQ.objects.filter(sensor__slug=slug)
     context = {
         'sensor': sensor,
         'photos': photos,
+        'faqs':faqs,
         'cart_sensor_form': cart_sensor_form,
         }
     return render(request, 'sensor.html', context)
