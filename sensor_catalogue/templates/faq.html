@@ -57,7 +57,7 @@
     {% for q in faqs %}
     <button class="accordion_faq">{{q.question}}</button>
     <div class="panel_faq">
-      <p> {{q.response}}</p>
+      <p> {{q.response |linebreaksbr}}</p>
     </div>
     {% endfor %}
   </div>
