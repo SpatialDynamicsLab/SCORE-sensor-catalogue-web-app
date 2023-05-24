@@ -67,13 +67,17 @@
          
       {% include 'additional_sensor_information.html' %}
 
-       <hr>
-    
       <!--Grid row-->
       <div class="row d-flex justify-content-center wow fadeIn">
 
+        <!-- FAQ's section -->
+        {% if faqs %}
+        {% include 'faq.html'%}
+        {% endif %}
+      
         <!--Additional photos section-->
         <div class="col-md-6 text-center">
+          <br>
            <h4> Additional pictures </43>
         </div>
         <div class="container">
