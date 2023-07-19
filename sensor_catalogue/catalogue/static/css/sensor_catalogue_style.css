@@ -214,8 +214,8 @@ text-transform: uppercase;
 	.cell-view.page-height{height: auto!important}
 }
 /*body selection*/
-body ::selection {color: #30bfd1; background: #343434;}
-body ::-moz-selection {color: #30bfd1; background: #343434;}
+body ::selection {color: #30bfd1;}
+body ::-moz-selection {color: #30bfd1;}
 /*helper classes*/
 .nopadding, .nopadding>*[class*="col"]{padding-left: 0; padding-right: 0; margin-left: 0; margin-right: 0;}
 .line-through{display: inline-block; position: relative; padding: 0 5px;}
