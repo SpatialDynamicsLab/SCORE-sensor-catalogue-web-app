@@ -1,11 +1,8 @@
+import datetime
 from django.db import models
-from django.db.models import Model, CharField
 from django.conf import settings
 from autoslug import AutoSlugField
-import datetime
-
 from django.shortcuts import reverse
-
 
 OPERATION_CHOICES = (
     ('VD', 'Very difficult'),
@@ -19,7 +16,6 @@ DEPLOYMENT_COST_CHOICES = (
     ('M', 'Medium'),
     ('L', 'Low'))
 
-
 HAZARD_CHOICES = (
      ('SL', 'Sea level rise'),
      ('CF', 'Coastal flooding'),
@@ -32,44 +28,45 @@ HAZARD_CHOICES = (
 
 YEAR_CHOICES = []
 for Y in range(1990, (datetime.datetime.now().year+1)):
-     YEAR_CHOICES.append((Y,Y))
+    YEAR_CHOICES.append((Y, Y))
 
 
 class Hazard(models.Model):
-         name = models.CharField(max_length=200, blank=True)
-         description = models.TextField(blank=True,default='Not provided')
-         image = models.ImageField(upload_to = 'hazards_image/%Y/%m/%d',blank=True,null=True)
-         slug = AutoSlugField(
-              populate_from='name', 
-              max_length=200,
-              unique=True, 
-              null=True,
-               default=None )
-         
-         class Meta:
-              ordering = ['name']
-              indexes = [
-                   models.Index(fields=['name']),
-              ]
-              verbose_name = 'Hazard'
-              verbose_name_plural = 'Hazards'
+    name = models.CharField(max_length=200, blank=True)
+    description = models.TextField(blank=True,default='Not provided')
+    image = models.ImageField(upload_to = 'hazards_image/%Y/%m/%d',blank=True,null=True)
+    slug = AutoSlugField(
+        populate_from='name',
+        max_length=200,
+        unique=True,
+        null=True,
+        default=None
+    )
 
-         def __str__(self):
-              return self.name
-         
-         def get_absolute_url(self):
-              return reverse('catalogue:sensor_list_by_hazard',
-                             args=[self.slug])
+    class Meta:
+        ordering = ['name']
+        indexes = [
+           models.Index(fields=['name']),
+        ]
+        verbose_name = 'Hazard'
+        verbose_name_plural = 'Hazards'
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('catalogue:sensor_list_by_hazard', args=[self.slug])
          
 
 class HazardCategory(models.Model):
-    hazard_category_name  =  models.CharField(
+    hazard_category_name = models.CharField(
          max_length=100,
          blank=True,
          null=True)
+
     class Meta:
-         verbose_name = "Hazard Category"
-         verbose_name_plural = "Hazard Categories"
+        verbose_name = "Hazard Category"
+        verbose_name_plural = "Hazard Categories"
 
     def __str__(self):
         return self.hazard_category_name
@@ -77,13 +74,13 @@ class HazardCategory(models.Model):
 
 class HazardSpecific(models.Model):
     hazard_specific_name = models.CharField(
-         max_length=65,
-         blank=True,
-         null=True)
+        max_length=65,
+        blank=True,
+        null=True)
 
     class Meta:
-            verbose_name = "Specific Hazard"
-            verbose_name_plural = "Specific Hazard"
+        verbose_name = "Specific Hazard"
+        verbose_name_plural = "Specific Hazard"
 
     def __str__(self):
 
@@ -158,53 +155,52 @@ class DeploymentOperation(CommonInfo):
 
 
 class PurchaseOperation(CommonInfo):
-     class Meta:
-         verbose_name = "Purchase Operation Complexity"
-         verbose_name_plural = "Purchase Operation Complexities"
+    class Meta:
+        verbose_name = "Purchase Operation Complexity"
+        verbose_name_plural = "Purchase Operation Complexities"
 
-     def __str__(self):
+    def __str__(self):
         return self.get_name_display()
      
 
 class DeploymentCost(models.Model):
-     name = models.CharField(
-     choices=DEPLOYMENT_COST_CHOICES,
-     max_length=1, blank=True)
-     image = models.ImageField(upload_to='deployment_cost/%Y/%m/%d',blank=True,null=True)
+    name = models.CharField(
+        choices=DEPLOYMENT_COST_CHOICES,
+        max_length=1, blank=True)
+    image = models.ImageField(
+        upload_to='deployment_cost/%Y/%m/%d', blank=True, null=True)
 
+    class Meta:
+        verbose_name = "Deployment Cost"
+        verbose_name_plural = "Deployment Costs"
 
-     class Meta:
-          verbose_name = "Deployment Cost"
-          verbose_name_plural = "Deployment Costs"
-
-
-     def __str__(self):
+    def __str__(self):
         return self.get_name_display()
 
 
-class DataAnalysisOperation(CommonInfo):    
-     class Meta:
-         verbose_name = "Data Analysis Operation Complexity"
-         verbose_name_plural = "Data Analysis Operation Complexities"
+class DataAnalysisOperation(CommonInfo):
+    class Meta:
+        verbose_name = "Data Analysis Operation Complexity"
+        verbose_name_plural = "Data Analysis Operation Complexities"
 
-     def __str__(self):
+    def __str__(self):
         return self.get_name_display()
      
     
 class CitizenScienceOperation(CommonInfo):
-     
-     class Meta:
-         verbose_name = "Citizen Science Operation Complexity"
-         verbose_name_plural = "Citizen Science Operation Complexities"
+    class Meta:
+        verbose_name = "Citizen Science Operation Complexity"
+        verbose_name_plural = "Citizen Science Operation Complexities"
 
-     def __str__(self):
+    def __str__(self):
         return self.get_name_display()
      
 
 class UserProfile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, 
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE
+    )
 
     def __str__(self):
         return self.user.username
@@ -212,37 +208,40 @@ class UserProfile(models.Model):
 
 class Sensor(models.Model):
     id_old = models.CharField(
-         blank=True,
-         max_length=20, 
-         verbose_name="Sensor Old ID")
+        blank=True,
+        max_length=20,
+        verbose_name="Sensor Old ID")
     tested_with_score = models.BooleanField(
-         default=True, 
-         verbose_name="Tested with SCORE")
+        default=True,
+        verbose_name="Tested with SCORE")
     reference_partner = models.CharField(
-         blank=True,
-         max_length=150, 
-         default=None, 
-         verbose_name="Reference partner")
+        blank=True,
+        max_length=150,
+        default=None,
+        verbose_name="Reference partner")
     sensor_name = models.CharField(
-         max_length= 250, 
-         verbose_name= "Name")
+        max_length=250,
+        verbose_name="Name")
     short_description = models.TextField(
-         blank=True,
-         verbose_name="Short Description")
+        blank=True,
+        verbose_name="Short Description")
     full_description = models.TextField(
-         blank=True,
-         verbose_name="Detailed Description")
+        blank=True,
+        verbose_name="Detailed Description")
     monitored_parameter = models.ManyToManyField(
-         MonitoredParameter,
-         blank=True,
-         verbose_name="Monitored Parameter")
+        MonitoredParameter,
+        blank=True,
+        verbose_name="Monitored Parameter")
     relevant_to_models = models.BooleanField(
-         default=True, 
-         verbose_name="Relevant to WP3 Models / EWSS")
+        default=True,
+        verbose_name="Relevant to WP3 Models")
+    relevant_to_ewss = models.BooleanField(
+        default=True,
+        verbose_name="Relevant to the EWSS")
 
     hazard = models.ManyToManyField(Hazard, blank=True, verbose_name="Hazard")
 
-    hazard_category= models.ManyToManyField(
+    hazard_category = models.ManyToManyField(
          HazardCategory, 
          blank=True,
          verbose_name="Hazard Category")
@@ -287,63 +286,68 @@ class Sensor(models.Model):
          max_length=250, 
          verbose_name="Unit of Measurement")
 
-    data_refresh_time= models.PositiveIntegerField(blank=True,null=True,
-         default=5, 
-         verbose_name="Data Refresh Duration (Minutes)")
+    data_refresh_time = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        default=5,
+        verbose_name="Data Refresh Duration (Minutes)")
     wifi_connection = models.BooleanField(
-         default=True, 
-         verbose_name="Wi-Fi Connection")
+        default=True,
+        verbose_name="Wi-Fi Connection")
     mobile_data_connection = models.BooleanField(
-         default=True, 
-         verbose_name= "4G Connection")
+        default=True,
+        verbose_name= "4G Connection")
     number_of_components = models.IntegerField(
-         null=True, 
-         verbose_name="Number of components",
-         blank=True)
+        null=True,
+        verbose_name="Number of components",
+        blank=True)
     external_power_supply = models.BooleanField(
-         default=False, 
-         verbose_name= "External Power Supply")
+        default=False,
+        verbose_name="External Power Supply")
     minimum_purchase_quantity = models.PositiveIntegerField(
-         null=True, blank=True, default=1,
-         verbose_name="Minimum purchase quantity")
+        null=True, blank=True, default=1,
+        verbose_name="Minimum purchase quantity")
     spatial_density_per_area = models.PositiveIntegerField(
-         null=True, blank=True,
-         verbose_name="Spatial Density / min number per area [km2]")
-    spatial_density_distribution = models.TextField(blank=True, null=True, default="Not provided",
-         verbose_name="Spatial Density / min number and distribution description")
-
+        null=True, blank=True,
+        verbose_name="Spatial Density / min number per area [km2]")
+    spatial_density_distribution = models.TextField(
+        blank=True,
+        null=True,
+        default="Not provided",
+        verbose_name="Spatial Density / min number and distribution description"
+    )
     purchase_operation = models.ForeignKey(
-         PurchaseOperation, 
-         on_delete=models.CASCADE,
-         blank=True,
-         default=None,null=True,
-         verbose_name="Purchase Operation")
+        PurchaseOperation,
+        on_delete=models.CASCADE,
+        blank=True,
+        default=None,null=True,
+        verbose_name="Purchase Operation")
     
     assembly_operation = models.ForeignKey(
-         AssemblyOperation,
-         on_delete=models.CASCADE,
-         default=None,
-         max_length=2,
-         blank=True,
-         null=True,
-         verbose_name="Assembly Operations Complexity")
+        AssemblyOperation,
+        on_delete=models.CASCADE,
+        default=None,
+        max_length=2,
+        blank=True,
+        null=True,
+        verbose_name="Assembly Operations Complexity")
 
     assembly_operation_public_involvement = models.TextField(
-         blank=True,
-         null=True,
-         verbose_name="Public Involvement & Assembly Operations")
+        blank=True,
+        null=True,
+        verbose_name="Public Involvement & Assembly Operations")
     
     deployment_operation = models.ForeignKey(
-         DeploymentOperation,
-         on_delete=models.CASCADE,
-         max_length=2, blank=True,null=True,
-         default=None, 
-         verbose_name="Deployment operation Complexity")
+        DeploymentOperation,
+        on_delete=models.CASCADE,
+        max_length=2, blank=True,null=True,
+        default=None,
+        verbose_name="Deployment operation Complexity")
     
     deployment_operation_public_involvement = models.TextField(
-         blank=True,
-         null=True,
-         verbose_name="Public Involvement & Deployment Operations")
+        blank=True,
+        null=True,
+        verbose_name="Public Involvement & Deployment Operations")
 
 #     deployment_costs = models.CharField(
 #         choices=DEPLOYMENT_COST_CHOICES,
@@ -357,9 +361,7 @@ class Sensor(models.Model):
         max_length=1, blank=True,
         default=None, null=True,
         verbose_name="Deployment Cost")
-    
 
-    
     data_analysis_operation = models.ForeignKey(
          DataAnalysisOperation,
          on_delete=models.CASCADE,
@@ -383,8 +385,12 @@ class Sensor(models.Model):
     targeted_user = models.CharField(
          max_length=250, blank=True,
          verbose_name="Targeted Users")
-    image = models.ImageField(upload_to='sensor_images/%Y/%m/%d',blank=True,null=True)
-    slug =  AutoSlugField(
+    image = models.ImageField(
+        upload_to='sensor_images/%Y/%m/%d',
+        blank=True,
+        null=True
+    )
+    slug = AutoSlugField(
          populate_from='sensor_name', 
          unique=True, 
          null=True, 
@@ -395,37 +401,34 @@ class Sensor(models.Model):
     )
     
     class Meta:
-         verbose_name = "Sensor"
-         verbose_name_plural = "Sensors"
+        verbose_name = "Sensor"
+        verbose_name_plural = "Sensors"
 
     def __str__(self):
         return self.sensor_name
-    
 
     def name_summary(self):
-         if len(self.sensor_name) <26:
-              return self.sensor_name
-         else:
-              return self.sensor_name[:26]+"..."
-    
+        if len(self.sensor_name) < 26:
+            return self.sensor_name
+        else:
+            return self.sensor_name[:26]+"..."
 
     def short_summary(self):
-         if len(self.short_description) < 180:
-              return self.short_description
-         else:
-              return self.short_description[:180]+"..."
-    
+        if len(self.short_description) < 180:
+            return self.short_description
+        else:
+            return self.short_description[:180]+"..."
 
     def get_absolute_url(self):
-         return reverse("catalogue:sensor", kwargs={
-              'slug':self.slug
-         })
+        return reverse("catalogue:sensor", kwargs={
+              'slug': self.slug
+        })
     
     def hazards_filters(self):
-         return self.hazard.all().values_list("id", flat=True)
+        return self.hazard.all().values_list("id", flat=True)
     
     def monitored_filters(self):
-         return self.monitored_parameter.all().values_list("id", flat=True)
+        return self.monitored_parameter.all().values_list("id", flat=True)
     
     def complexity_filter(self):
         if self.deployment_operation:
@@ -435,17 +438,17 @@ class Sensor(models.Model):
 #     def get_minimum_quantity(self):
 #         return self.minimum_purchase_quantity
 
+
 class SensorImage(models.Model):
     sensor = models.ForeignKey(Sensor, default=None, on_delete=models.CASCADE)
-    images = models.ImageField(upload_to = 'sensor_images/%Y/%m/%d',blank=True)
+    images = models.ImageField(upload_to = 'sensor_images/%Y/%m/%d', blank=True)
  
     def __str__(self):
         return self.sensor.sensor_name
-    
 
     class Meta:
-         verbose_name = "Sensor Image"
-         verbose_name_plural = "Sensor Images"
+        verbose_name = "Sensor Image"
+        verbose_name_plural = "Sensor Images"
 
 
 class SensorFAQ(models.Model):
@@ -457,7 +460,5 @@ class SensorFAQ(models.Model):
         return self.question
 
     class Meta:
-         verbose_name = "FAQ"
-         verbose_name_plural = "FAQ's"
-
-
+        verbose_name = "FAQ"
+        verbose_name_plural = "FAQ's"
