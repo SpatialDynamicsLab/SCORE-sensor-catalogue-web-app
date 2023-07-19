@@ -84,7 +84,7 @@ def detail_view(request, slug):
     context = {
         'sensor': sensor,
         'photos': photos,
-        'faqs':faqs,
+        'faqs': faqs,
         'cart_sensor_form': cart_sensor_form,
         }
     return render(request, 'sensor.html', context)

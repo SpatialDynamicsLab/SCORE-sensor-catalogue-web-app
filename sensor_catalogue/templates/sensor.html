@@ -45,6 +45,15 @@
               </p>
               {% endif %}
 
+              <p>
+                {% if sensor.relevant_to_models %}
+                <strong style="padding-right: 10px">&#10003; Relevant to WP3 models</strong>
+                {% endif %}
+                {% if sensor.relevant_to_ewss %}
+                <strong>&#10003; Relevant to the EWSS</strong>
+                {% endif %}
+              </p>
+
               <p class="lead">
                 <span> €{{ sensor.price | intcomma }}</span>
               </p>
