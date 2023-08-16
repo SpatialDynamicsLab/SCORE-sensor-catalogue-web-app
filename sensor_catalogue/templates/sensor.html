@@ -13,7 +13,10 @@
       <div class="row wow fadeIn">
         <!--Grid column-->
         <div class="col-md-4 mb-3">
-          <img src="{% if sensor.image %} {{ sensor.image.url }} {% else %}{% static "images/no_image.png" %} {% endif %}" alt="{{ sensor.sensor_name}}" style="width:100%;height:350px; margin-left: auto;margin-right: auto; display: block;" class="w-">
+          <img class="img-fluid rounded" src="{% if sensor.image %} {{ sensor.image.url }} {% else %}
+          {% static "images/no_image.png" %} {% endif %}" alt="{{ sensor.sensor_name}}"
+          style="width:100%;height:350px; margin-left: auto;margin-right: auto;
+          display: block;">
         </div>
         <div class="col-md-6 mb-4">
           <!--Content-->
@@ -73,9 +76,7 @@
       </div>
       <!--Grid row-->
       <hr>
-         
       {% include 'additional_sensor_information.html' %}
-
       <!--Grid row-->
       <div class="row d-flex justify-content-center wow fadeIn">
 
@@ -91,13 +92,10 @@
         </div>
         <div class="container">
           {% if photos %}
-
           {% include 'additional_pictures.html'%}
-    
           {% else %}
-    
-          <p style="text-align: center;"> {{sensor}} currently, does not have any additional pictures </p>
-    
+          <p style="text-align: center;"> {{sensor}} currently,
+            does not have any additional pictures </p>
           {% endif %}
 </div>
 </div>

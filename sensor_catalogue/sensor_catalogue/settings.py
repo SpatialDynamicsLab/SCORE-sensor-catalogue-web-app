@@ -213,7 +213,7 @@ STATIC_URL = '/static/'
 
 
 MEDIA_ROOT = BASE_DIR / 'images'
-MEDIA_URL = '/images/'
+MEDIA_URL = 'https://sensors.score-eu-project.eu/images/'
 
 # CRISPY_TEMPLATE_PACK = 'bootstrap4'
 

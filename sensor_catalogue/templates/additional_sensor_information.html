@@ -1,13 +1,13 @@
 {% load crispy_forms_tags %}
 {% load static %}
 {% block content %}
-{% load humanize %} 
-
+{% load humanize %}
 <diV>
 <!-- <h4>Additional Properties</h4> -->
-<button class="accordion" style="font-weight: bold">Sensor Properties</button>
+<button class="accordion" style="font-weight: bold">
+    Sensor Properties</button>
 <div class="panel">
-    <table class="table">
+    <table class="table table-responsive">
         <thead>
             <tr>
             <th>Accuracy (error of the measurements)</th>
@@ -16,28 +16,100 @@
             <th>Wi-Fi Connection</th>
             <th>4G Connection</th>
             <th>External Power Supply</th>
+            <th>Documentation</th>
             </tr>
         </thead><tbody>
             <tr>
-            <td>{{ sensor.accuracy   }}</td>
-            <td>{{ sensor.unit_of_measurement  }}</td>
+            <td>{{ sensor.accuracy }}</td>
+            <td>{{ sensor.unit_of_measurement }}</td>
             <td>{{ sensor.data_refresh_time }}</td>
-            <td>{{ sensor.wifi_connection  }}</td>
+            <td>{{ sensor.wifi_connection }}</td>
             <td>{{ sensor.mobile_data_connection }}</td>
-            <td>{{ sensor.external_power_supply  }}</td>
+            <td>{{ sensor.external_power_supply }}</td>
+            <td>
+                {% if sensor.sensor_name == 'DIY wave gauge' %}
+                <a href="https://drive.google.com/drive/folders/1DfEX4-AtzhsiDW5vRylHC-OUlri6GlX5?usp=sharing"
+                   target="_blank" style="color: blue;" >
+                    See available docs for {{sensor.sensor_name}}
+                </a>
+                {% endif %}
+                 {% if sensor.sensor_name == 'Kite Aerial Photography (KAP)' %}
+                <a href="https://drive.google.com/drive/folders/1-42CW3Hjw2JdJEOWOTzS4w7YUaQbT_jX?usp=share_link"
+                   target="_blank" style="color: blue;" >
+                    See available docs for {{sensor.sensor_name}}
+                </a>
+                {% endif %}
+                {% if sensor.sensor_name == 'SmartLNB' %}
+                <a href="https://drive.google.com/drive/folders/1lSNQbFuyB2ztRvfLpz_aXf29LNfxvm5o?usp=share_link"
+                   target="_blank" style="color: blue;" >
+                    See available docs for {{sensor.sensor_name}}
+                </a>
+                {% endif %}
+                {% if sensor.sensor_name == 'Optical rain sensor' %}
+                <a href="https://drive.google.com/drive/folders/1_s8TN0lerbWlvJJHOEdUruuKtaDIMTqh?usp=share_link"
+                   target="_blank" style="color: blue;" >
+                    See available docs for {{sensor.sensor_name}}
+                </a>
+                {% endif %}
+                {% if sensor.sensor_name == 'Smart Pebbles' %}
+                <a href="https://drive.google.com/drive/folders/1RySv6dnTl9B-d3NKOkei7KSIL4fKAoDb?usp=share_link"
+                   target="_blank" style="color: blue;" >
+                    See available docs for {{sensor.sensor_name}}
+                </a>
+                {% endif %}
+                {% if sensor.sensor_name == 'Onset HOBO water level loggers' %}
+                <a href="https://drive.google.com/drive/folders/177J4ZtBQvCVlPY_IqiAaYgjIjIwjOA0P?usp=share_link"
+                   target="_blank" style="color: blue;" >
+                    See available docs for {{sensor.sensor_name}}
+                </a>
+                {% endif %}
+                {% if sensor.sensor_name == 'MaxBotix Ultrasonic sensors' %}
+                <a href="https://drive.google.com/drive/folders/1tlrMndixG7dbwt7v0IP_lkMdpVhQkavJ?usp=share_link"
+                   target="_blank" style="color: blue;" >
+                    See available docs for {{sensor.sensor_name}}
+                </a>
+                {% endif %}
+                {% if sensor.sensor_name == 'Lidar-lite V3HP' %}
+                <a href="https://drive.google.com/drive/folders/1YG_h1dQzz8GKzXXc4lHkm-c6ZboNifWB?usp=sharing"
+                   target="_blank" style="color: blue;" >
+                    See available docs for {{sensor.sensor_name}}
+                </a>
+                {% endif %}
+                {% if sensor.sensor_name == 'BRESSER WIFI ClearView Weather Station with 7-in-1 Sensor' %}
+                <a href="https://drive.google.com/drive/folders/1LhMITmtgAkr7fp7aJvBfNM3rOiLTPqPN?usp=share_link"
+                   target="_blank" style="color: blue;" >
+                    See available docs for {{sensor.sensor_name}}
+                </a>
+                {% endif %}
+                {% if sensor.sensor_name == 'Remote Telemetry Units (RTUs) + sensors' %}
+                <a href="https://drive.google.com/drive/folders/17fbSm0ip5OlkU7pGeFz8bZFp5HUFAgci?usp=share_link"
+                   target="_blank" style="color: blue;" >
+                    See available docs for {{sensor.sensor_name}}
+                </a>
+                {% endif %}
+                {% if sensor.sensor_name == 'Art Sewer' %}
+                <a href="https://drive.google.com/drive/folders/1PWHlX51Mzn5en8vYdy1uiLMTMD_9wf9H?usp=share_link"
+                   target="_blank" style="color: blue;" >
+                    See available docs for {{sensor.sensor_name}}
+                </a>
+                {% endif %}
+                {% if sensor.sensor_name == 'Smart Citizen Water/Soil Station' %}
+                <a href="https://drive.google.com/drive/folders/11L7_b5ueKbdftnX2_0Dp_0EXgWx52wFi?usp=share_link"
+                   target="_blank" style="color: blue;" >
+                    See available docs for {{sensor.sensor_name}}
+                </a>
+                {% endif %}
+          </td>
             </tr>
         </tbody>
         </table>
     </div>
 
-
-
-<button class="accordion" style="font-weight: bold">Historical Information</button>
-
-
+<button class="accordion" style="font-weight: bold">
+    Historical Information</button>
 <div class="panel">
     <div class="col-md-12 mb-2">
-        <table class="table">
+        <table class="table table-responsive">
           <thead>
             <tr>
               <th>Reference Partners</th>
@@ -50,26 +122,36 @@
           </thead><tbody>
             <tr>
               <td>{{ sensor.reference_partner  }}</td>
-              <td>{% if sensor.project_website %}<a href="{{ sensor.project_website }}" target="_blank" style="color: blue;" >{{ sensor.project_name }}</a>{% else %} {{ sensor.project_name }} {% endif %}</td>
+              <td>{% if sensor.project_website %}
+                  <a href="{{ sensor.project_website }}" target="_blank"
+                     style="color: blue;" >{{ sensor.project_name }}
+                  </a>
+                  {% else %} {{ sensor.project_name }} {% endif %}
+              </td>
               <td>{{ sensor.project_year }}</td> 
-                <td>{% if sensor.reference_paper %}<a href="{{ sensor.reference_paper }}" target="_blank" style="color: blue;" >Reference paper</a>{% else %} Not available{% endif %}</td>               
+                <td>{% if sensor.reference_paper %}
+                    <a href="{{ sensor.reference_paper }}" target="_blank"
+                       style="color: blue;" >Reference paper
+                    </a>
+                    {% else %} Not available{% endif %}
+                </td>
               <td>{{ sensor.minimum_purchase_quantity  }}</td>
               <td>{{ sensor.spatial_density_per_area  }}</td>
             </tr>
           </tbody>
         </table>
       </div>
-
 </div>
 
-<button class="accordion" style="font-weight: bold">Operation Complexities</button>
+<button class="accordion" style="font-weight: bold">
+    Operation Complexities</button>
 <div class="panel">
     {% include 'complexities.html' %}
 </div>
 
 <button class="accordion" style="font-weight: bold">Citizen Science</button>
 <div class="panel">
-    <table class="table">
+    <table class="table table-responsive">
         <thead>
           <tr>
             <th>Citizen Science Activities Complexity</th>
@@ -83,7 +165,11 @@
             <!-- <td>{{ sensor.citizen_science_operation.get_name_display   }}</td> -->
 
           <td>
-            <img src="{% if sensor.citizen_science_operation.image %} {{ sensor.citizen_science_operation.image.url }} {% else %}{{ sensor.citizen_science_operation.get_name_display }} {% endif %}" alt="{{ sensor.citizen_science_operation.get_name_display }}" class="image-difficulty">
+            <img src="{% if sensor.citizen_science_operation.image %}
+            {{ sensor.citizen_science_operation.image.url }} {% else %}
+            {{ sensor.citizen_science_operation.get_name_display }} {% endif %}"
+                 alt="{{ sensor.citizen_science_operation.get_name_display }}"
+                 class="image-difficulty">
           </td>
             <td>{{ sensor.assembly_operation_public_involvement  }}</td>
             <td>{{ sensor.deployment_operation_public_involvement }}</td>
@@ -98,7 +184,6 @@
   <script>
     var acc = document.getElementsByClassName("accordion");
     var i;
-    
     for (i = 0; i < acc.length; i++) {
       acc[i].addEventListener("click", function() {
         this.classList.toggle("active");
@@ -111,5 +196,4 @@
       });
     }
     </script>
-
   {% endblock %}
