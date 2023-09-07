@@ -46,7 +46,10 @@ def home(request):
             complexities.append(complexity)
     # END TODO
 
-    sensors_by_price = Sensor.objects.order_by('price')
+    sensors_by_price = Sensor.objects.exclude(
+        price__isnull=True).order_by('price')
+    print(sensors_by_price)
+    print(sensors_by_price.last())
     if sensors_by_price:
         price_step = sensors_by_price.last().price/20
     else:

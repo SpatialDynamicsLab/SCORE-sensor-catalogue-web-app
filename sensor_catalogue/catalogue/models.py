@@ -252,8 +252,9 @@ class Sensor(models.Model):
     price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        blank=True,
-        null=True,
+        blank=False,
+        null=False,
+        default=0,
         verbose_name="Cost(€)")
     sensor_website = models.URLField(
          blank=True, 
