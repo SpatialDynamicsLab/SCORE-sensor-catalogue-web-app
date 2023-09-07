@@ -212,7 +212,7 @@ class Sensor(models.Model):
         max_length=20,
         verbose_name="Sensor Old ID")
     tested_with_score = models.BooleanField(
-        default=True,
+        default=False,
         verbose_name="Tested with SCORE")
     reference_partner = models.CharField(
         blank=True,
@@ -233,10 +233,10 @@ class Sensor(models.Model):
         blank=True,
         verbose_name="Monitored Parameter")
     relevant_to_models = models.BooleanField(
-        default=True,
+        default=False,
         verbose_name="Relevant to WP3 Models")
     relevant_to_ewss = models.BooleanField(
-        default=True,
+        default=False,
         verbose_name="Relevant to the EWSS")
 
     hazard = models.ManyToManyField(Hazard, blank=True, verbose_name="Hazard")
@@ -250,10 +250,11 @@ class Sensor(models.Model):
          blank=True,
          verbose_name="Hazard Specific")
     price = models.DecimalField(
-         max_digits=10, 
-         decimal_places=2,
-         blank=True,
-         verbose_name="Cost(€)")
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Cost(€)")
     sensor_website = models.URLField(
          blank=True, 
          verbose_name="Sensor Web Page")
@@ -292,10 +293,10 @@ class Sensor(models.Model):
         default=5,
         verbose_name="Data Refresh Duration (Minutes)")
     wifi_connection = models.BooleanField(
-        default=True,
+        default=False,
         verbose_name="Wi-Fi Connection")
     mobile_data_connection = models.BooleanField(
-        default=True,
+        default=False,
         verbose_name= "4G Connection")
     number_of_components = models.IntegerField(
         null=True,
