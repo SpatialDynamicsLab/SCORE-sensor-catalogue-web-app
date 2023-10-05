@@ -60,7 +60,6 @@ class SensorFAQInline(admin.TabularInline):
     extra = 1
 
 
-
 def order_pdf(obj):
     url = reverse('catalogue:order_pdf', args=[obj.id])
     return mark_safe(f'<a href="{url}">PDF</a>')
@@ -69,14 +68,14 @@ order_pdf.short_description = 'Invoice'
 
 @admin.register(Sensor)
 class SenorImageAdmin(admin.ModelAdmin):
+    list_display = [
+        f.name for f in Sensor._meta.fields
+    ]
     inlines = [SensorImageInline, SensorFAQInline]
-
 
 # @admin.register(Sensor)
 # class SensorFAQInline(admin.ModelAdmin):
 #     inlines = [SensorFAQInline]
-
-
 
 # @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):

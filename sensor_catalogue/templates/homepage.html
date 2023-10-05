@@ -192,6 +192,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Shuffle/6.1.0/shuffle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.min.js"></script>
 <script>
 var hazard_images = {}
 {% for hazard in hazards %}
@@ -343,10 +344,21 @@ function clear_data_filters(){
         }
     }).on('change', retrieve_data_filters);
 
-    var sensors_container = $('.sensors_grid').isotope({
-        itemSelector: '.grid-item',
-        masonry: {
-            columnWidth: '.grid-sizer'
-        }
-    })
+    var $sensors_container = $('.sensors_grid');
+
+    $sensors_container.imagesLoaded(function() {
+        $sensors_container.isotope({
+            itemSelector: '.grid-item',
+            masonry: {
+                columnWidth: '.grid-sizer'
+            }
+        });
+    });
+
+<!--    var sensors_container = $('.sensors_grid').isotope({-->
+<!--        itemSelector: '.grid-item',-->
+<!--        masonry: {-->
+<!--            columnWidth: '.grid-sizer'-->
+<!--        }-->
+<!--    })-->
 {% endblock ready_scripts %}
