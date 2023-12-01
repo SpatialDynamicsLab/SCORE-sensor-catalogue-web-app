@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <!-- Load Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css" />
     <style>
         .navbar {
         background-color: #003366; /* Dark blue background */
@@ -120,14 +122,22 @@
     <!-- Load jQuery and Bootstrap JavaScript -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
     <script>
+
+        // Create a marker cluster group
+    var markers = L.markerClusterGroup({
+        spiderfyOnMaxZoom: true, // Spiderfy markers when zoomed in fully
+        showCoverageOnHover: false, // Don't show the coverage area when hovering over a cluster
+        zoomToBoundsOnClick: true // Zoom to the bounds of the cluster when clicked
+    });
+
         var map = L.map('map').setView([53.3105866, -6.2359141], 13); // Default view
         // Load and display tile layer on the map
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; CARTO © OpenStreetMap contributors',
             maxZoom: 18
         }).addTo(map);
-
 
 
         function onEachFeature(feature, layer) {
@@ -166,13 +176,15 @@
                 return response.json();
             })
             .then(function(geojsonFeatureCollection) {
-                L.geoJSON(geojsonFeatureCollection, {
-                    onEachFeature: onEachFeature
-                }).addTo(map);
-
-                // Hide loading GIF
-                document.getElementById('loading-gif').style.display = 'none';
-            })
+            var geoJsonLayer = L.geoJSON(geojsonFeatureCollection, {
+                onEachFeature: onEachFeature
+            });
+            markers.addLayer(geoJsonLayer); // Add the GeoJSON layer to the marker cluster group
+            map.addLayer(markers); // Add the marker cluster group to the map
+            map.fitBounds(markers.getBounds()); // Zoom the map to the bounds of the marker cluster group
+            // Hide loading GIF
+            document.getElementById('loading-gif').style.display = 'none';
+        })
             .catch(function(error) {
                 console.error('Error fetching GeoJSON data:', error);
                 // Hide loading GIF
