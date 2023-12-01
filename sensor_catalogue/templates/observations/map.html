@@ -146,26 +146,31 @@
             });
         }
 
-        // Function to display device details
         function displayDeviceDetails(properties) {
             var detailsHtml = '<h5><strong>' + properties.name + '</strong></h5>';
             detailsHtml += '<p>' + properties.description + '</p>';
-            detailsHtml += '<p><strong>Last Reading:</strong> ' + properties.last_reading_at + '</p>';
-            // Observations table
-            detailsHtml += '<table class="table table-sm table-bordered"><thead><tr><th>Value</th><th>Unit</th><th>Measurement</th><th>Recorded At</th><th>Added At</th><th>Sensor</th></tr></thead><tbody>';
+
+            // Horizontal table with one row for CCLL Tags, System Tags, and Owner
+            detailsHtml += '<table class="table table-sm">';
+            detailsHtml += '<tr>';
+            detailsHtml += '<th>CCLL Tags:</th>';
+            detailsHtml += '<td>' + properties.ccll_tags.join(", ") + '</td>';
+            detailsHtml += '<th>Owner:</th>';
+            detailsHtml += '<td>' + properties.owner + '</td>';
+            detailsHtml += '</tr>';
+            detailsHtml += '</table>';
+
+            // Observations table without 'Added At' column
+            detailsHtml += '<table class="table table-sm table-bordered"><thead><tr><th>Value</th><th>Unit</th><th>Measurement</th><th>Recorded At</th><th>Sensor</th></tr></thead><tbody>';
             properties.observations.forEach(function(obs) {
-                detailsHtml += '<tr><td>' + obs.value + '</td><td>' + obs.unit + '</td><td>' + obs.measurement_name + '</td><td>' + obs.recorded_at + '</td><td>' + obs.added_at + '</td><td>' + obs.sensor_name + '</td></tr>';
+                detailsHtml += '<tr><td>' + obs.value + '</td><td>' + obs.unit + '</td><td>' + obs.measurement_name + '</td><td>' + obs.recorded_at + '</td><td>' + obs.sensor_name + '</td></tr>';
             });
             detailsHtml += '</tbody></table>';
-            // Additional details table
-            detailsHtml += '<table class="table table-sm table-borderless">';
-            detailsHtml += '<tr><td><strong>Owner:</strong></td><td>' + properties.owner + '</td></tr>';
-            detailsHtml += '<tr><td><strong>CCLL Tags:</strong></td><td>' + properties.ccll_tags.join(", ") + '</td></tr>';
-            detailsHtml += '<tr><td><strong>System Tags:</strong></td><td>' + properties.system_tags.join(", ") + '</td></tr>';
-            detailsHtml += '</table>';
 
             $('#device-details').html(detailsHtml);
         }
+
+
 
 
         // Display loading GIF
