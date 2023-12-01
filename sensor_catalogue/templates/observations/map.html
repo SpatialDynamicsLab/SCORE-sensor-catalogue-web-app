@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CCLLs Sensors Map</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Load Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <!-- Load Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        .navbar {
+        background-color: #003366; /* Dark blue background */
+        color: white; /* White text color */
+    }
+
+        .navbar-brand img {
+            height: 40px; /* Logo height */
+            margin-right: 10px; /* Spacing between logo and title */
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        /* Additional styles for the title next to the logo */
+        .navbar-title {
+            color: white; /* Title color */
+            font-size: 24px; /* Title font size */
+            font-weight: bold; /* Title font weight */
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+         body {
+            padding-top: 70px;
+        }
+        #map-container, #sidebar-container {
+            width: 100%;
+            flex: 1;
+        }
+        #map {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        #map-container {
+            height: 50%;
+        }
+        #sidebar-container {
+            height: 50%;
+            overflow-y: auto;
+            padding-left: 10%;
+            padding-right: 10%;
+        }
+         .leaflet-touch .leaflet-control-zoom-display {
+        width: 48px;
+        height: 48px;
+        font-size: 18px;
+        line-height: 40px;
+    }
+    .leaflet-touch .leaflet-bar a, .leaflet-touch .leaflet-toolbar-0 > li > a {
+        width: 44px;
+        height: 44px;
+        font-size: 20px;
+        line-height: 45px;
+        background-size: 314px 30px;
+    }
+    .leaflet-touch a {
+        background-position-y: 6px;
+    }
+    .leaflet-touch .leaflet-touch .leaflet-control-toolbar .leaflet-toolbar-1 > li > .leaflet-toolbar-icon {
+        font-size: 20px;
+        line-height: 44px;
+        height: 44px;
+    }
+    .leaflet-touch .leaflet-touch .leaflet-toolbar-1 {
+        left: 45px;
+        color: white;
+    }
+        #loading-gif {
+        display: none; /* Hide the loading gif initially */
+        margin: 0 auto;
+        padding-top: 20%;
+        width: 220px;
+        height: 220px;
+        background: url('https://i.gifer.com/ZZ5H.gif') no-repeat center center; /* Assuming you have a loading.gif in the right path */
+    }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <a class="navbar-brand" href="#">
+            <img src="https://score-dt-ewss.test.spatialdynamicslab.xyz/static/images/score_logo_white.png" alt="SCORE Logo">
+            CCLLs Sensors Map
+        </a>
+    </nav>
+    <div id="map-container">
+        <div id="map"></div>
+    </div>
+    <br>
+    <div id="sidebar-container">
+        <img id="loading-gif" alt="Loading..." style="display: none;">
+        <div id="device-details">
+            <h4>Sensor Details</h4>
+            <p>Click on a sensor to see its details and observations.</p>
+        </div>
+    </div>
+    <!-- Load Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- Load jQuery and Bootstrap JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        var map = L.map('map').setView([53.3105866, -6.2359141], 13); // Default view
+        // Load and display tile layer on the map
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; CARTO © OpenStreetMap contributors',
+            maxZoom: 18
+        }).addTo(map);
+
+
+
+        function onEachFeature(feature, layer) {
+            layer.on('click', function (e) {
+                displayDeviceDetails(feature.properties);
+            });
+        }
+
+        // Function to display device details
+        function displayDeviceDetails(properties) {
+            var detailsHtml = '<h5><strong>' + properties.name + '</strong></h5>';
+            detailsHtml += '<p>' + properties.description + '</p>';
+            detailsHtml += '<p><strong>Last Reading:</strong> ' + properties.last_reading_at + '</p>';
+            // Observations table
+            detailsHtml += '<table class="table table-sm table-bordered"><thead><tr><th>Value</th><th>Unit</th><th>Measurement</th><th>Recorded At</th><th>Added At</th><th>Sensor</th></tr></thead><tbody>';
+            properties.observations.forEach(function(obs) {
+                detailsHtml += '<tr><td>' + obs.value + '</td><td>' + obs.unit + '</td><td>' + obs.measurement_name + '</td><td>' + obs.recorded_at + '</td><td>' + obs.added_at + '</td><td>' + obs.sensor_name + '</td></tr>';
+            });
+            detailsHtml += '</tbody></table>';
+            // Additional details table
+            detailsHtml += '<table class="table table-sm table-borderless">';
+            detailsHtml += '<tr><td><strong>Owner:</strong></td><td>' + properties.owner + '</td></tr>';
+            detailsHtml += '<tr><td><strong>CCLL Tags:</strong></td><td>' + properties.ccll_tags.join(", ") + '</td></tr>';
+            detailsHtml += '<tr><td><strong>System Tags:</strong></td><td>' + properties.system_tags.join(", ") + '</td></tr>';
+            detailsHtml += '</table>';
+
+            $('#device-details').html(detailsHtml);
+        }
+
+
+        // Display loading GIF
+        document.getElementById('loading-gif').style.display = 'block';
+
+        fetch('https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/smart-citizen/latest-observations.geojson')
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(geojsonFeatureCollection) {
+                L.geoJSON(geojsonFeatureCollection, {
+                    onEachFeature: onEachFeature
+                }).addTo(map);
+
+                // Hide loading GIF
+                document.getElementById('loading-gif').style.display = 'none';
+            })
+            .catch(function(error) {
+                console.error('Error fetching GeoJSON data:', error);
+                // Hide loading GIF
+                document.getElementById('loading-gif').style.display = 'none';
+            });
+    </script>
+</body>
+</html>

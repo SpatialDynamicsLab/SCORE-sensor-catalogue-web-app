@@ -80,8 +80,7 @@ INSTALLED_APPS = [
     "catalogue",
     "cart",
     "orders",
-
-
+    "observations",
 ]
 
 
