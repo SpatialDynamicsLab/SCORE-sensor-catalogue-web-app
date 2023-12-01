@@ -142,11 +142,12 @@
 
         function onEachFeature(feature, layer) {
             layer.on('click', function (e) {
-                displayDeviceDetails(feature.properties);
+                displayDeviceDetails(feature);
             });
         }
 
-        function displayDeviceDetails(properties) {
+        function displayDeviceDetails(feature) {
+            properties = feature.properties
             var detailsHtml = '<h5><strong>' + properties.name + '</strong></h5>';
             detailsHtml += '<p>' + properties.description + '</p>';
 
@@ -157,9 +158,11 @@
             detailsHtml += '<td>' + properties.ccll_tags.join(", ") + '</td>';
             detailsHtml += '<th>Owner:</th>';
             detailsHtml += '<td>' + properties.owner + '</td>';
+            detailsHtml += '<th>Time series:</th>';
+            detailsHtml += '<td>' + ' <a href="https://dashboard.smartcitizen.me/?id='
+                + feature.id + '" class="ml-2" target="_blank">Open dashboard</a></td>';
             detailsHtml += '</tr>';
             detailsHtml += '</table>';
-
             // Observations table without 'Added At' column
             detailsHtml += '<table class="table table-sm table-bordered"><thead><tr><th>Value</th><th>Unit</th><th>Measurement</th><th>Recorded At</th><th>Sensor</th></tr></thead><tbody>';
             properties.observations.forEach(function(obs) {
@@ -169,8 +172,6 @@
 
             $('#device-details').html(detailsHtml);
         }
-
-
 
 
         // Display loading GIF
