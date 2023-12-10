@@ -12,15 +12,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css" />
     <style>
         .navbar {
-        background-color: #003366; /* Dark blue background */
-        color: white; /* White text color */
-    }
-
+            background-color: #003366; /* Dark blue background */
+            color: white; /* White text color */
+        }
         .navbar-brand img {
             height: 40px; /* Logo height */
             margin-right: 10px; /* Spacing between logo and title */
         }
-
         .navbar-brand {
             display: flex;
             align-items: center;
@@ -124,27 +122,18 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
     <script>
-
         // Create a marker cluster group
-    var markers = L.markerClusterGroup({
-        spiderfyOnMaxZoom: true, // Spiderfy markers when zoomed in fully
-        showCoverageOnHover: false, // Don't show the coverage area when hovering over a cluster
-        zoomToBoundsOnClick: true // Zoom to the bounds of the cluster when clicked
-    });
-
-        var map = L.map('map').setView([53.3105866, -6.2359141], 13); // Default view
+        var markers = L.markerClusterGroup({
+            spiderfyOnMaxZoom: true, // Spiderfy markers when zoomed in fully
+            showCoverageOnHover: false, // Don't show the coverage area when hovering over a cluster
+            zoomToBoundsOnClick: true // Zoom to the bounds of the cluster when clicked
+        });
+        var map = L.map('map').setView([53.3105866, -6.2359141], 13);
         // Load and display tile layer on the map
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; CARTO © OpenStreetMap contributors',
             maxZoom: 18
         }).addTo(map);
-
-
-        function onEachFeature(feature, layer) {
-            layer.on('click', function (e) {
-                displayDeviceDetails(feature);
-            });
-        }
 
         function displayDeviceDetails(feature) {
             properties = feature.properties
@@ -155,7 +144,9 @@
             detailsHtml += '<table class="table table-sm">';
             detailsHtml += '<tr>';
             detailsHtml += '<th>CCLL Tags:</th>';
-            detailsHtml += '<td>' + properties.ccll_tags.join(", ") + '</td>';
+            detailsHtml += '<td>' + properties.user_tags.join(", ") + '</td>';
+            detailsHtml += '<th>System Tags:</th>';
+            detailsHtml += '<td>' + properties.system_tags.join(", ") + '</td>';
             detailsHtml += '<th>Owner:</th>';
             detailsHtml += '<td>' + properties.owner + '</td>';
             detailsHtml += '<th>Time series:</th>';
@@ -164,33 +155,43 @@
             detailsHtml += '</tr>';
             detailsHtml += '</table>';
             // Observations table without 'Added At' column
-            detailsHtml += '<table class="table table-sm table-bordered"><thead><tr><th>Value</th><th>Unit</th><th>Measurement</th><th>Recorded At</th><th>Sensor</th></tr></thead><tbody>';
+            detailsHtml += '<table class="table table-sm table-bordered"><thead>' +
+                '<tr><th>Value</th><th>Unit</th><th>Measurement</th><th>Recorded At' +
+                '</th><th>Sensor</th></tr></thead><tbody>';
             properties.observations.forEach(function(obs) {
-                detailsHtml += '<tr><td>' + obs.value + '</td><td>' + obs.unit + '</td><td>' + obs.measurement_name + '</td><td>' + obs.recorded_at + '</td><td>' + obs.sensor_name + '</td></tr>';
+                detailsHtml += '<tr><td>' + obs.value + '</td><td>' + obs.unit +
+                    '</td><td>' + obs.measurement_name + '</td><td>' + obs.recorded_at +
+                    '</td><td>' + obs.sensor_name + '</td></tr>';
             });
             detailsHtml += '</tbody></table>';
 
             $('#device-details').html(detailsHtml);
         }
 
+         function forEachFeature(feature, layer) {
+            layer.on('click', function (e) {
+                displayDeviceDetails(feature);
+            });
+        }
 
         // Display loading GIF
         document.getElementById('loading-gif').style.display = 'block';
 
-        fetch('https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/smart-citizen/latest-observations.geojson')
+        fetch('https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/' +
+            'smart-citizen/latest-observations.geojson?user_tags=SCOREDUBLINCCLL')
             .then(function(response) {
                 return response.json();
             })
             .then(function(geojsonFeatureCollection) {
-            var geoJsonLayer = L.geoJSON(geojsonFeatureCollection, {
-                onEachFeature: onEachFeature
-            });
-            markers.addLayer(geoJsonLayer); // Add the GeoJSON layer to the marker cluster group
-            map.addLayer(markers); // Add the marker cluster group to the map
-            map.fitBounds(markers.getBounds()); // Zoom the map to the bounds of the marker cluster group
-            // Hide loading GIF
-            document.getElementById('loading-gif').style.display = 'none';
-        })
+                var geoJsonLayer = L.geoJSON(geojsonFeatureCollection, {
+                    onEachFeature: forEachFeature
+                });
+                markers.addLayer(geoJsonLayer); // Add the GeoJSON layer to the marker cluster group
+                map.addLayer(markers); // Add the marker cluster group to the map
+                map.fitBounds(markers.getBounds()); // Zoom the map to the bounds of the marker cluster group
+                // Hide loading GIF
+                document.getElementById('loading-gif').style.display = 'none';
+            })
             .catch(function(error) {
                 console.error('Error fetching GeoJSON data:', error);
                 // Hide loading GIF
