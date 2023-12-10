@@ -10,7 +10,17 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat+sans-serif&display=swap" rel="stylesheet">
     <style>
+         html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+         body {
+            padding-top: 70px;
+            font-family: Montserrat, sans-serif;
+        }
         .navbar {
             background-color: #003366; /* Dark blue background */
             color: white; /* White text color */
@@ -30,14 +40,6 @@
             color: white; /* Title color */
             font-size: 24px; /* Title font size */
             font-weight: bold; /* Title font weight */
-        }
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-         body {
-            padding-top: 70px;
         }
         #map-container, #sidebar-container {
             width: 100%;
@@ -137,11 +139,11 @@
 
         function displayDeviceDetails(feature) {
             properties = feature.properties
-            var detailsHtml = '<h5><strong>' + properties.name + '</strong></h5>';
+            var detailsHtml = '<h4><strong>' + properties.name + '</strong></h4>';
             detailsHtml += '<p>' + properties.description + '</p>';
 
             // Horizontal table with one row for CCLL Tags, System Tags, and Owner
-            detailsHtml += '<table class="table table-sm">';
+            detailsHtml += '<table class="table table-sm table-responsive-sm">';
             detailsHtml += '<tr>';
             detailsHtml += '<th>CCLL Tags:</th>';
             detailsHtml += '<td>' + properties.user_tags.join(", ") + '</td>';
@@ -149,14 +151,15 @@
             detailsHtml += '<td>' + properties.system_tags.join(", ") + '</td>';
             detailsHtml += '<th>Owner:</th>';
             detailsHtml += '<td>' + properties.owner + '</td>';
-            detailsHtml += '<th>Time series:</th>';
-            detailsHtml += '<td>' + ' <a href="https://dashboard.smartcitizen.me/?id='
-                + feature.id + '" class="ml-2" target="_blank">Open</a></td>';
+            // detailsHtml += '<th>Time series:</th>';
+            // detailsHtml += '<td>' + ' <a href="https://dashboard.smartcitizen.me/?id='
+            //     + feature.id + '" class="ml-2" target="_blank">Open</a></td>';
             detailsHtml += '</tr>';
             detailsHtml += '</table>';
             // Observations table without 'Added At' column
-            detailsHtml += '<table class="table table-sm table-bordered"><thead>' +
-                '<tr><th>Value</th><th>Unit</th><th>Measurement</th><th>Recorded At' +
+            detailsHtml += '<table class="table table-sm table-bordered table-hover table-responsive-md">' +
+                '<thead class="thead-light">' +
+                '<tr><th>Value</th><th>Unit</th><th>Measurement</th><th>Last Observation' +
                 '</th><th>Sensor</th></tr></thead><tbody>';
             properties.observations.forEach(function(obs) {
                 detailsHtml += '<tr><td>' + obs.value + '</td><td>' + obs.unit +
@@ -177,6 +180,13 @@
         // Display loading GIF
         document.getElementById('loading-gif').style.display = 'block';
 
+        // var customIcon = L.icon({
+        //     iconUrl: 'https://score-eu-project.eu/wp-content/uploads/2021/09/cropped-favicon.png', // Replace with the path to your icon image
+        //     iconSize: [28, 28],    // Size of the icon
+        //     iconAnchor: [12, 41],  // Point of the icon which will correspond to marker's location
+        //     popupAnchor: [0, -41]  // Point from which the popup should open relative to the iconAnchor
+        // });
+
         fetch('https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/' +
             'smart-citizen/latest-observations.geojson?user_tags=SCOREDUBLINCCLL')
             .then(function(response) {
@@ -184,7 +194,10 @@
             })
             .then(function(geojsonFeatureCollection) {
                 var geoJsonLayer = L.geoJSON(geojsonFeatureCollection, {
-                    onEachFeature: forEachFeature
+                    onEachFeature: forEachFeature,
+                    // pointToLayer: function (feature, latlng) {
+                    //     return L.marker(latlng, { icon: customIcon });
+                    // }
                 });
                 markers.addLayer(geoJsonLayer); // Add the GeoJSON layer to the marker cluster group
                 map.addLayer(markers); // Add the marker cluster group to the map
