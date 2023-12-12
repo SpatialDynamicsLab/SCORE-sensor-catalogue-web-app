@@ -199,8 +199,8 @@
             var properties = feature.properties;
             var observations = properties.observations;
 
-            var detailsHtml = '<h4><strong>' + properties.name + '</strong></h4>';
-            var detailsHtml = '<h6><strong>' + properties.observations.recorded_at + '</strong></h6>';
+            var detailsHtml = '<h4><strong>' + properties.name + '</strong><h6>' + properties.observations.recorded_at + '</h6></h4>';
+            // var detailsHtml = '<h6><strong>' + properties.observations.recorded_at + '</strong></h6>';
 
             // Crear una tabla para mostrar las observaciones de la estación
             detailsHtml += '<table class="table table-sm table-bordered table-hover table-responsive-md">';
