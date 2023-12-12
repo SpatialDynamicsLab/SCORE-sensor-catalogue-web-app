@@ -1,0 +1,21 @@
+{% extends "observations/base.html" %}
+{% load static %}
+{% block head %}
+{% include 'observations/map/css.html' %}
+{% endblock %}
+{% block head_title %}Map {% endblock %}
+{% block content %}
+{% include 'observations/base/navbar.html' %}
+<div id="map-container">
+    <div id="map"></div>
+</div>
+<br>
+<div id="sidebar-container">
+    <img id="loading-gif" alt="Loading..." style="display: none;">
+    <div id="device-details">
+        <h4>Sensor Details</h4>
+        <p>Click on a point to see the sensor details and observations.</p>
+    </div>
+</div>
+{% include 'observations/map/js.html' %}
+{% endblock %}
