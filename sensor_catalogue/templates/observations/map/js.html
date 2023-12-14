@@ -104,20 +104,20 @@
         });
     }
 
-    fetch('https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/' +
+
+    function loadSmartCitizenData() {
+        return fetch('https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/' +
         'smart-citizen/latest-observations.geojson?user_tags=SCOREDUBLINCCLL')
         .then(function(response) {
             return response.json();
         })
         .then(function(geojsonFeatureCollection) {
-            var smartCitizenMarkers = L.markerClusterGroup(); // Define markers here
             var smartCitizenLayer = L.geoJSON(geojsonFeatureCollection, {
                 onEachFeature: forEachFeature,
             });
 
             smartCitizenMarkers.addLayer(smartCitizenLayer);
             map.addLayer(smartCitizenMarkers);
-            // map.fitBounds(smartCitizenMarkers.getBounds());
             document.getElementById('loading-gif').style.display = 'none';
         })
         .catch(function(error) {
@@ -125,15 +125,15 @@
             // Hide loading GIF
             document.getElementById('loading-gif').style.display = 'none';
         });
+    }
 
-    // Fetch Weather Underground GeoJSON data
-    fetch('https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/' +
+    function loadWUData() {
+        return fetch('https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/' +
         'weather-underground/pws/latest-observations.geojson')
         .then(function(response) {
             return response.json();
         })
         .then(function(geojsonFeatureCollection) {
-            var wuMarkers = L.markerClusterGroup(); // Define markers here
             var wuPWSLayer = L.geoJSON(geojsonFeatureCollection, {
                 onEachFeature: forEachFeatureWU,
             });
@@ -147,4 +147,45 @@
             // Hide loading GIF
             document.getElementById('loading-gif').style.display = 'none';
         });
+    }
+
+    Promise.all([loadSmartCitizenData(), loadWUData()])
+        .then(() => {
+            mapBoundsFit(); // Call this function only after both layers are loaded
+            document.getElementById('loading-gif').style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Error loading data:', error);
+            document.getElementById('loading-gif').style.display = 'none';
+        });
+
+
+   function mapBoundsFit () {
+       try {
+           var smartCitizenBounds = smartCitizenMarkers.getBounds();
+           var wuBounds = wuMarkers.getBounds();
+
+            var combinedBounds = L.latLngBounds([]);
+
+            if (smartCitizenMarkers.getLayers().length > 0) {
+                combinedBounds.extend(smartCitizenBounds);
+            }
+            if (wuMarkers.getLayers().length > 0) {
+                combinedBounds.extend(wuBounds);
+            }
+
+            console.log("Smart Citizen Bounds:", smartCitizenBounds);
+            console.log("WU Bounds:", wuBounds);
+            console.log("Combined Bounds:", combinedBounds);
+
+            if (combinedBounds.isValid()) {
+                map.fitBounds(combinedBounds);
+            } else {
+                console.log("Combined bounds are not valid.");
+            }
+        } catch (error) {
+            console.error("Error fitting map bounds:", error);
+        }
+   }
+
 </script>
