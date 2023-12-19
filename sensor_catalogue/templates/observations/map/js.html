@@ -107,7 +107,7 @@
 
     function loadSmartCitizenData() {
         return fetch('https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/' +
-        'smart-citizen/latest-observations.geojson?user_tags=SCOREDUBLINCCLL')
+        'smart-citizen/latest-observations.geojson?user_tags=SCOREDUBLINCCLL&system_tags=online')
         .then(function(response) {
             return response.json();
         })
