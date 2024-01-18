@@ -16,6 +16,7 @@
     {% endblock css_libs %}
     <link href="{% static 'css/sensor_catalogue_style.css' %}" rel="stylesheet"/>
     {% block extra_style %}{% endblock extra_style %}
+    {% include 'observations/base/css.html' %}
 </head>
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% block content %}
