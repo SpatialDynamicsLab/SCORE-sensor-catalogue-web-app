@@ -18,13 +18,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import redirect_howe_to_catalogue_view
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path('', redirect_howe_to_catalogue_view),
     path('accounts/', include('allauth.urls')),
     path('cart/', include('cart.urls', namespace='cart')),
     path('orders/', include('orders.urls', namespace='orders')),
-    path('', include('catalogue.urls', namespace='catalogue')),
+    path('catalogue/', include('catalogue.urls', namespace='catalogue')),
     path('map/', include('observations.urls', namespace='observations')),
 ]
 
