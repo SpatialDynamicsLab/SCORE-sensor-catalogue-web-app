@@ -7,59 +7,45 @@
 {% block content %}
 <!-- Navigation bar -->
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-    <a class="navbar-brand" href="#">
-        <img src="https://score-dt-ewss.test.spatialdynamicslab.xyz/static/images/score_logo_white.png" alt="SCORE Logo">
-        Community applications
+    <a class="navbar-brand" href="">
+        <img src="https://score-dt-ewss.test.spatialdynamicslab.xyz/static/images/score_logo_white.png"
+             alt="SCORE Logo">Community applications
     </a>
 </nav>
-<br>
- <h1 class="text-center font-weight-bolder">Become a Citizen Scientist!</h1>
-<div class="container text-center">
-    <br>
-     <div class="row mb-10">
-          <div class="col-md-4 mb-3">
+<div class="mx-auto my-4">
+    <h2 class="text-center font-weight-bolder">Become a Citizen Scientist!</h2>
+    <div class="row mx-auto text-center my-2">
+        <div class="col-12 col-xs-12 col-md-4" style="padding-bottom: 300px;">
             <div class="card" style="width: 18rem;">
-              <img src="/static/images/weather_station.jpg" class="card-img-top" alt="...">
-              <div class="card-body text-center">
-                   <a href="https://geosurveys.score-eu-project.eu/map/become-a-citizen-scientist-weather-station"
-                   class="btn btn-prim waves-effect waves-light">
-                    Apply here!</a>
-                  <br><br>
-                <h4 class="card-title size-5">Become a Citizen Scientist in Dún Laoghaire-Rathdown!</h4>
-                <p class="card-text font-weight-bolder">Weather Station - Site selection process</p>
-              </div>
+                <img src="/static/images/weather_station.jpg" class="card-img-top" alt="..." style="height: 390px; object-fit: cover;">
+                <div class="card-body">
+                    <a href="https://geosurveys.score-eu-project.eu/map/become-a-citizen-scientist-weather-station" class="btn btn-prim waves-effect waves-light">Apply here!</a>
+                    <h4 class="card-title size-5 mt-2">Become a Citizen Scientist in Dún Laoghaire-Rathdown!</h4>
+                    <p class="card-text font-weight-bolder">Weather Station - Site selection process</p>
+                </div>
             </div>
-
-          </div>
-          <div class="col-md-4 mb-3">
-
-            <div class="card" style="width: 18rem;">
-              <img src="/static/images/outdoor_air_quality.jpeg" class="card-img-top" alt="...">
-              <div class="card-body text-center">
-                  <a href="https://geosurveys.score-eu-project.eu/map/become-a-citizen-scientist-outdoor-air-quality-kit"
-                   class="btn btn-prim waves-effect waves-light">Apply here!</a>
-                  <br><br>
-                <h5 class="card-title">Become a Citizen Scientist in Dún Laoghaire-Rathdown!</h5>
-                <p class="card-text font-weight-bolder">Outdoor Air Quality Kit - Site selection process</p>
-              </div>
-            </div>
-
-          </div>
-          <div class="col-md-4 mb-3">
-
-            <div class="card" style="width: 18rem;">
-              <img src="/static/images/indoor_air_quality.jpeg" class="card-img-top" alt="...">
-              <div class="card-body text-center">
-                  <a href="https://geosurveys.score-eu-project.eu/map/become-a-citizen-scientist-indoor-air-quality-kit/"
-                   class="btn btn-prim waves-effect waves-light">Apply here!</a>
-                  <br><br>
-                <h5 class="card-title">Become a Citizen Scientist in Dún Laoghaire-Rathdown!</h5>
-                <p class="card-text font-weight-bolder">Indoor Air Quality Kit - Site selection process</p>
-              </div>
-            </div>
-
-          </div>
         </div>
+        <div class="col-12 col-xs-12 col-md-4" style="padding-bottom: 300px;">
+            <div class="card" style="width: 18rem;">
+                <img src="/static/images/outdoor_air_quality.jpeg" class="card-img-top" alt="..." style="height: 390px; object-fit: cover;">
+                <div class="card-body">
+                    <a href="https://geosurveys.score-eu-project.eu/map/become-a-citizen-scientist-outdoor-air-quality-kit" class="btn btn-prim waves-effect waves-light">Apply here!</a>
+                    <h5 class="card-title mt-2">Become a Citizen Scientist in Dún Laoghaire-Rathdown!</h5>
+                    <p class="card-text font-weight-bolder">Outdoor Air Quality Kit - Site selection process</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-xs-12 col-md-4" style="padding-bottom: 300px;">
+            <div class="card" style="width: 18rem;">
+                <img src="/static/images/indoor_air_quality_2.jpg" class="card-img-top" alt="..." style="height: 390px; object-fit: contain;">
+                <div class="card-body">
+                    <a href="https://geosurveys.score-eu-project.eu/map/become-a-citizen-scientist-indoor-air-quality-kit/" class="btn btn-prim waves-effect waves-light">Apply here!</a>
+                    <h5 class="card-title mt-2">Become a Citizen Scientist in Dún Laoghaire-Rathdown!</h5>
+                    <p class="card-text font-weight-bolder">Indoor Air Quality Kit - Site selection process</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 {% include "footer.html" %}
