@@ -9,6 +9,7 @@ urlpatterns =[
     path('hazards/', views.hazard_list, name='hazards_list'),
     path('hazards/<slug:slug>', views.hazard_sensor_list, name='hazard_sensor_list'),
     path('sensor/<slug>/',views.detail_view, name='sensor'),
+    path('applications/', views.invitations_view, name='invitations'),
 
     # path('add-to-cart/<slug>/', views.add_to_cart,name='add-to-cart'),
     # path('add_to_cart/<slug>/', views.cart_add,name='cart_add'),
