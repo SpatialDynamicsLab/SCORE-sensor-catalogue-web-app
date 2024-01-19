@@ -22,11 +22,11 @@ from .views import redirect_howe_to_catalogue_view
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('', redirect_howe_to_catalogue_view),
+    # path('', redirect_howe_to_catalogue_view),
     path('accounts/', include('allauth.urls')),
     path('cart/', include('cart.urls', namespace='cart')),
     path('orders/', include('orders.urls', namespace='orders')),
-    path('catalogue/', include('catalogue.urls', namespace='catalogue')),
+    path('', include('catalogue.urls', namespace='catalogue')),
     path('map/', include('observations.urls', namespace='observations')),
 ]
 
