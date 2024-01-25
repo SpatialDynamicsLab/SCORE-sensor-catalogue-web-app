@@ -15,7 +15,7 @@
     var baseLayers = {};
     var overlayLayers = {
         "Smart Citizen Devices": smartCitizenMarkers,
-         "WU Personal Weather Stations":wuMarkers
+        "WU Personal Weather Stations":wuMarkers
     };
 
     var map = L.map('map').setView([53.3105866, -6.2359141], 13);
@@ -30,8 +30,10 @@
 
     function displayDeviceDetails(feature) {
         properties = feature.properties
-        var detailsHtml = '<h4><strong>' + properties.name + '</strong></h4>';
-        detailsHtml += '<p>' + properties.description + '</p>';
+        var detailsHtml = '<h3 style="color:#004680"><b>' + properties.name + '</b></h3>';
+        detailsHtml += '<p>' + properties.description + '<br><small>Platform provider: ' +
+           '<a href="'  + properties.platform_provider.url + '" className="ml-2" target="_blank"> ' +
+            properties.platform_provider.name + '</a></small></p>'
 
         // Horizontal table with one row for CCLL Tags, System Tags, and Owner
         detailsHtml += '<table class="table table-sm table-responsive-sm">';
@@ -45,6 +47,7 @@
         // detailsHtml += '<th>Time series:</th>';
         // detailsHtml += '<td>' + ' <a href="https://dashboard.smartcitizen.me/?id='
         //     + feature.id + '" class="ml-2" target="_blank">Open</a></td>';
+        detailsHtml += '<td>' + properties.owner + '</td>';
         detailsHtml += '</tr>';
         detailsHtml += '</table>';
         // Observations table without 'Added At' column
@@ -72,9 +75,11 @@
         var properties = feature.properties;
         var observations = properties.observations;
 
-        var detailsHtml = '<h4><strong>' + properties.name + '</strong><h6>'
-            + properties.observations.recorded_at + '</h6></h4>';
+        var detailsHtml = '<h3 style="color:#004680"><b> ' + properties.name + '</b></h3>';
         // var detailsHtml = '<h6><strong>' + properties.observations.recorded_at + '</strong></h6>';
+        detailsHtml += '<p>Last observation: <b>' + properties.observations.recorded_at + '</b>' +
+            '<br><small>Platform provider: ' + '<a href="'  + properties.platform_provider.url +
+            '" className="ml-2" target="_blank"> ' + properties.platform_provider.name + '</a></small></p>'
 
         // Crear una tabla para mostrar las observaciones de la estación
         detailsHtml += '<table class="table table-sm table-bordered ' +
