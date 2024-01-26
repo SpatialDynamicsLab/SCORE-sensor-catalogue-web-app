@@ -116,7 +116,7 @@ def hazard_sensor_list(request, slug):
         return redirect("catalogue:hazards_list")
         
 
-def invitations_view(request):
-    return render(request, "pages/card_menu.html", {})
+def ccll_dublin_page_view(request):
+    return render(request, "pages/ccll/dublin.html", {})
 
 

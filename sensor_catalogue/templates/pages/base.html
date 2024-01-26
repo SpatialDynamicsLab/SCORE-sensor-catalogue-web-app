@@ -4,23 +4,21 @@
 <html>
 <head>
     <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1,
+    shrink-to-fit=no"/>
     <meta http-equiv="x-ua-compatible" content="ie=edge"/>
-    <title>{% block head_title %}{% endblock head_title %}</title>
-    {% block extra_head %}{% endblock extra_head %}
-    {% block css_libs %}
+    <title>CCLLs pages - {% block head_title %}{% endblock head_title %}</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"/>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"/>
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet"/>
     <link href="{% static 'css/mdb.min.css' %}" rel="stylesheet"/>
-    {% endblock css_libs %}
     <link href="{% static 'css/sensor_catalogue_style.css' %}" rel="stylesheet"/>
-    {% block extra_style %}{% endblock extra_style %}
-    {% include 'observations/base/css.html' %}
+    {% include 'pages/base/css.html' %}
+    {% block head %}
+    {% endblock %}
 </head>
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% block content %}
-
     {% endblock %}
 </body>
 </html>
