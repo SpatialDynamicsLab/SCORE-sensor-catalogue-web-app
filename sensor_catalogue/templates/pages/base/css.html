@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css" />
 <style>
-        html, body {
+    html, body {
         height: 100%;
         margin: 0;
         padding: 0;
@@ -33,5 +33,20 @@
         color: white; /* Title color */
         font-size: 24px; /* Title font size */
         font-weight: bold; /* Title font weight */
+    }
+
+    @media screen and (min-width: 768px) and (max-width: 1023px) {
+        .centered-list-bg-screens {
+            padding-left: 6rem;
+            padding-right: 14rem;
+        }
+    }
+
+    /* Media query for large screens */
+    @media screen and (min-width: 1024px) {
+        .centered-list-bg-screens {
+            padding-left: 6rem;
+            padding-right: 14rem;
+        }
     }
 </style>
