@@ -2,38 +2,82 @@
 {% load i18n %}
 {% load static %}
 {% load crispy_forms_tags %}
+{% load humanize %}
+{% block extra_head %}
+<style>
+  /*Profile Card 5*/
+    .profile-card{
+        margin-top:20px;
+    }
+    .profile-card .card-img-block {
+        width: 95%;
+        margin: 0 auto;
+        position: relative;
+        top: -20px;
+
+    }
+    .profile-card .card-img-block img{
+        border-radius:5px;
+        box-shadow:0 0 10px rgba(0,0,0,0.63);
+        height: 360px;
+    }
+
+</style>
+{% endblock %}
+
 {% block content %}
-{% load humanize %} 
+
 {% include 'navbar.html' %}
-
   <!-- <main class="mt-5 pt-4"> -->
-    <div class="container dark-grey-text mt-5 pt-5">
-
+    <div class="container dark-grey-text mt-4 pt-4">
       <!--Grid row-->
+      <nav class="font-weight-lighter">
+            <div>
+              <a href="/">&#171; Back to catalogue</a>
+            </div>
+          </nav>
       <div class="row wow fadeIn">
         <!--Grid column-->
         <div class="col-md-4 mb-3">
-          <img class="img-fluid rounded" src="{% if sensor.image %} {{ sensor.image.url }} {% else %}
-          {% static "images/no_image.png" %} {% endif %}" alt="{{ sensor.sensor_name}}"
-          style="width:100%;height:350px; margin-left: auto;margin-right: auto;
-          display: block;">
+
+
+
+          <div class="mt-4 justify-content-center">
+    		    <div class="profile-card">
+    		        <div class="card-img-block">
+    		            <img class="card-img" src="{% if sensor.image %}{{ sensor.image.url }}{% else %}{% static 'images/no_image.png' %}{% endif %}"
+                             alt="{{ sensor.sensor_name}}">
+    		        </div>
+                </div>
+    		</div>
+
+
+<!--          <img class="img-fluid rounded" src="{% if sensor.image %}-->
+<!--          {{ sensor.image.url }} {% else %}-->
+<!--          {% static "images/no_image.png" %} {% endif %}" alt="{{ sensor.sensor_name}}"-->
+<!--          style="width:100%;height:350px; margin-left: auto;margin-right: auto;-->
+<!--          display: block;">-->
+
+
         </div>
         <div class="col-md-6 mb-4">
           <!--Content-->
-          <div class="p-4">
+          <div class="pt-0 pl-4">
             <div class="mb-3">
-              <h3 class="simple-article size-5 uppercase">{{sensor.sensor_name}}</h3>          
+              <h1 class="simple-article size-6 uppercase font-weight-bolder">
+                {{sensor.sensor_name}}</h1>
 
               </div>
             <p class="lead">Description</p>
 
               <p>{{ sensor.full_description | linebreaks  }}</p>
 
-              <p><strong>Monitored Parameters:</strong> 
-
-                {% for param in sensor.monitored_parameter.all %}
-                  {{param}}
-                {% endfor %}
+              <p><strong>Monitored Parameters:</strong>
+                 <div class="simple-article size-4 uppercase color col-xs-b5">
+                  {% for param in sensor.monitored_parameter.all %}
+                    <li style="list-style: none;">{{param}}</li>
+                  {% endfor %}
+                </div>
               </p>
 
               {% if sensor.hazard %}
@@ -63,12 +107,18 @@
               <p>
                 Minimum Quantity : {{ sensor.minimum_purchase_quantity  }}
               </p>
-              <form action="{% url "cart:cart_add" sensor.slug %}" method="post" >
-                {{cart_sensor_form }}
-                {% csrf_token %}
-                <button type="submit" value="Add to cart"
-                        class="btn btn-warn">Add to cart</button>
+            <div>
+              <form action="{% url 'cart:cart_add' sensor.slug %}" method="post">
+                 {% csrf_token %}
+                 Quantity:
+                {% for field in cart_sensor_form %}
+                    {{ field }}
+                {% endfor %}
+                <button type="submit" value="Add to cart" class="btn btn-warn">
+                  Add to cart
+                </button>
               </form>
+            </div>
           </div>
           <div>
           </div>

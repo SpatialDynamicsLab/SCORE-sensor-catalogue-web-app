@@ -67,8 +67,8 @@ def home(request):
         'complexities': complexities,
         'sensors': sensors,
         'min_price': min_price,
-        'max_price': max_price,
-        'price_step': price_step
+        'max_price': 2000,
+        'price_step': 200
     }
     return render(request, 'homepage.html', context)
 

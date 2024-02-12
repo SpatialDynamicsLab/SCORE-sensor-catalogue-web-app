@@ -239,6 +239,7 @@ body ::-moz-selection {color: #30bfd1;}
 .simple-article.size-3{font-size: 14px; line-height: 22px;}
 .simple-article.size-4{font-size: 16px; line-height: 24px;color:#3ab2ca;font-weight:500;}
 .simple-article.size-5{font-size: 18px; line-height: 24px;color:#343434;}
+.simple-article.size-6{font-size: 36px; line-height: 24px;color:#343434;}
 
 .simple-article p, .simple-article ul, .simple-article ol, .simple-article img, .simple-article *[class*="col"], .simple-article h1, .simple-article h2, .simple-article h3, .simple-article h4, .simple-article h5, .simple-article h6, .simple-article .embed-responsive, .simple-article .swiper-container{margin-bottom: 22px;}
 .simple-article *:last-child{margin-bottom: 0;}
@@ -266,11 +267,11 @@ body ::-moz-selection {color: #30bfd1;}
 .title-underline.right span:before{display: none;}
 .simple-article h4, .h4 {
   text-align: center;
-  background-color: #f86d51;
+  background-color: #30bfd1;
   border-radius: 30px;
   width: 75px;
   height: 30px;
-  border: solid 1px #ff4d35;
+  border: solid 1px #30bfd1;
   padding: 4px 6px; 
   color: white;
   right: -10px;
@@ -281,6 +282,7 @@ body ::-moz-selection {color: #30bfd1;}
 }
 h3.size-5 {font-weight: 500;}
 h3.size-3 {font-weight: 300;color:#30bfd1;}
+h1.size-5 {font-size: 42px}
 
 
 /*-------------------------------------------------------------------------------------------------------------------------------*/
@@ -394,7 +396,7 @@ div.gallery-grid-item.style-2 {border:solid 10px rgb(249, 253, 255) !important;}
   margin-left: 5px;
 }
 
-.active:after {
+.active-accordion:after {
   content: "\2796"; /* Unicode character for "minus" sign (-) */
 }
 
