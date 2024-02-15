@@ -5,22 +5,23 @@
 {% load humanize %}
 {% block extra_head %}
 <style>
-  /*Profile Card 5*/
-    .profile-card{
-        margin-top:20px;
-    }
-    .profile-card .card-img-block {
-        width: 95%;
-        margin: 0 auto;
-        position: relative;
-        top: -20px;
+  /* Profile Card 5 */
+  .profile-card {
+    margin-top: 10px;
+    width: 95%; /* Set the width of the card */
+    max-width: 400px; /* Define the maximum width of the card */
+    overflow: hidden; /* Hide overflowing content */
+    border-radius: 5px; /* Add border radius */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.63);
+  }
 
-    }
-    .profile-card .card-img-block img{
-        border-radius:5px;
-        box-shadow:0 0 10px rgba(0,0,0,0.63);
-        height: 360px;
-    }
+  .profile-card .card-img-block {
+    position: relative;
+    height: 360px; /* Set the height of the card image */
+    overflow: hidden; /* Hide overflowing content */
+    background-size: cover;
+    background-position: center; /* Center the background image */
+  }
 
 </style>
 {% endblock %}
@@ -40,16 +41,23 @@
         <!--Grid column-->
         <div class="col-md-4 mb-3">
 
-
-
           <div class="mt-4 justify-content-center">
-    		    <div class="profile-card">
-    		        <div class="card-img-block">
-    		            <img class="card-img" src="{% if sensor.image %}{{ sensor.image.url }}{% else %}{% static 'images/no_image.png' %}{% endif %}"
-                             alt="{{ sensor.sensor_name}}">
-    		        </div>
-                </div>
-    		</div>
+            <div class="profile-card">
+              <div class="card-img-block" style="background-image: url('{% if sensor.image %}{{ sensor.image.url }}{% else %}{% static 'images/no_image.png' %}{% endif %}')">
+              </div>
+            </div>
+          </div>
+
+
+
+<!--          <div class="mt-4 justify-content-center">-->
+<!--    		    <div class="profile-card">-->
+<!--    		        <div class="card-img-block">-->
+<!--    		            <img class="card-img" src="{% if sensor.image %}{{ sensor.image.url }}{% else %}{% static 'images/no_image.png' %}{% endif %}"-->
+<!--                             alt="{{ sensor.sensor_name}}">-->
+<!--    		        </div>-->
+<!--                </div>-->
+<!--    		</div>-->
 
 
 <!--          <img class="img-fluid rounded" src="{% if sensor.image %}-->
