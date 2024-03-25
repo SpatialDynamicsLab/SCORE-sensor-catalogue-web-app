@@ -1,0 +1,143 @@
+{% extends "onboarding/base.html" %}
+{% load static %}
+{% block head %}
+{% include 'onboarding/base/css.html' %}
+<style>
+    #mapid {
+        height: 450px; /* Adjust height as needed for your layout */
+        width: 100%; /* Full width */
+        margin-top: 20px;
+    }
+    .sensor-form-container {
+        background: #f8f9fa;
+        border-radius: 5px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin: auto;
+        margin-top: 20px;
+        margin-bottom: 30px;
+        max-width: 1200px; /* Adjust as needed */
+    }
+    .btn-main {
+        background-color: #30bfd1;
+        color: white;
+        border-radius: 20px;
+        padding: 10px 25px;
+        font-size: 18px; /* Larger font for buttons */
+        text-transform: uppercase;
+    }
+    .btn-main:hover {
+        background-color: #003580;
+        color: white;
+    }
+</style>
+{% endblock %}
+{% block head_title %}Select your sensor type{% endblock %}
+{% block content %}
+{% include 'onboarding/base/navbar.html' %}
+<div class="pt-5">
+    <div class="row justify-content-center p-4">
+        <div class="col-md-8 sensor-form-container">
+            <form id="sensorForm" method="post">
+                {% csrf_token %}
+                <h2 class="text-uppercase font-weight-bolder mb-4 text-center">
+                    Register Your Sensor</h2>
+                <!-- Input field for sensor name -->
+                <div class="form-group">
+                    <label for="sensor_name" class="h4 mb-3">
+                        What is the nanme of your sensor?</label>
+                    <input type="text" name="sensor_name" id="sensor_name"
+                           class="form-control"
+                           placeholder="Enter sensor name" required>
+                </div>
+                <!-- Dropdown for selecting sensor type -->
+                <div class="form-group">
+                    <label for="sensor_type" class="h4 mb-3">
+                        Select the type of sensor:</label>
+                    <select name="sensor_type" id="sensor_type"
+                            class="form-control" required>
+                        <option value="">Please select a sensor type</option>
+                        {% for type, name in sensor_type_choices.items %}
+                            <option value="{{ type }}">{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div id="mapid" style="display: none;"></div>
+                <input type="hidden" name="location" id="location"
+                       required style="display: none;">
+                <div class="text-center">
+                    <button type="submit" class="btn btn-main mt-4">
+                        Next
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    var sensorTypeSelect = document.getElementById('sensor_type');
+    var mapContainer = document.getElementById('mapid');
+    var locationInput = document.getElementById('location');
+
+    // Initialize the map but do not display it yet
+    var map = L.map('mapid').setView([53.35, -6.2], 11);
+    L.tileLayer('https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '&copy; ESRI' +
+        '<a href="https://www.esri.com/">',
+    }).addTo(map);
+
+    var marker;
+
+    // Function to update the map and location visibility
+    function updateMapVisibility() {
+        var selectedType = sensorTypeSelect.value;
+        if (selectedType === 'SCK-AQ') {
+            mapContainer.style.display = 'block';
+            locationInput.style.display = 'block';
+
+            // Invalidate map size after changing its visibility
+            // This is particularly important for correct rendering
+            setTimeout(function() {
+                map.invalidateSize();
+            }, 1); // A short delay ensures the map container is visible when size is invalidated
+        } else {
+            mapContainer.style.display = 'none';
+            locationInput.style.display = 'none';
+            locationInput.value = ''; // Clear location value
+        }
+    }
+
+    // Event listener for sensor type selection changes
+    sensorTypeSelect.addEventListener('change', function() {
+        updateMapVisibility();
+        if (marker) {
+            map.removeLayer(marker);
+        }
+    });
+
+    // Map click event to set location
+    map.on('click', function(e) {
+        if (marker) {
+            map.removeLayer(marker);
+        }
+        marker = L.marker(e.latlng).addTo(map);
+        locationInput.value = JSON.stringify(e.latlng);
+    });
+
+    // Form submission handler
+    document.getElementById('sensorForm').onsubmit = function(e) {
+        if (sensorTypeSelect.value === 'SCK-AQ' && !locationInput.value) {
+            e.preventDefault(); // Prevent form submission
+            alert('Please select a location on the map for your sensor.');
+        }
+    };
+});
+
+</script>
+
+{% endblock %}
+

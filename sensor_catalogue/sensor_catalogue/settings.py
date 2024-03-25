@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     "cart",
     "orders",
     "observations",
+    "onboarding",
 ]
 
 
@@ -212,7 +213,8 @@ STATIC_URL = '/static/'
 
 
 MEDIA_ROOT = BASE_DIR / 'images'
-MEDIA_URL = 'https://sensors.score-eu-project.eu/images/'
+# MEDIA_URL = 'https://sensors.score-eu-project.eu/images/'
+MEDIA_URL = '/images/'
 
 # CRISPY_TEMPLATE_PACK = 'bootstrap4'
 

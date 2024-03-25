@@ -1,0 +1,105 @@
+{% extends "onboarding/base.html" %}
+{% load static %}
+{% block head %}
+{% include 'onboarding/base/css.html' %}
+<style>
+    .step-container {
+        background: #f8f9fa;
+        border-radius: 5px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin: auto;
+        margin-top: 20px;
+        margin-bottom: 30px;
+        max-width: 1200px; /* Adjust as needed */
+    }
+    .step-header-number {
+        font-size: 1.2rem; /* Large text for headings */
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+    .step-header {
+        font-size: 2rem; /* Large text for headings */
+        font-weight: bolder;
+        margin-bottom: 1rem;
+    }
+    .step-content {
+        font-size: 1.4rem; /* Larger text for content */
+        margin-bottom: 1rem;
+    }
+    .step-media {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        width: 80%; /* Responsive media width */
+        height: auto; /* Maintain aspect ratio */
+    }
+    .step-navigation-link {
+        text-decoration: none;
+        color: white;
+        background-color: #30bfd1;
+        padding: 10px 25px;
+        border-color: #30bfd1;
+        border-radius: 30px;
+        font-size: 22px; /* Larger font for buttons */
+        text-transform: uppercase;
+    }
+    .step-navigation-link:hover {
+        background-color: #003580;
+        color: white;
+    }
+    .text-center { /* Centering for all text */
+        text-align: center;
+    }
+</style>
+{% endblock %}
+{% block head_title %}Installation Step{% endblock %}
+{% block content %}
+{% include 'onboarding/base/navbar.html' %}
+<div class="container">
+    <div class="step-container text-center">
+
+
+        <h5 class="step-header-number">
+            Step {{ step_number }} of {{ total_steps }}</h5>
+        <h1 class="step-header text-uppercase">{{ current_step.title }}</h1>
+        <p class="step-content">{{ current_step.description|safe }}</p>
+
+        {% if current_step.step_type == 'media' %}
+            {% if current_step.image %}
+            <img src="{{ current_step.image.url }}" alt="Step Image" class="step-media">
+            {% endif %}
+            {% if current_step.video %}
+            <video controls class="step-media">
+                <source src="{{ current_step.video.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            {% endif %}
+        {% elif current_step.step_type == 'input' %}
+            <form method="POST" action="
+            {% url 'onboarding:installation_step' sensor_thing_id=sensor_thing.id step_number=step_number %}">
+                {% csrf_token %}
+                {% if currrent_step.input_label %}
+                <label for="step_input">{{ current_step.input_label }}</label>
+                {% endif %}
+                <input type="text" id="step_input" name="step_input"
+                       class="form-control" required>
+                <button type="submit" class="btn btn-primary mt-3
+                step-navigation-link">Next step</button>
+            </form>
+        {% endif %}
+
+        <div class="navigation-buttons mt-4">
+            {% if next_step_number and current_step.step_type != 'input' %}
+                <a href="{% url 'onboarding:installation_step' sensor_thing_id=sensor_thing.id step_number=next_step_number %}"
+                   class="step-navigation-link">Next Step</a>
+            {% elif not next_step_number %}
+                {% if redirect_url %}
+                    <a href="{{ redirect_url }}" class="step-navigation-link">Finish</a>
+                {% else %}
+                    <a href="{% url 'onboarding:installation_complete' %}" class="step-navigation-link">Finish</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

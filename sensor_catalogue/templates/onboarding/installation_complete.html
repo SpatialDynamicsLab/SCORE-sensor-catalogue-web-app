@@ -1,0 +1,56 @@
+{% extends "onboarding/base.html" %}
+{% load static %}
+{% block head %}
+{% include 'onboarding/base/css.html' %}
+<style>
+    .step-container {
+        background: #f8f9fa;
+        border-radius: 5px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin: auto;
+        margin-top: 20px;
+        max-width: 600px; /* Adjust as needed */
+    }
+    .step-header {
+        font-size: 2rem; /* Large text for headings */
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+    .step-content {
+        font-size: 1.2rem; /* Larger text for content */
+        margin-bottom: 1rem;
+    }
+    .step-media {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        width: 100%; /* Responsive media width */
+        height: auto; /* Maintain aspect ratio */
+    }
+    .step-navigation-link {
+        text-decoration: none;
+        color: white;
+        background-color: #0056b3; /* Example primary color */
+        padding: 10px 25px;
+        border-radius: 20px;
+        font-size: 18px; /* Larger font for buttons */
+    }
+    .step-navigation-link:hover {
+        background-color: #003580;
+    }
+    .text-center { /* Centering for all text */
+        text-align: center;
+    }
+</style>
+{% endblock %}
+{% block head_title %}Installation Step{% endblock %}
+{% block content %}
+{% include 'onboarding/base/navbar.html' %}
+<div class="container">
+    <div class="step-container text-center">
+
+        <h3 class="step-header">Well Done!</h3>
+
+    </div>
+</div>
+{% endblock %}
