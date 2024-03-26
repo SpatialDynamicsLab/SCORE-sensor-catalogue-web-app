@@ -3,10 +3,12 @@ from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views import View
+from django.views.decorators.clickjacking import xframe_options_exempt
 from .models import Sensor, SensorThing, InstallationStep
 from django.http import JsonResponse
 
 
+@xframe_options_exempt
 class SensorThingCreateView(View):
     template_name = 'onboarding/sensor_thing_form.html'
 
@@ -41,7 +43,8 @@ class SensorThingCreateView(View):
                 }
             except (json.JSONDecodeError, KeyError, TypeError):
                 return JsonResponse(
-                    {'error': 'Invalid or missing location data for SCK-AQ sensor type.'},
+                    {'error': 'Invalid or missing location data '
+                              'for SCK-AQ sensor type.'},
                     status=400)
         else:
             location = {}  # Set an empty location or an appropriate default.
@@ -59,6 +62,7 @@ class SensorThingCreateView(View):
                         sensor_thing_id=sensor_thing.id)
 
 
+@xframe_options_exempt
 def installation_step_view(request, sensor_thing_id, step_number=1):
     sensor_thing = get_object_or_404(SensorThing, id=sensor_thing_id)
     steps = InstallationStep.objects.filter(
@@ -119,48 +123,7 @@ def installation_step_view(request, sensor_thing_id, step_number=1):
     return render(request, 'onboarding/installation_step.html', context)
 
 
-
-# def installation_step_view(request, sensor_thing_id, step_number=1):
-#     sensor_thing = get_object_or_404(SensorThing, id=sensor_thing_id)
-#     steps = InstallationStep.objects.filter(
-#         sensor=sensor_thing.sensor).order_by('step_number')
-#     current_step = steps.filter(step_number=step_number).first()
-#
-#     if not current_step:
-#         return redirect('onboarding:installation_complete')
-#
-#     next_step_number = step_number + 1 if step_number < steps.count() else None
-#
-#     if request.method == 'POST' and current_step.step_type == 'input':
-#         input_value = request.POST.get('step_input', '')
-#         properties = json.loads(sensor_thing.properties or '{}')
-#
-#         # Ensure properties is a dictionary
-#         if not isinstance(properties, dict):
-#             properties = {}
-#
-#         key = current_step.title.replace(' ', '_').lower()
-#         properties[key] = input_value
-#         sensor_thing.properties = json.dumps(properties)
-#         sensor_thing.save()
-#         messages.success(request, 'Your input has been saved successfully.')
-#
-#         if next_step_number:
-#             return redirect(reverse(
-#                 'onboarding:installation_step',
-#                 args=[sensor_thing_id, next_step_number]))
-#         return redirect('onboarding:installation_complete')
-#
-#     context = {
-#         'sensor_thing': sensor_thing,
-#         'current_step': current_step,
-#         'step_number': step_number,
-#         'next_step_number': next_step_number,
-#         'total_steps': steps.count(),
-#     }
-#     return render(request, 'onboarding/installation_step.html', context)
-
-
+@xframe_options_exempt
 def installation_complete_view(request):
     # Define the logic or render a template for the installation completion page
     return render(request, 'onboarding/installation_complete.html')
