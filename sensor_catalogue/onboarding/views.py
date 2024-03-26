@@ -8,10 +8,10 @@ from .models import Sensor, SensorThing, InstallationStep
 from django.http import JsonResponse
 
 
-@xframe_options_exempt
 class SensorThingCreateView(View):
     template_name = 'onboarding/sensor_thing_form.html'
 
+    @xframe_options_exempt
     def get(self, request, *args, **kwargs):
         sensor_types_used = Sensor.objects.all().values_list(
             'sensor_type', flat=True).distinct()
@@ -20,6 +20,7 @@ class SensorThingCreateView(View):
         return render(request, self.template_name,
                       {'sensor_type_choices': sensor_type_choices})
 
+    @xframe_options_exempt
     def post(self, request, *args, **kwargs):
         sensor_type = request.POST.get('sensor_type')
         location_json = request.POST.get('location',
