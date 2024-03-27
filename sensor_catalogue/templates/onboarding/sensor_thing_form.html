@@ -18,15 +18,17 @@
         margin-bottom: 30px;
         max-width: 1200px; /* Adjust as needed */
     }
-    .btn-main {
-        background-color: #30bfd1;
+    .step-navigation-link {
+        text-decoration: none;
         color: white;
-        border-radius: 20px;
+        background-color: #30bfd1;
         padding: 10px 25px;
-        font-size: 18px; /* Larger font for buttons */
+        border-color: #30bfd1;
+        border-radius: 30px;
+        font-size: 22px; /* Larger font for buttons */
         text-transform: uppercase;
     }
-    .btn-main:hover {
+    .step-navigation-link:hover {
         background-color: #003580;
         color: white;
     }
@@ -40,16 +42,23 @@
         <div class="col-md-8 sensor-form-container">
             <form id="sensorForm" method="post">
                 {% csrf_token %}
+                 <br>
                 <h2 class="text-uppercase font-weight-bolder mb-4 text-center">
                     Register Your Sensor</h2>
                 <!-- Input field for sensor name -->
+                 <br>
                 <div class="form-group">
                     <label for="sensor_name" class="h4 mb-3">
-                        What is the name of your sensor?</label>
+                        <b>
+                       What is the name of your sensor that we have provided
+                            to you by email? <br>(E.g. <b>SCORE_PWS_03</b>)
+                            </b>
+                    </label>
                     <input type="text" name="sensor_name" id="sensor_name"
                            class="form-control"
                            placeholder="Enter sensor name" required>
                 </div>
+                <br><br>
                 <!-- Dropdown for selecting sensor type -->
                 <div class="form-group">
                     <label for="sensor_type" class="h4 mb-3">
@@ -66,7 +75,8 @@
                 <input type="hidden" name="location" id="location"
                        required style="display: none;">
                 <div class="text-center">
-                    <button type="submit" class="btn btn-main mt-4">
+                    <button type="submit" class="btn btn-primary mt-4
+                step-navigation-link">
                         Next
                     </button>
                 </div>
