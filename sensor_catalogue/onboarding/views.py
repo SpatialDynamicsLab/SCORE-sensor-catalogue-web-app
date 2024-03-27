@@ -68,6 +68,10 @@ class SensorThingCreateView(View):
 @xframe_options_exempt
 def installation_step_view(request, sensor_thing_id, step_number=1):
     sensor_thing = get_object_or_404(SensorThing, id=sensor_thing_id)
+    if sensor_thing.sensor.sensor_type == 'SCK-AQ-DUB':
+        sck_sensor = True
+    else:
+        sck_sensor = False
     steps = InstallationStep.objects.filter(
         sensor=sensor_thing.sensor).order_by('step_number')
     current_step = steps.filter(step_number=step_number).first()
@@ -126,7 +130,8 @@ def installation_step_view(request, sensor_thing_id, step_number=1):
         'prev_step_number': prev_step_number,
         'next_step_number': next_step_number,
         'total_steps': steps.count(),
-        'redirect_url': redirect_url
+        'redirect_url': redirect_url,
+        'sck_sensor': sck_sensor,
     }
     return render(request, 'onboarding/installation_step.html', context)
 

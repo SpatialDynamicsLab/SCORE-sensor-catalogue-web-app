@@ -33,6 +33,12 @@
         width: 60%; /* Responsive media width */
         height: auto; /* Maintain aspect ratio */
     }
+    .step-media-sck {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        width: 35%; /* Responsive media width */
+        height: auto; /* Maintain aspect ratio */
+    }
     .step-navigation-link {
         text-decoration: none;
         color: white;
@@ -64,7 +70,12 @@
 
         {% if current_step.step_type == 'media' %}
             {% if current_step.image %}
-            <img src="{{ current_step.image.url }}" alt="Step Image" class="step-media">
+            <img src="{{ current_step.image.url }}"
+                 {% if sck_sensor %}
+                     class="step-media-sck"
+                 {% else %}
+                     class="step-media"
+                 {% endif %}>
             {% endif %}
             {% if current_step.video %}
             <video controls class="step-media">
