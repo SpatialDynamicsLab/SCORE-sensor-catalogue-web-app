@@ -75,6 +75,7 @@ def installation_step_view(request, sensor_thing_id, step_number=1):
         return redirect('onboarding:installation_complete')
 
     next_step_number = step_number + 1 if step_number < steps.count() else None
+    prev_step_number = step_number - 1 if step_number > 1 else None
     redirect_url = current_step.redirect_url if not next_step_number else None
 
     if request.method == 'POST' and current_step.step_type == 'input':
@@ -118,6 +119,7 @@ def installation_step_view(request, sensor_thing_id, step_number=1):
         'sensor_thing': sensor_thing,
         'current_step': current_step,
         'step_number': step_number,
+        'prev_step_number': prev_step_number,
         'next_step_number': next_step_number,
         'total_steps': steps.count(),
         'redirect_url': redirect_url
