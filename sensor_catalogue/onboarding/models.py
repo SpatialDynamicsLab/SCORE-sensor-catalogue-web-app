@@ -3,7 +3,8 @@ from django.db import models
 
 class Sensor(models.Model):
     SENSOR_TYPES = [
-        ('SCK-AQ', 'Smart Citizen Kit Air Quality'),
+        ('SCK-AQ-DUB', 'Smart Citizen Kit Air Quality - Dublin CCLL'),
+        ('WU-PWS-DUB', 'Weather Station with 7-in-1 Sensor - Dublin CCLL'),
         ('WU-PWS', 'BRESSER WIFI ClearView Weather Station with 7-in-1 Sensor'),
     ]
 

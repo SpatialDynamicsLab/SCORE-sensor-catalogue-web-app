@@ -62,7 +62,7 @@
         <h5 class="step-header-number">
             Step {{ step_number }} of {{ total_steps }}</h5>
         <h1 class="step-header text-uppercase">{{ current_step.title }}</h1>
-        <p class="step-content">{{ current_step.description|safe }}</p>
+        <p class="step-content">{{ current_step.description | safe }}</p>
 
         {% if current_step.step_type == 'media' %}
             {% if current_step.image %}
