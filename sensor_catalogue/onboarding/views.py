@@ -27,13 +27,14 @@ class SensorThingCreateView(View):
         location_json = request.POST.get('location',
                                          '{}')  # Default to empty JSON.
         name = request.POST.get('sensor_name', 'Default Name')
+        print(name)
 
         sensor = Sensor.objects.filter(sensor_type=sensor_type).first()
         if not sensor:
             return JsonResponse({'error': 'Sensor type not found.'}, status=404)
 
         # Check if location is required and validate it.
-        if sensor_type == 'SCK-AQ':
+        if sensor_type == 'SCK-AQ-DUB':
             try:
                 location_coords = json.loads(location_json)
                 location = {
@@ -81,14 +82,17 @@ def installation_step_view(request, sensor_thing_id, step_number=1):
     if request.method == 'POST' and current_step.step_type == 'input':
         input_value = request.POST.get('step_input', '').strip()
         properties = json.loads(sensor_thing.properties or '{}')
+        print(properties)
 
         # Ensure properties is a dictionary
-        if not isinstance(properties, dict):
-            properties = {}
+        if not isinstance(properties, list):
+            properties = []
 
         key = current_step.title.replace(' ', '_').lower()
-        properties[key] = input_value
+        new_property = {key: input_value}
+        properties.append(new_property)
         sensor_thing.properties = json.dumps(properties)
+        print(sensor_thing.properties)
         sensor_thing.save()
 
         # Check if there is an input_processing_url to make a GET request
