@@ -95,7 +95,7 @@
     // Function to update the map and location visibility
     function updateMapVisibility() {
         var selectedType = sensorTypeSelect.value;
-        if (selectedType === 'SCK-AQ') {
+        if (selectedType === 'SCK-AQ-DUB') {
             mapContainer.style.display = 'block';
             locationInput.style.display = 'block';
 
@@ -130,7 +130,7 @@
 
     // Form submission handler
     document.getElementById('sensorForm').onsubmit = function(e) {
-        if (sensorTypeSelect.value === 'SCK-AQ' && !locationInput.value) {
+        if (sensorTypeSelect.value === 'SCK-AQ-DUB' && !locationInput.value) {
             e.preventDefault(); // Prevent form submission
             alert('Please select a location on the map for your sensor.');
         }
