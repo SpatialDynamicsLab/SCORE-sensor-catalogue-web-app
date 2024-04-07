@@ -31,8 +31,9 @@
     function displayDeviceDetails(feature) {
         properties = feature.properties
         var detailsHtml = '<h3 style="color:#004680"><b>' + properties.name + '</b></h3>';
-        detailsHtml += '<p>' + properties.description + '<br>Last Obeservation: ' + properties.last_reading_at +
-            '<br><small>Platform provider: ' +
+        detailsHtml += '<p>' + properties.description + '<br><br><strong>Last Observation: '
+            + properties.last_reading_at +
+            '</strong><br><small>Platform provider: ' +
            '<a href="'  + properties.platform_provider.url + '" className="ml-2" target="_blank"> ' +
             properties.platform_provider.name + '</a></small></p>'
 
@@ -54,10 +55,10 @@
         // Observations table without 'Added At' column
         detailsHtml += '<table class="table table-sm table-bordered table-hover table-responsive-md">' +
             '<thead class="thead-light">' +
-            '<tr><th>Value</th><th>Unit</th><th>Measurement</th><th>Sensor</th></tr></thead><tbody>';
+            '<tr><th>Sensor</th><th>Measurement</th><th>Value</th><th>Unit</th></tr></thead><tbody>';
         properties.observations.forEach(function(obs) {
-            detailsHtml += '<tr><td>' + obs.value + '</td><td>' + obs.unit +
-                '</td><td>' + obs.measurement_name + '</td><td>' + obs.sensor_name + '</td></tr>';
+            detailsHtml += '<tr><td>' + obs.sensor_name + '</td><td>' + obs.measurement_name +
+                '</td><td>' + obs.value + '</td><td>' + obs.unit + '</td></tr>';
         });
         detailsHtml += '</tbody></table>';
 
