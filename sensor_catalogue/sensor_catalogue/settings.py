@@ -53,7 +53,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
      "django.contrib.humanize",
-    
 
     # ...
     'allauth',
@@ -63,6 +62,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'django_filters',
+    'modeltranslation',
     # ...
 
     # ...
@@ -168,6 +168,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
+
+LANGUAGES = [
+    ('en-us', 'English'),
+    ('es', 'Spanish'),
+    ('it', 'Italian'),
+    ('pt', 'Portuguese'),
+]
 
 LANGUAGE_CODE = "en-us"
 
