@@ -142,3 +142,13 @@ def installation_complete_view(request):
     return render(request, 'onboarding/installation_complete.html')
 
 
+def onboarded_sensor_data_view(request):
+    # Get all SensorThing objects
+    sensor_things = SensorThing.objects.all().order_by('-created_at')
+    context = {
+        'sensor_things': sensor_things,
+    }
+
+    return render(request,
+                  'onboarding/onboarded_sensor_data.html',
+                  context)

@@ -20,4 +20,6 @@ urlpatterns = [
     path('installation-complete/',
          views.installation_complete_view, name='installation_complete'),
 
+    path('data/', views.onboarded_sensor_data_view, name='onboarded_sensor_data'),
+
 ]
