@@ -1,5 +1,6 @@
 {% extends "onboarding/base.html" %}
 {% load static %}
+{% load i18n %}
 {% block head %}
 {% include 'onboarding/base/css.html' %}
 <style>
@@ -17,6 +18,17 @@
         margin-top: 20px;
         margin-bottom: 30px;
         max-width: 1200px; /* Adjust as needed */
+    }
+   /* Flex container for header with title and language selector */
+    .sensor-form-header {
+        display: flex;
+        justify-content: space-between; /* Aligns children (title and form) on the main axis */
+        align-items: center; /* Aligns children on the cross axis */
+    }
+    .sensor-form-title {
+        flex-grow: 1; /* Allows the title to grow and fill the space */
+        text-align: center; /* Centers the title text */
+        padding-left: 35px;
     }
     .step-navigation-link {
         text-decoration: none;
@@ -40,18 +52,35 @@
 <div class="pt-5">
     <div class="row justify-content-center p-4">
         <div class="col-md-8 sensor-form-container">
-            <form id="sensorForm" method="post">
-                {% csrf_token %}
-                 <br>
-                <h2 class="text-uppercase font-weight-bolder mb-4 text-center">
-                    Register Your Sensor</h2>
-                <!-- Input field for sensor name -->
-                 <br>
+            <!-- Header with title and language selector -->
+            <div class="sensor-form-header">
+                <!-- Title centered using flex-grow and text-align -->
+                <div class="sensor-form-title">
+                    <h2 class="text-uppercase font-weight-bolder mb-4">
+                        Register Your Sensor
+                    </h2>
+                </div>
+                <!-- Language selector form -->
+                <form method="post" action="{% url 'set_language' %}">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ redirect_to }}">
+                    <select name="language" onchange="this.form.submit()" class="form-control form-control-sm">
+                        {% get_current_language as LANGUAGE_CODE %}
+                        {% get_available_languages as LANGUAGES %}
+                        {% for code, name in LANGUAGES %}
+                            <option value="{{ code }}" {% if code == LANGUAGE_CODE %} selected{% endif %}>
+                                {{ name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+            <br>
+            <form id="sensorForm" method="post">{% csrf_token %}
                 <div class="form-group">
                     <label for="sensor_name" class="h4 mb-3">
                         <b>
-                       What is the name of your sensor that we have provided
-                            to you by email? <br>(E.g. <b>SCORE_PWS_03</b>)
+                            {{name_question}}
                             </b>
                     </label>
                     <input type="text" name="sensor_name" id="sensor_name"
@@ -62,7 +91,7 @@
                 <!-- Dropdown for selecting sensor type -->
                 <div class="form-group">
                     <label for="sensor_type" class="h4 mb-3">
-                        Select the type of sensor:</label>
+                        {{select_sensor_type}}</label>
                     <select name="sensor_type" id="sensor_type"
                             class="form-control" required>
                         <option value="">Please select a sensor type</option>
@@ -75,8 +104,7 @@
                 <input type="hidden" name="location" id="location"
                        required style="display: none;">
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary mt-4
-                step-navigation-link">
+                    <button type="submit" class="btn btn-primary mt-4 step-navigation-link">
                         Next
                     </button>
                 </div>

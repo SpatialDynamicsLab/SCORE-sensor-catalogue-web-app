@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext as _
 from django.views import View
 from django.views.decorators.clickjacking import xframe_options_exempt
 from .models import Sensor, SensorThing, InstallationStep
@@ -19,15 +20,23 @@ class SensorThingCreateView(View):
             'sensor_type', flat=True).distinct()
         sensor_type_choices = {
             k: v for k, v in Sensor.SENSOR_TYPES if k in sensor_types_used}
-        return render(request, self.template_name,
-                      {'sensor_type_choices': sensor_type_choices})
+
+        context = {
+            'name_question': _("What is the name of your sensor that we "
+                               "have provided to you by email? "
+                               "(E.g.SCORE_PWS_03</b>)"),
+            'select_sensor_type': _("Select the type of sensor:"),
+            'sensor_type_choices': sensor_type_choices
+
+        }
+
+        return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         sensor_type = request.POST.get('sensor_type')
         location_json = request.POST.get('location',
                                          '{}')  # Default to empty JSON.
         name = request.POST.get('sensor_name', 'Default Name')
-        print(name)
 
         sensor = Sensor.objects.filter(sensor_type=sensor_type).first()
         if not sensor:

@@ -29,6 +29,8 @@ urlpatterns = [
     path('', include('catalogue.urls', namespace='catalogue')),
     path('map/', include('observations.urls', namespace='observations')),
     path('onboarding/', include('onboarding.urls', namespace='onboarding')),
+
+    path('i18n/', include('django.conf.urls.i18n')),
 ]
 
 
