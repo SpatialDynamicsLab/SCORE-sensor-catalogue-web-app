@@ -45,11 +45,8 @@ class SensorThingCreateView(View):
 
     def post(self, request, *args, **kwargs):
         sensor_type = request.POST.get('sensor_type')
-        print(sensor_type)
         location_json = request.POST.get(
             'location', '{}')
-        # name = request.POST.get(
-        #     'sensor_name', 'Default Name')
 
         sensor = Sensor.objects.filter(id=sensor_type).first()
         if not sensor:
@@ -78,9 +75,7 @@ class SensorThingCreateView(View):
 
         sensor_thing = SensorThing.objects.create(
             sensor=sensor,
-            # name=name,
             location=json.dumps(location),
-            # properties=json.dumps(properties)
         )
 
         return redirect('onboarding:installation_step',
@@ -90,7 +85,7 @@ class SensorThingCreateView(View):
 @xframe_options_exempt
 def installation_step_view(request, sensor_thing_id, step_number=1):
     sensor_thing = get_object_or_404(SensorThing, id=sensor_thing_id)
-    if sensor_thing.sensor == 61:
+    if sensor_thing.sensor.id == 61:
         sck_sensor = True
     else:
         sck_sensor = False
@@ -108,7 +103,6 @@ def installation_step_view(request, sensor_thing_id, step_number=1):
     if request.method == 'POST' and current_step.step_type == 'input':
         input_value = request.POST.get('step_input', '').strip()
         properties = json.loads(sensor_thing.properties or '{}')
-        print(properties)
 
         # Ensure properties is a dictionary
         if not isinstance(properties, list):
@@ -118,16 +112,13 @@ def installation_step_view(request, sensor_thing_id, step_number=1):
         new_property = {key: input_value}
         properties.append(new_property)
         sensor_thing.properties = json.dumps(properties)
-        print(sensor_thing.properties)
 
         contains_name = 'name' in current_step.title.lower()
         contains_sensor = 'sensor' in current_step.title.lower()
         if (contains_sensor and contains_name
                 or current_step.input_type == 'sensor_name'):
-            print('yessssensor')
             sensor_thing.name = input_value
         sensor_thing.save()
-
 
         # Check if there is an input_processing_url to make a GET request
         if current_step.input_processing_url:

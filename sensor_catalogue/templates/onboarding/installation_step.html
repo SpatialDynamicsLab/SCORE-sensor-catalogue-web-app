@@ -110,9 +110,11 @@
                    class="btn btn-primary step-navigation-link">Next Step &raquo;</a>
             {% elif not next_step_number %}
                 {% if redirect_url %}
-                    <a href="{{ redirect_url }}" class="btn btn-primary step-navigation-link">Finish</a>
+                    <a href="{{ redirect_url }}" class="btn btn-primary
+                    step-navigation-link">Finish</a>
                 {% else %}
-                    <a href="{% url 'onboarding:installation_complete' %}" class="btn btn-primary step-navigation-link">Finish</a>
+                    <a href="{% url 'onboarding:installation_complete' %}"
+                       class="btn btn-primary step-navigation-link">Finish</a>
                 {% endif %}
             {% endif %}
         </div>
