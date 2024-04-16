@@ -31,12 +31,8 @@ class SensorThingCreateView(View):
         # Create dictionary for dropdown, only include valid sensors
         valid_sensors = {sensor_id: name for sensor_id, name in sensor_ids_names
                          if sensor_id in valid_sensor_ids}
-        print(valid_sensors)
 
         context = {
-            # 'name_question': _("What is the name of your sensor that we "
-            #                    "have provided to you by email? "
-            #                    "(E.g.SCORE_PWS_03</b>)"),
             'select_sensor_type': _("Select the Type of Sensor:"),
             'valid_sensors': valid_sensors
         }

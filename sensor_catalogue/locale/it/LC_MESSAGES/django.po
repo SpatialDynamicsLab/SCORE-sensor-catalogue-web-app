@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-16 19:36+0000\n"
+"POT-Creation-Date: 2024-04-16 19:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,13 +17,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
 #: onboarding/admin.py:9
 msgid "Sensor by Name"
 msgstr ""
 
 #: onboarding/views.py:36
 msgid "Select the Type of Sensor:"
-msgstr "Selecciona el tipo de sensor"
+msgstr "Seleziona il tipo di sensore"
 
 #: templates/account/account_inactive.html:5
 #: templates/account/account_inactive.html:8
@@ -418,23 +419,23 @@ msgstr ""
 
 #: templates/onboarding/installation_step.html:97
 msgid "Next step"
-msgstr "Próximo paso"
+msgstr "Passo successivo"
 
 #: templates/onboarding/installation_step.html:105
 msgid "Previous step"
-msgstr "Paso anterior"
+msgstr "Passo precedente"
 
 #: templates/onboarding/sensor_thing_form.html:60
 msgid "Register Your Sensor"
-msgstr "Registra tu sensor"
+msgstr "Registra il tuo sensore"
 
 #: templates/onboarding/sensor_thing_form.html:87
 msgid "Select sensor"
-msgstr "Selecciona sensor"
+msgstr "Seleziona sensore"
 
 #: templates/onboarding/sensor_thing_form.html:98
 msgid "Next"
-msgstr "Continuar"
+msgstr "Prossimo"
 
 #: templates/openid/login.html:9
 msgid "OpenID Sign In"

@@ -22,7 +22,7 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-print(BASE_DIR)
+
 
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
@@ -174,8 +174,12 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGES = [
     ('en-us', 'English'),
     ('es', 'Spanish'),
+    ('ca', 'Catalan'),
+    ('eu', 'Basque'),
     ('it', 'Italian'),
     ('pt', 'Portuguese'),
+    ('tr', 'Turkish'),
+    ('pl', 'Polish'),
 ]
 
 LANGUAGE_CODE = "en-us"
@@ -189,9 +193,6 @@ USE_TZ = True
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale'),
 )
-
-print(os.path.join(BASE_DIR, 'locale'))
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/

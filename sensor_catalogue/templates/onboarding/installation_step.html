@@ -81,7 +81,7 @@
             {% if current_step.video %}
             <video controls class="step-media">
                 <source src="{{ current_step.video.url }}" type="video/mp4">
-                Your browser does not support the video tag.
+                {% trans "Your browser does not support the video tag." %}
             </video>
             {% endif %}
         {% elif current_step.step_type == 'input' %}
@@ -94,7 +94,7 @@
                 <input type="text" id="step_input" name="step_input"
                        class="form-control" required>
                 <button type="submit" class="btn btn-primary mt-3
-                step-navigation-link">Next step</button>
+                step-navigation-link">{% trans "Next step" %}</button>
             </form>
         {% endif %}
 
@@ -102,19 +102,21 @@
             {% if prev_step_number %}
                 <a href="{% url 'onboarding:installation_step' sensor_thing_id=sensor_thing.id step_number=prev_step_number %}"
                    class="btn btn-sm">
-                   &laquo; Previous step</a>
+                   &laquo; {% trans "Previous step" %}</a>
             {% endif %}
 
             {% if next_step_number and current_step.step_type != 'input' %}
                 <a href="{% url 'onboarding:installation_step' sensor_thing_id=sensor_thing.id step_number=next_step_number %}"
-                   class="btn btn-primary step-navigation-link">Next Step &raquo;</a>
+                   class="btn btn-primary step-navigation-link">
+                    {% trans "Next Step% %} &raquo;</a>
             {% elif not next_step_number %}
                 {% if redirect_url %}
                     <a href="{{ redirect_url }}" class="btn btn-primary
-                    step-navigation-link">Finish</a>
+                    step-navigation-link">{% trans" Finish" %}</a>
                 {% else %}
                     <a href="{% url 'onboarding:installation_complete' %}"
-                       class="btn btn-primary step-navigation-link">Finish</a>
+                       class="btn btn-primary step-navigation-link">
+                        {% trans" Finish" %}</a>
                 {% endif %}
             {% endif %}
         </div>
