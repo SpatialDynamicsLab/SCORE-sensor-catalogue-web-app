@@ -1,23 +1,15 @@
 from django.db import models
-
-
-class Sensor(models.Model):
-    SENSOR_TYPES = [
-        ('SCK-AQ-DUB', 'Smart Citizen Kit Air Quality - Dublin CCLL'),
-        ('WU-PWS-DUB', 'Weather Station with 7-in-1 Sensor - Dublin CCLL'),
-        ('WU-PWS', 'BRESSER WIFI ClearView Weather Station with 7-in-1 Sensor'),
-    ]
-
-    sensor_type = models.CharField(max_length=10, choices=SENSOR_TYPES)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+from catalogue.models import Sensor
 
 
 class SensorThing(models.Model):
-    sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    location = models.JSONField()
-    properties = models.JSONField()
+    sensor = models.ForeignKey(
+        Sensor,
+        default=18,
+        on_delete=models.SET_DEFAULT)
+    name = models.CharField(max_length=255, null=True, blank=True)
+    location = models.JSONField(null=True, blank=True)
+    properties = models.JSONField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -33,7 +25,7 @@ class InstallationStep(models.Model):
         ('input', 'Input Gathering'),
     )
 
-    sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE)
+    sensor = models.ForeignKey(Sensor, default=60, on_delete=models.SET_DEFAULT)
     step_number = models.IntegerField()
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
@@ -62,5 +54,5 @@ class InstallationStep(models.Model):
         unique_together = [['sensor', 'step_number']]
 
     def __str__(self):
-        return (f'{self.sensor.sensor_type} '
+        return (f'{self.sensor.sensor_name} '
                 f'Step {self.step_number}: {self.title}')

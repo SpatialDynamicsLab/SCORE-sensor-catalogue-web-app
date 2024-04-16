@@ -28,7 +28,7 @@
     .sensor-form-title {
         flex-grow: 1; /* Allows the title to grow and fill the space */
         text-align: center; /* Centers the title text */
-        padding-left: 35px;
+        padding-left: 65px;
     }
     .step-navigation-link {
         text-decoration: none;
@@ -64,11 +64,13 @@
                 <form method="post" action="{% url 'set_language' %}">
                     {% csrf_token %}
                     <input name="next" type="hidden" value="{{ redirect_to }}">
-                    <select name="language" onchange="this.form.submit()" class="form-control form-control-sm">
+                    <select name="language" onchange="this.form.submit()"
+                            class="form-control form-control-sm">
                         {% get_current_language as LANGUAGE_CODE %}
                         {% get_available_languages as LANGUAGES %}
                         {% for code, name in LANGUAGES %}
-                            <option value="{{ code }}" {% if code == LANGUAGE_CODE %} selected{% endif %}>
+                            <option value="{{ code }}"
+                                    {% if code == LANGUAGE_CODE %} selected{% endif %}>
                                 {{ name }}
                             </option>
                         {% endfor %}
@@ -77,26 +79,14 @@
             </div>
             <br>
             <form id="sensorForm" method="post">{% csrf_token %}
-                <div class="form-group">
-                    <label for="sensor_name" class="h4 mb-3">
-                        <b>
-                            {{name_question}}
-                            </b>
-                    </label>
-                    <input type="text" name="sensor_name" id="sensor_name"
-                           class="form-control"
-                           placeholder="Enter sensor name" required>
-                </div>
-                <br><br>
                 <!-- Dropdown for selecting sensor type -->
                 <div class="form-group">
                     <label for="sensor_type" class="h4 mb-3">
                         {{select_sensor_type}}</label>
-                    <select name="sensor_type" id="sensor_type"
-                            class="form-control" required>
-                        <option value="">Please select a sensor type</option>
-                        {% for type, name in sensor_type_choices.items %}
-                            <option value="{{ type }}">{{ name }}</option>
+                     <select name="sensor_type" id="sensor_type" class="form-control" required>
+                        <option value="">{% trans "Select sensor" %}</option>
+                        {% for id, name in valid_sensors.items %}
+                            <option value="{{ id }}">{{ name }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -133,7 +123,7 @@
     // Function to update the map and location visibility
     function updateMapVisibility() {
         var selectedType = sensorTypeSelect.value;
-        if (selectedType === 'SCK-AQ-DUB') {
+        if (selectedType != 18) {
             mapContainer.style.display = 'block';
             locationInput.style.display = 'block';
 
@@ -168,7 +158,7 @@
 
     // Form submission handler
     document.getElementById('sensorForm').onsubmit = function(e) {
-        if (sensorTypeSelect.value === 'SCK-AQ-DUB' && !locationInput.value) {
+        if (sensorTypeSelect.value != 18 && !locationInput.value) {
             e.preventDefault(); // Prevent form submission
             alert('Please select a location on the map for your sensor.');
         }

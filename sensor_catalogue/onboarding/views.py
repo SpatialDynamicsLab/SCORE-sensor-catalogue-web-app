@@ -16,34 +16,48 @@ class SensorThingCreateView(View):
     template_name = 'onboarding/sensor_thing_form.html'
 
     def get(self, request, *args, **kwargs):
-        sensor_types_used = Sensor.objects.all().values_list(
-            'sensor_type', flat=True).distinct()
-        sensor_type_choices = {
-            k: v for k, v in Sensor.SENSOR_TYPES if k in sensor_types_used}
+        # Fetch sensors with their IDs and names
+        sensor_ids_names = Sensor.objects.filter().values_list(
+            'id', 'sensor_name').distinct()
+
+        # Prepare list of IDs for filtering InstallationSteps
+        sensor_ids = [sensor_id for sensor_id, name in sensor_ids_names]
+
+        # Find IDs that have at least one InstallationStep
+        valid_sensor_ids = InstallationStep.objects.filter(
+            sensor_id__in=sensor_ids
+        ).values_list('sensor_id', flat=True).distinct()
+
+        # Create dictionary for dropdown, only include valid sensors
+        valid_sensors = {sensor_id: name for sensor_id, name in sensor_ids_names
+                         if sensor_id in valid_sensor_ids}
+        print(valid_sensors)
 
         context = {
-            'name_question': _("What is the name of your sensor that we "
-                               "have provided to you by email? "
-                               "(E.g.SCORE_PWS_03</b>)"),
-            'select_sensor_type': _("Select the type of sensor:"),
-            'sensor_type_choices': sensor_type_choices
-
+            # 'name_question': _("What is the name of your sensor that we "
+            #                    "have provided to you by email? "
+            #                    "(E.g.SCORE_PWS_03</b>)"),
+            'select_sensor_type': _("Select the Type of Sensor:"),
+            'valid_sensors': valid_sensors
         }
 
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         sensor_type = request.POST.get('sensor_type')
-        location_json = request.POST.get('location',
-                                         '{}')  # Default to empty JSON.
-        name = request.POST.get('sensor_name', 'Default Name')
+        print(sensor_type)
+        location_json = request.POST.get(
+            'location', '{}')
+        # name = request.POST.get(
+        #     'sensor_name', 'Default Name')
 
-        sensor = Sensor.objects.filter(sensor_type=sensor_type).first()
+        sensor = Sensor.objects.filter(id=sensor_type).first()
         if not sensor:
-            return JsonResponse({'error': 'Sensor type not found.'}, status=404)
+            return JsonResponse(
+                {'error': 'Sensor type not found.'}, status=404)
 
         # Check if location is required and validate it.
-        if sensor_type == 'SCK-AQ-DUB':
+        if sensor.id != 18:
             try:
                 location_coords = json.loads(location_json)
                 location = {
@@ -55,19 +69,18 @@ class SensorThingCreateView(View):
                 }
             except (json.JSONDecodeError, KeyError, TypeError):
                 return JsonResponse(
-                    {'error': 'Invalid or missing location data '
-                              'for SCK-AQ sensor type.'},
+                    {'error': 'Invalid or missing location data.'},
                     status=400)
         else:
             location = {}  # Set an empty location or an appropriate default.
 
-        properties = [{"name": name}]  # Example properties, modify as needed.
+        # properties = [{"name": name}]  # Example properties, modify as needed.
 
         sensor_thing = SensorThing.objects.create(
             sensor=sensor,
-            name=name,
+            # name=name,
             location=json.dumps(location),
-            properties=json.dumps(properties)
+            # properties=json.dumps(properties)
         )
 
         return redirect('onboarding:installation_step',
@@ -77,7 +90,7 @@ class SensorThingCreateView(View):
 @xframe_options_exempt
 def installation_step_view(request, sensor_thing_id, step_number=1):
     sensor_thing = get_object_or_404(SensorThing, id=sensor_thing_id)
-    if sensor_thing.sensor.sensor_type == 'SCK-AQ-DUB':
+    if sensor_thing.sensor == 61:
         sck_sensor = True
     else:
         sck_sensor = False
@@ -106,7 +119,15 @@ def installation_step_view(request, sensor_thing_id, step_number=1):
         properties.append(new_property)
         sensor_thing.properties = json.dumps(properties)
         print(sensor_thing.properties)
+
+        contains_name = 'name' in current_step.title.lower()
+        contains_sensor = 'sensor' in current_step.title.lower()
+        if (contains_sensor and contains_name
+                or current_step.input_type == 'sensor_name'):
+            print('yessssensor')
+            sensor_thing.name = input_value
         sensor_thing.save()
+
 
         # Check if there is an input_processing_url to make a GET request
         if current_step.input_processing_url:
