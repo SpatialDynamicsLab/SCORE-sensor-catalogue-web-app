@@ -1,5 +1,6 @@
 {% extends "onboarding/base.html" %}
 {% load static %}
+{% load i18n %}
 {% block head %}
 {% include 'onboarding/base/css.html' %}
 <style>
@@ -108,15 +109,15 @@
             {% if next_step_number and current_step.step_type != 'input' %}
                 <a href="{% url 'onboarding:installation_step' sensor_thing_id=sensor_thing.id step_number=next_step_number %}"
                    class="btn btn-primary step-navigation-link">
-                    {% trans "Next Step% %} &raquo;</a>
+                    {% trans "Next Step" %} &raquo;</a>
             {% elif not next_step_number %}
                 {% if redirect_url %}
                     <a href="{{ redirect_url }}" class="btn btn-primary
-                    step-navigation-link">{% trans" Finish" %}</a>
+                    step-navigation-link">{% trans "Finish" %}</a>
                 {% else %}
                     <a href="{% url 'onboarding:installation_complete' %}"
                        class="btn btn-primary step-navigation-link">
-                        {% trans" Finish" %}</a>
+                        {% trans "Finish" %}</a>
                 {% endif %}
             {% endif %}
         </div>
