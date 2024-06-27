@@ -8,7 +8,9 @@
      let charts = {};
 
    var sensor = document.getElementById('sensor');
-
+  
+   var datasensor = document.getElementById('datasensor');
+   var chartsarea = document.getElementById('chartscontainer');
     document.getElementById('loading-gif').style.display = 'block';
     var smartCitizenMarkers = L.markerClusterGroup({
         spiderfyOnMaxZoom: true,
@@ -118,6 +120,10 @@ console.log("Previous Date: ", formattedPreviousDate);
         detailsHtml += '</tbody></table>';
 
         $('#device-details').html(detailsHtml);
+
+        sensor.style.display = 'none';
+        chartsarea.style.display = 'none';
+        datasensor.style.display='none';
        
     }
 
@@ -289,14 +295,17 @@ function slideRight() {
 
     async function loadEachWuStationObservation(stationName) {
             try {
-                document.getElementById('loading-gif').style.display = 'block';
+                 
                 const data = await fetchData(`https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/weather-underground/pws/observations/?station_name=${stationName}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=600`);
-                document.getElementById('loading-gif').style.display = 'none';
+                
                 if (!data.results || data.results.length === 0) {
                     console.log('No data available for this station.');
                     return;
                 }
-   
+                sensor.style.display = 'inl';
+                datasensor.style.display='inline';
+                chartsarea.style.display = 'block';
+                
                 sensor.textContent=stationName;
                 const fields = [
                 { key: 'temp', label: 'Temperature (°C)', unit: '°C', transform: value => value, yMin: null, yMax: null, canvasId: 'temp',chartType:'line' },
