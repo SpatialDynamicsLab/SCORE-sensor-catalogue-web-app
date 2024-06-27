@@ -3,19 +3,79 @@
 {% block head %}
 {% include 'observations/map/css.html' %}
 {% endblock %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-gauge@0.2.1/dist/chartjs-gauge.min.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 {% block head_title %}Map {% endblock %}
 {% block content %}
 {% include 'observations/base/navbar.html' %}
-<div id="map-container">
-    <div id="map"></div>
-</div>
-<br>
-<div id="sidebar-container">
-    <img id="loading-gif" alt="Loading..." style="display: none;">
-    <div id="device-details">
-        <h4>Sensor Details</h4>
-        <p>Click on a point to see the sensor details and observations.</p>
+<div >
+    <div id="map-container">
+        <div id="map"></div>
     </div>
+
+<div class="devicedetailsmain">
+
+    <div id="device-details">
+        <h3>Sensor Details</h4>
+        <p>Click on a point to see the sensor details and observations.</p>
+        <img id="loading-gif" alt="Loading..." style="display: none;">
+    </div>
+    
+ 
+    <div style="max-width: 78.5%;margin:0 auto;color: #004680;margin-bottom: 20px;padding-bottom: 10px;border-bottom: 2px solid #004680;">
+        <h3 > <b id="sensor"> Graphs </b> Data</h3>
+    </div>
+    <div id="chartscontainer">
+        <canvas class="chart" id="temp" ></canvas>
+        <canvas class="chart" id="heat_index"></canvas>
+
+        <canvas class="chart" id="precipitation_rate"></canvas>
+        <canvas class="chart" id="precipitation_total"></canvas>
+        <canvas class="chart" id="atmospheric_pressure" ></canvas>
+
+        <canvas class="chart" id="dew_point"></canvas>
+        <canvas class="chart" id="relative_humidity"></canvas>
+
+        <canvas class="chart" id="uv"></canvas>
+        <canvas class="chart" id="solar_radiation"></canvas>
+
+
+       
+
+       
+
+        <canvas class="chart" id="wind_chill"></canvas>
+        <canvas class="chart" id="wind_speed"></canvas>
+        <canvas class="chart" id="wind_gust"></canvas>
+        <canvas class="chart" id="wind_direction"></canvas>
+
+       
+        
+    </div>
+    
+    <!-- temp
+  
+   
+    map/:575 
+    map/:575 
+    map/:575 wind_direction
+    map/:575 wind_speed
+    map/:575 wind_gust
+    
+    map/:575 precipitation_rate
+    map/:575 precipitation_total
+    map/:575 uv
+    map/:575  -->
 </div>
-{% include 'observations/map/js.html' %}
+   
+
+
+</div>
+
+
+
+    {% include 'observations/map/js.html' %}
 {% endblock %}
