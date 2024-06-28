@@ -10,6 +10,7 @@
    var sensor = document.getElementById('sensor');
    var datasensor = document.getElementById('datasensor');
    var chartsarea = document.getElementById('chartscontainer');
+   var dropdownarea = document.getElementById('dropdown');
     document.getElementById('loading-gif').style.display = 'block';
     var smartCitizenMarkers = L.markerClusterGroup({
         spiderfyOnMaxZoom: true,
@@ -112,6 +113,7 @@ updateDateRange(1);
 
         sensor.style.display = 'none';
         chartsarea.style.display = 'none';
+        dropdownarea.style.display = 'none';
         datasensor.style.display='none';
        
     }
@@ -258,6 +260,7 @@ updateSampleSize();
                 sensor.style.display = 'inline';
                 datasensor.style.display='inline';
                 chartsarea.style.display = 'block';
+                dropdownarea.style.display = 'inline';
                 
                 sensor.textContent=stationName;
                 const fields = [
