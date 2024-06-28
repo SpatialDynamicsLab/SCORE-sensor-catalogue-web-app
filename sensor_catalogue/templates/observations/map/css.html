@@ -339,6 +339,19 @@
 
 
 @media only screen and (max-width: 600px) {
+    .devicedetailsmain {
+    /* background-image: url(https://score-eu-project.eu/wp-content/uploads/2021/09/background.png); */
+    height: 100%;
+    scroll-behavior: smooth;
+    background-color: #eff8ff;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* background-color: #f9f9f9; */
+    max-width: 100%;
+    margin: 40px auto;
+}
     #device-details {
     max-width: 100%;
     margin: 0 auto;
@@ -346,7 +359,7 @@
 .deviceInfo {
     display: flex;
     justify-content: center;
-    max-width: 90%;
+    max-width: 100%;
     padding: 10px 10px 0px 10px;
     margin: 0 auto;
     background-color: aliceblue;
@@ -355,6 +368,51 @@
 #chartscontainer{
     max-width: 100%; 
     margin: 0 auto;
+}
+.slider-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 100px;
+}
+.observations-container {
+    display: flex;
+    overflow-x: hidden;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #fff;
+    white-space: nowrap;
+    flex: 1;
+  
+}
+.obsTop {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    width: 100px;
+}
+.value {
+    display: block;
+    font-size: 25px;
+    font-weight: 500;
+    color: #71a4b5;
+}
+.unit {
+    font-size: 8px;
+}
+.measurement {
+    display: block;
+    font-weight: bold;
+    color: #004680;
+    font-size: 8px;
+}
+.observation-item {
+    display: inline-block;
+    text-align: center;
+    /* padding: 10px; */
+    margin-right: 0px;
+    /* border-right: 1px solid #ddd; */
 }
 }
 

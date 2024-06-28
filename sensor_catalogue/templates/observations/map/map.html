@@ -79,6 +79,15 @@
     <div style="max-width: 78.5%;margin:0 auto;color: #004680;margin-bottom: 20px;padding-bottom: 10px;border-bottom: 2px solid #004680;">
         <h3  style="display: flex;"> <b id="sensor" style="margin-right: 4px;"> Graphs </b > <p id="datasensor"> Data </p></h3>
     </div>
+    <div>
+        <label for="timeRange">Select Time Range:</label>
+        <select id="timeRange" onchange="onTimeRangeChange()">
+            <option value="day">24 Hrs</option>
+            <option value="week">Last Week</option>
+            <option value="month">Last Month</option>
+        </select>
+        <small>(Please wait for chart to update when selecting month or week )</small>
+    </div>
     <div id="chartscontainer">
         <canvas class="chart" id="temp" ></canvas>
         <canvas class="chart" id="heat_index"></canvas>

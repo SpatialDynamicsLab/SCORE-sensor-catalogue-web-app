@@ -8,7 +8,6 @@
      let charts = {};
 
    var sensor = document.getElementById('sensor');
-  
    var datasensor = document.getElementById('datasensor');
    var chartsarea = document.getElementById('chartscontainer');
     document.getElementById('loading-gif').style.display = 'block';
@@ -37,41 +36,31 @@
     }).addTo(map);
     
 
-
-
-
-
-    // dates 
     
-    // Get the current date
-const currentDate = new Date();
+    let formattedPreviousDate, formattedCurrentDate;
 
-// Extract year, month, and day for the current date
-const currentYear = currentDate.getFullYear();
-const currentMonth = String(currentDate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-const currentDay = String(currentDate.getDate()).padStart(2, '0');
+// Function to format date
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
 
-// Format the current date as YYYY-MM-DD
-const formattedCurrentDate = `${currentYear}-${currentMonth}-${currentDay}`;
+function updateDateRange(days) {
+    const currentDate = new Date();
+    const previousDate = new Date(currentDate);
+    previousDate.setDate(currentDate.getDate() - days);
 
-// Get the date of the day before
-const previousDate = new Date(currentDate);
-previousDate.setDate(currentDate.getDate() - 1);
+    formattedCurrentDate = formatDate(currentDate);
+    formattedPreviousDate = formatDate(previousDate);
 
-// Extract year, month, and day for the previous date
-const previousYear = previousDate.getFullYear();
-const previousMonth = String(previousDate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-const previousDay = String(previousDate.getDate()).padStart(2, '0');
+    console.log("Current Date: ", formattedCurrentDate);
+    console.log("Previous Date: ", formattedPreviousDate);
+}
 
-// Format the previous date as YYYY-MM-DD
-const formattedPreviousDate = `${previousYear}-${previousMonth}-${previousDay}`;
-
-// Display the dates
-console.log("Current Date: ", formattedCurrentDate);
-console.log("Previous Date: ", formattedPreviousDate);
-
-
-
+// Initial date range (last 7 days)
+updateDateRange(1);
 
 
 
@@ -203,106 +192,70 @@ function slideRight() {
 }
 
 
-    // function heatIndexMeter(temparature,humidity, heatIndex){
+   
 
-    //     const ctx = document.getElementById('heatIndexChart').getContext('2d');
-    //     const gaugeNeedle = {
-    //         id: 'gaugeNeedle',
-    //         afterDatasetsDraw(chart, args, plugins) {
-    //             const { ctx, chartArea: { top, bottom, left, right }, scales: { r } } = chart;
-    //             ctx.save();
+    var sampleSize = 1;
 
-    //             const xCenter = chart.getDatasetMeta(0).data[0].x;
-    //             const yCenter = chart.getDatasetMeta(0).data[0].y; 
-    //             const outRadius = chart.getDatasetMeta(0).data[0].outerRadius;
-    //             const innerRadius = chart.getDatasetMeta(0).data[0].innerRadius;
-    //             const middleRadius = (outRadius + innerRadius) / 2;
-    //             // Calculate angle based on heat index
-    //             const angle = (Math.PI * ((heatIndex - 0) / (30 - 0)) - Math.PI / 2); // Adjust 30 to your max value
+   // Function to update sampleSize based on screen size
+   function updateSampleSize() {
+        var isMobile = window.matchMedia("(max-width: 600px)").matches;
+        if (document.getElementById('timeRange').value === 'month') {
+            sampleSize = isMobile ? 100 : 50;
 
-    //             ctx.translate(xCenter, yCenter);
-    //             ctx.rotate(angle);
+        }
+        else if (document.getElementById('timeRange').value === 'week') {
+            sampleSize = isMobile ? 30 : 10;
 
-    //             // Needle
-    //             ctx.beginPath();
-    //             ctx.moveTo(0, 0);
-    //             ctx.lineTo(0, -middleRadius);
-    //             ctx.lineWidth = 5;
-    //             ctx.strokeStyle = 'black';
-    //             ctx.stroke();
+        }
+        else if (document.getElementById('timeRange').value === 'day'){
+            sampleSize = isMobile ? 10 : 1;
+        }
 
-    //             // Dot at center
-    //             ctx.beginPath();
-    //             ctx.arc(0, 0, 5, 0, Math.PI * 2);
-    //             ctx.fillStyle = 'black';
-    //             ctx.fill();
-
-    //             ctx.restore();
-
-                
-
-    //         }
-    //     }
         
-    //     if (heatIndexChart) {
-    //                 heatIndexChart.destroy();
-    //         }
-    //     heatIndexChart = new Chart(ctx, {
-    //         type: 'doughnut', // Using doughnut for radial gauge effect
-    //         data: {
-    //             labels: ['0-5', '5-10', '10-15', '15-20', '20-25', '25-30'],
-    //             datasets: [{
-    //                 data: [5, 5, 5, 5, 5, 5], // Evenly distribute the segments
-    //                 backgroundColor: [
-    //                 '#b2ff66',
-    //                 '#ffff66',
-    //                 '#ffb266',
-    //                 '#ff9933',
-    //                 '#ff6666',
-    //                 '#ff3333',
-    //                 '#ff0000',
-    //             ],
-    //                 borderWidth: 1
-    //             }]
-    //         },
-    //         options: {
-    //             circumference: 180, // Half circle
-    //             rotation: 270, // Start angle
-    //             cutout: '80%', // Inner cutout for doughnut
-    //             responsive: true,
-    //             plugins: {
-    //                 legend: {
-    //                     display: true,
-    //                     position: 'bottom' // Hide legend
-    //                 },
-    //                 tooltip: {
-    //                     enabled: false // Disable tooltips
-    //                 }
-    //             }
-    //         },
-    //         plugins: [gaugeNeedle]
-    //     });
+        
+        console.log('Sample Size:', sampleSize); // For debugging purposes
+    }
 
-    //     document.querySelector('.details').innerHTML = `
-    //         <p>Current Heat Index Details</p>
-    //         <p><strong>Location:</strong> City, Country</p>
-    //         <p><strong>Temperature:</strong> ${temparature}°C</p>
-    //         <p><strong>Humidity:</strong> ${humidity}%</p>
-    //         <p><strong>Heat Index:</strong> ${heatIndex.toFixed(1)}°C</p>
-    //     `;
+        // Update sample size and chart data based on screen size
+        function onResize() {
+        updateSampleSize();
+        if (charts['temp']) {
+            loadEachWuStationObservation(sensor.textContent);
+        }
+    }
+       // Add event listener for screen size changes
+       window.matchMedia("(max-width: 600px)").addListener(onResize);
 
-    // }
+updateSampleSize();
+
+
+
+  // Handle time range selection
+  function onTimeRangeChange() {
+        const timeRange = document.getElementById('timeRange').value;
+        if (timeRange === 'week') {
+            updateDateRange(7);
+        } else if (timeRange === 'month') {
+            updateDateRange(30);
+        }else if (timeRange == 'day'){
+            updateDateRange(1);
+        }
+        updateSampleSize();
+        if (sensor.textContent) {
+            loadEachWuStationObservation(sensor.textContent);
+        }
+    }
 
     async function loadEachWuStationObservation(stationName) {
             try {
                  
-                const data = await fetchData(`https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/weather-underground/pws/observations/?station_name=${stationName}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=600`);
+                const data = await fetchData(`https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/weather-underground/pws/observations/?station_name=${stationName}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=10000`);
                 
                 if (!data.results || data.results.length === 0) {
                     console.log('No data available for this station.');
                     return;
                 }
-                sensor.style.display = 'inl';
+                sensor.style.display = 'inline';
                 datasensor.style.display='inline';
                 chartsarea.style.display = 'block';
                 
@@ -327,28 +280,12 @@ function slideRight() {
                
                 fields.forEach(field => {
                 const values = data.results.map(observation => field.transform(observation[field.key].value)).reverse();
-                const sampledLabels = labels.filter((_, index) => index % 1 === 0);
-                const sampledValues = values.filter((_, index) => index %  1 === 0);
-                createChart(field.canvasId, field.label, sampledLabels, values, `${field.label}`, field.yMin, field.yMax, field.chartType);
+                const sampledLabels = labels.filter((_, index) => index % sampleSize === 0);
+                const sampledValues = values.filter((_, index) => index %  sampleSize === 0);
+                createChart(field.canvasId, field.label, sampledLabels, sampledValues, `${field.label}`, field.yMin, field.yMax, field.chartType);
                 });
 
-                // const pressures = data.results.map(observation => observation.atmospheric_pressure.value / 10).reverse();
-                // const heatIndex = data.results.map(observation => observation.heat_index.value).reverse();
-                // const dew_point = data.results.map(observation => observation.dew_point.value).reverse();
-                // const relative_humidity = data.results.map(observation => observation.relative_humidity.value).reverse();
-                // put all measurements arrays into one array and loop around to use different data for the charts 
-                // const sampleRate = 1;
-                // const sampledLabels = labels.filter((_, index) => index % sampleRate === 0);
-                // const sampledPressures = pressures.filter((_, index) => index % sampleRate === 0);
-                // const sampledHeatIndex = heatIndex.filter((_, index) => index % sampleRate === 0);
-                // const sampledewPoint = dew_point.filter((_, index) => index % sampleRate === 0);
 
-                // const sampleHumidity = relative_humidity.filter((_, index) => index % sampleRate === 0);
-              
-                //  createChart('pressureChart', 'Atmospheric Pressure (KPa)', sampledLabels, sampledPressures, 'Pressure (KPa)', 99.5, 103);
-                //  createChart('heatIndexChart', 'Heat Index (°C)', sampledLabels, sampledHeatIndex, 'Heat Index (°C)', null, null);
-                //  createChart('dewPointChart', 'Dew Point (°C)', sampledLabels, sampledewPoint, 'Dew Point (°C)', null, null);
-                //  createChart('relativeHumidityChart', 'Relative Humidity (%)', sampledLabels, sampleHumidity, 'Relative Humidity (%)', null, 90);
 
             } catch (error) {
                 console.error('Error:', error);
@@ -377,6 +314,7 @@ function slideRight() {
         },
         options: {
           responsive: true,
+          
           scales: {
             x: {
               type: 'time',
@@ -413,7 +351,7 @@ function slideRight() {
                 callbacks: {
           label: function(context) {
             // Show only the first value
-            console.log(context.dataset.label,":",context.raw)
+           
             return `${context.dataset.label}: ${context.raw}`;
           },
           title: function(tooltipItems) {
@@ -423,44 +361,7 @@ function slideRight() {
               mode: 'index',
               intersect: false
             },
-            // annotation: {
-            //   annotations: {
-            //     line1: {
-            //       type: 'line',
-            //       yMin: 102,
-            //       yMax: 102,
-            //       borderColor: 'rgba(0, 0, 0, 0.5)',
-            //       borderWidth: 2,
-            //       label: {
-            //         enabled: true,
-            //         content: 'Pressure 102 KPa',
-            //         position: 'end',
-            //         backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            //         color: 'white',
-            //         font: {
-            //           weight: 'bold'
-            //         }
-            //       }
-            //     },
-            //     line2: {
-            //       type: 'line',
-            //       yMin: 101,
-            //       yMax: 101,
-            //       borderColor: 'rgba(0, 0, 0, 0.5)',
-            //       borderWidth: 2,
-            //       label: {
-            //         enabled: true,
-            //         content: 'Pressure 101 KPa',
-            //         position: 'end',
-            //         backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            //         color: 'white',
-            //         font: {
-            //           weight: 'bold'
-            //         }
-            //       }
-            //     }
-            //   }
-            // }
+        
           }
         }
       });
@@ -524,26 +425,7 @@ function slideRight() {
         });
     }
 
-    // function testingWUData(){
-    //     return fetch('https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/smart-citizen/observations/?device_id=16759&sensor_id=87&' +
-    //     'weather-underground/pws/latest-observations.geojson')
-    //         .then(function(response) {
-    //             return response.json();
-    //         })
-    //         .then(function(data) {
-    //             console.log(data.results);
-    //         })
-
-           
-    //         // Hide loading GIF
-            
-    //         .catch(function(error) {
-    //         console.error('Error fetching Weather Underground GeoJSON data:', error);
-    //         // Hide loading GIF
-           
-    //         });
-        
-    // }
+   
 
     Promise.all([loadSmartCitizenData(), loadWUData()])
         .then(() => {
