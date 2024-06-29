@@ -11,6 +11,8 @@
    var datasensor = document.getElementById('datasensor');
    var chartsarea = document.getElementById('chartscontainer');
    var dropdownarea = document.getElementById('dropdown');
+   var cLoading = document.getElementById('chart-loading');
+
     document.getElementById('loading-gif').style.display = 'block';
     var smartCitizenMarkers = L.markerClusterGroup({
         spiderfyOnMaxZoom: true,
@@ -128,7 +130,7 @@ updateDateRange(1);
             var properties = feature.properties;
             var observations = properties.observations;
             loadEachWuStationObservation(properties.name);
-
+            sensor.textContent=properties.name;
             var detailsHtml = `
                 
             <div class="slider-container">
@@ -174,11 +176,7 @@ updateDateRange(1);
 
 
             document.getElementById('device-details').innerHTML = detailsHtml;
-            const temparature = properties.observations.temp.value;
-            const humidity = properties.observations.relative_humidity.value;
-            const heatIndex = properties.observations.heat_index.value;
-            const pressure = properties.observations.atmospheric_pressure.value
-            console.log('heatedIndex', heatIndex)
+
             // heatIndexMeter(temparature,humidity,heatIndex);
             
          
@@ -250,19 +248,21 @@ updateSampleSize();
 
     async function loadEachWuStationObservation(stationName) {
             try {
-                 
+                 cLoading.style.display = 'inline';
                 const data = await fetchData(`https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/weather-underground/pws/observations/?station_name=${stationName}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=10000`);
                 
                 if (!data.results || data.results.length === 0) {
                     console.log('No data available for this station.');
+                    cLoading.style.display = 'none';
                     return;
+
                 }
                 sensor.style.display = 'inline';
                 datasensor.style.display='inline';
                 chartsarea.style.display = 'block';
                 dropdownarea.style.display = 'inline';
                 
-                sensor.textContent=stationName;
+               
                 const fields = [
                 { key: 'temp', label: 'Temperature (°C)', unit: '°C', transform: value => value, yMin: null, yMax: null, canvasId: 'temp',chartType:'line' },
                 { key: 'atmospheric_pressure', label: 'Atmospheric Pressure (KPa)', unit: 'KPa', transform: value => value / 10, yMin: null, yMax: null, canvasId: 'atmospheric_pressure',chartType:'line' },
@@ -278,15 +278,19 @@ updateSampleSize();
                 { key: 'precipitation_total', label: 'Precipitation total (mm)', unit: 'mm', transform: value => value, yMin: null, yMax: null, canvasId: 'precipitation_total' ,chartType:'line'},
                 { key: 'uv', label: 'UV (UV index)', unit: 'UV index', transform: value => value, yMin: null, yMax: null, canvasId: 'uv' ,chartType:'line'},
                 ];
-
                 const labels = data.results.map(observation => new Date(observation.recorded_at)).reverse();
-               
-                fields.forEach(field => {
-                const values = data.results.map(observation => field.transform(observation[field.key].value)).reverse();
-                const sampledLabels = labels.filter((_, index) => index % sampleSize === 0);
-                const sampledValues = values.filter((_, index) => index %  sampleSize === 0);
-                createChart(field.canvasId, field.label, sampledLabels, sampledValues, `${field.label}`, field.yMin, field.yMax, field.chartType);
-                });
+        
+        fields.forEach(field => {
+            const hasValidData = data.results.some(observation => observation[field.key] !== undefined && observation[field.key] !== null);
+            const values = hasValidData 
+                ? data.results.map(observation => observation[field.key] !== undefined && observation[field.key] !== null ? field.transform(observation[field.key].value) : null).reverse()
+                : null;
+            
+            const sampledLabels = labels.filter((_, index) => index % sampleSize === 0);
+            const sampledValues = values ? values.filter((_, index) => index % sampleSize === 0) : null;
+            cLoading.style.display = 'none';
+            createChart(field.canvasId, field.label, sampledLabels, sampledValues, `${field.label}`, field.yMin, field.yMax, field.chartType);
+        });
 
 
 
@@ -300,7 +304,20 @@ updateSampleSize();
         if(charts[canvasId]){
             charts[canvasId].destroy();
         }
-      const ctx = document.getElementById(canvasId).getContext('2d');
+        const ctx = document.getElementById(canvasId).getContext('2d');
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Clear any previous content
+    
+    if (!data) {
+        // Display a message instead of creating a chart
+        ctx.font = '16px Arial';
+        ctx.fillStyle = 'red';
+        ctx.textAlign = 'center'; // Center horizontally
+        ctx.textBaseline = 'middle'; // Center vertically
+        ctx.fillText('No data available', ctx.canvas.width / 2, ctx.canvas.height / 2 - 10);
+        ctx.fillText('Try changing time range', ctx.canvas.width / 2, ctx.canvas.height / 2 + 10);
+        return;
+    }
+       
       charts[canvasId] = new Chart(ctx, {
         type: chartType,
         data: {
