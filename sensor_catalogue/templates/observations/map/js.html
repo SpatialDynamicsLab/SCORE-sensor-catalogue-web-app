@@ -4,14 +4,15 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-gauge@0.2.1/dist/chartjs-gauge.min.js"></script>
 
 <script>
-     // Display loading GIF
-     let charts = {};
-
-   var sensor = document.getElementById('sensor');
-   var datasensor = document.getElementById('datasensor');
-   var chartsarea = document.getElementById('chartscontainer');
-   var dropdownarea = document.getElementById('dropdown');
-   var cLoading = document.getElementById('chart-loading');
+    // Display loading GIF
+    let charts = {};
+    let backToTopBtn = document.getElementById("backToTopBtn");
+    var sensor = document.getElementById('sensor');
+    var datasensor = document.getElementById('datasensor');
+    var chartsarea = document.getElementById('chartscontainer');
+    var dropdownarea = document.getElementById('dropdown');
+    var cLoading = document.getElementById('chart-loading');
+    var chartboxes = document.querySelectorAll('.chartbox');
 
     document.getElementById('loading-gif').style.display = 'block';
     var smartCitizenMarkers = L.markerClusterGroup({
@@ -28,7 +29,7 @@
     var baseLayers = {};
     var overlayLayers = {
         "Smart Citizen Devices": smartCitizenMarkers,
-        "WU Personal Weather Stations":wuMarkers
+        "WU Personal Weather Stations": wuMarkers
     };
 
     var map = L.map('map').setView([53.3105866, -6.2359141], 13);
@@ -37,54 +38,70 @@
         attribution: '&copy; CARTO © OpenStreetMap contributors',
         maxZoom: 18
     }).addTo(map);
-    
 
-    
+    window.onscroll = function() {
+    scrollFunction();
+};
+
+
+function scrollFunction() {
+    if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+        backToTopBtn.style.display = "block";
+    } else {
+        backToTopBtn.style.display = "none";
+    }
+}
+// When the user clicks on the button, scroll to the top of the document
+backToTopBtn.addEventListener('click', function() {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+});
+
+
     let formattedPreviousDate, formattedCurrentDate;
 
-// Function to format date
-function formatDate(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-}
+    // Function to format date
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
 
-function updateDateRange(days) {
-    const currentDate = new Date();
-    const previousDate = new Date(currentDate);
-    previousDate.setDate(currentDate.getDate() - days);
+    function updateDateRange(days) {
+        const currentDate = new Date();
+        const previousDate = new Date(currentDate);
+        previousDate.setDate(currentDate.getDate() - days);
 
-    formattedCurrentDate = formatDate(currentDate);
-    formattedPreviousDate = formatDate(previousDate);
+        formattedCurrentDate = formatDate(currentDate);
+        formattedPreviousDate = formatDate(previousDate);
 
-    console.log("Current Date: ", formattedCurrentDate);
-    console.log("Previous Date: ", formattedPreviousDate);
-}
+        
+    }
 
-// Initial date range (last 7 days)
-updateDateRange(1);
+    // Initial date range (last 7 days)
+    updateDateRange(1);
 
 
 
     async function fetchData(url) {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
-            }
-            return await response.json();
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
         }
+        return await response.json();
+    }
     // L.control.layers(baseLayers, overlayLayers).addTo(map);
-    
+
 
     function displayDeviceDetails(feature) {
-        
+
         properties = feature.properties
         var detailsHtml = '<h3 style="color:#004680"><b>' + properties.name + '</b></h3>';
         detailsHtml += '<p>' + properties.description + '<br><br><strong>Last Observation: '
             + properties.last_reading_at +
             '</strong><br><small>Platform provider: ' +
-           '<a href="'  + properties.platform_provider.url + '" className="ml-2" target="_blank"> ' +
+            '<a href="' + properties.platform_provider.url + '" className="ml-2" target="_blank"> ' +
             properties.platform_provider.name + '</a></small></p>'
 
         // Horizontal table with one row for CCLL Tags, System Tags, and Owner
@@ -105,7 +122,7 @@ updateDateRange(1);
         detailsHtml += '<table class="table table-sm table-bordered table-hover table-responsive-md">' +
             '<thead class="thead-light">' +
             '<tr><th>Sensor</th><th>Measurement</th><th>Value</th><th>Unit</th></tr></thead><tbody>';
-        properties.observations.forEach(function(obs) {
+        properties.observations.forEach(function (obs) {
             detailsHtml += '<tr><td>' + obs.sensor_name + '</td><td>' + obs.measurement_name +
                 '</td><td>' + obs.value + '</td><td>' + obs.unit + '</td></tr>';
         });
@@ -116,22 +133,22 @@ updateDateRange(1);
         sensor.style.display = 'none';
         chartsarea.style.display = 'none';
         dropdownarea.style.display = 'none';
-        datasensor.style.display='none';
-       
+        datasensor.style.display = 'none';
+
     }
 
-     function forEachFeature(feature, layer) {
+    function forEachFeature(feature, layer) {
         layer.on('click', function (e) {
             displayDeviceDetails(feature);
         });
     }
 
     function displayWUDetails(feature) {
-            var properties = feature.properties;
-            var observations = properties.observations;
-            loadEachWuStationObservation(properties.name);
-            sensor.textContent=properties.name;
-            var detailsHtml = `
+        var properties = feature.properties;
+        var observations = properties.observations;
+        loadEachWuStationObservation(properties.name);
+        sensor.textContent = properties.name;
+        var detailsHtml = `
                 
             <div class="slider-container">
             <button class="slide-button left" onclick="slideLeft()">&#10094;</button>
@@ -139,9 +156,9 @@ updateDateRange(1);
            
             `;
 
-            for (var key in observations) {
-        if (observations.hasOwnProperty(key) && key !== 'id' && key !== 'recorded_at' && key !== 'station_id' && key !== 'station_name') {
-            detailsHtml += `
+        for (var key in observations) {
+            if (observations.hasOwnProperty(key) && key !== 'id' && key !== 'recorded_at' && key !== 'station_id' && key !== 'station_name') {
+                detailsHtml += `
             <a href=#${key} style="border-right: 1px solid #ddd">
                 <div class="observation-item">
                     <div class="obsTop">
@@ -154,10 +171,10 @@ updateDateRange(1);
                 </div>
                 </a>
             `;
-            console.log(key)
+            
+            }
         }
-    }
-    detailsHtml += `
+        detailsHtml += `
         	
             </div>
             <button class="slide-button right" onclick="slideRight()">&#10095;</button>
@@ -175,29 +192,29 @@ updateDateRange(1);
 
 
 
-            document.getElementById('device-details').innerHTML = detailsHtml;
+        document.getElementById('device-details').innerHTML = detailsHtml;
 
-            // heatIndexMeter(temparature,humidity,heatIndex);
-            
-         
+        // heatIndexMeter(temparature,humidity,heatIndex);
+
+
     }
     function slideLeft() {
-    const container = document.querySelector('.observations-container');
-    container.scrollBy({ left: -400, behavior: 'smooth' });
-}
+        const container = document.querySelector('.observations-container');
+        container.scrollBy({ left: -400, behavior: 'smooth' });
+    }
 
-function slideRight() {
-    const container = document.querySelector('.observations-container');
-    container.scrollBy({ left: 400, behavior: 'smooth' });
-}
+    function slideRight() {
+        const container = document.querySelector('.observations-container');
+        container.scrollBy({ left: 400, behavior: 'smooth' });
+    }
 
 
-   
+
 
     var sampleSize = 1;
 
-   // Function to update sampleSize based on screen size
-   function updateSampleSize() {
+    // Function to update sampleSize based on screen size
+    function updateSampleSize() {
         var isMobile = window.matchMedia("(max-width: 600px)").matches;
         if (document.getElementById('timeRange').value === 'month') {
             sampleSize = isMobile ? 100 : 50;
@@ -207,37 +224,37 @@ function slideRight() {
             sampleSize = isMobile ? 30 : 10;
 
         }
-        else if (document.getElementById('timeRange').value === 'day'){
-            sampleSize = isMobile ? 10 : 1;
+        else if (document.getElementById('timeRange').value === 'day') {
+            sampleSize = isMobile ? 10 : 5;
         }
 
-        
-        
+
+
         console.log('Sample Size:', sampleSize); // For debugging purposes
     }
 
-        // Update sample size and chart data based on screen size
-        function onResize() {
+    // Update sample size and chart data based on screen size
+    function onResize() {
         updateSampleSize();
         if (charts['temp']) {
             loadEachWuStationObservation(sensor.textContent);
         }
     }
-       // Add event listener for screen size changes
-       window.matchMedia("(max-width: 600px)").addListener(onResize);
+    // Add event listener for screen size changes
+    window.matchMedia("(max-width: 600px)").addListener(onResize);
 
-updateSampleSize();
+    updateSampleSize();
 
 
 
-  // Handle time range selection
-  function onTimeRangeChange() {
+    // Handle time range selection
+    function onTimeRangeChange() {
         const timeRange = document.getElementById('timeRange').value;
         if (timeRange === 'week') {
             updateDateRange(7);
         } else if (timeRange === 'month') {
             updateDateRange(30);
-        }else if (timeRange == 'day'){
+        } else if (timeRange == 'day') {
             updateDateRange(1);
         }
         updateSampleSize();
@@ -247,144 +264,194 @@ updateSampleSize();
     }
 
     async function loadEachWuStationObservation(stationName) {
-            try {
-                 cLoading.style.display = 'inline';
-                const data = await fetchData(`https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/weather-underground/pws/observations/?station_name=${stationName}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=10000`);
-                
-                if (!data.results || data.results.length === 0) {
-                    console.log('No data available for this station.');
-                    cLoading.style.display = 'none';
-                    return;
+        try {
+            cLoading.style.display = 'inline';
+            const data = await fetchData(`https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/weather-underground/pws/observations/?station_name=${stationName}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=10000`);
 
-                }
-                sensor.style.display = 'inline';
-                datasensor.style.display='inline';
-                chartsarea.style.display = 'block';
-                dropdownarea.style.display = 'inline';
-                
-               
-                const fields = [
-                { key: 'temp', label: 'Temperature (°C)', unit: '°C', transform: value => value, yMin: null, yMax: null, canvasId: 'temp',chartType:'line' },
-                { key: 'atmospheric_pressure', label: 'Atmospheric Pressure (KPa)', unit: 'KPa', transform: value => value / 10, yMin: null, yMax: null, canvasId: 'atmospheric_pressure',chartType:'line' },
-                { key: 'heat_index', label: 'Heat Index (°C)', unit: '°C', transform: value => value, yMin: null, yMax: null, canvasId: 'heat_index',chartType:'line' },
-                { key: 'dew_point', label: 'Dew Point (°C)', unit: '°C', transform: value => value, yMin: null, yMax: null, canvasId: 'dew_point',chartType:'line' },
-                { key: 'relative_humidity', label: 'Relative Humidity (%)', unit: '%', transform: value => value, yMin: null, yMax: null, canvasId: 'relative_humidity' ,chartType:'line'},
-                { key: 'wind_chill', label: 'Wind Chill (°C)', unit: '°C', transform: value => value, yMin: null, yMax: null, canvasId: 'wind_chill',chartType:'line' },
-                { key: 'solar_radiation', label: 'Solar Radiation (W/m²)', unit: 'W/m²', transform: value => value, yMin: null, yMax: null, canvasId: 'solar_radiation',chartType:'line' },
-                { key: 'wind_speed', label: 'Wind Speed (Km/h)', unit: 'km/h', transform: value => value, yMin: null, yMax: null, canvasId: 'wind_speed',chartType:'line' },
-                { key: 'wind_gust', label: 'Wind Gust (Km/h)', unit: 'km/h', transform: value => value, yMin: null, yMax: null, canvasId: 'wind_gust' ,chartType:'line'},
-                { key: 'wind_direction', label: 'Wind Direction (Deg)', unit: 'Deg', transform: value => value, yMin: 0, yMax: 360, canvasId: 'wind_direction',chartType:'scatter' },
-                { key: 'precipitation_rate', label: 'Precipitation Rate (mm/h)', unit: 'mm/h', transform: value => value, yMin: 0, yMax: null, canvasId: 'precipitation_rate' ,chartType:'line'},
-                { key: 'precipitation_total', label: 'Precipitation total (mm)', unit: 'mm', transform: value => value, yMin: null, yMax: null, canvasId: 'precipitation_total' ,chartType:'line'},
-                { key: 'uv', label: 'UV (UV index)', unit: 'UV index', transform: value => value, yMin: null, yMax: null, canvasId: 'uv' ,chartType:'line'},
-                ];
-                const labels = data.results.map(observation => new Date(observation.recorded_at)).reverse();
-        
-        fields.forEach(field => {
-            const hasValidData = data.results.some(observation => observation[field.key] !== undefined && observation[field.key] !== null);
-            const values = hasValidData 
-                ? data.results.map(observation => observation[field.key] !== undefined && observation[field.key] !== null ? field.transform(observation[field.key].value) : null).reverse()
-                : null;
-            
-            const sampledLabels = labels.filter((_, index) => index % sampleSize === 0);
-            const sampledValues = values ? values.filter((_, index) => index % sampleSize === 0) : null;
-            cLoading.style.display = 'none';
-            createChart(field.canvasId, field.label, sampledLabels, sampledValues, `${field.label}`, field.yMin, field.yMax, field.chartType);
-        });
+            if (!data.results || data.results.length === 0) {
+                console.log('No data available for this station.');
+                cLoading.style.display = 'none';
+                return;
 
-
-
-            } catch (error) {
-                console.error('Error:', error);
             }
-        }
+            sensor.style.display = 'inline';
+            datasensor.style.display = 'inline';
+            chartsarea.style.display = 'block';
+            dropdownarea.style.display = 'inline';
 
-    
+
+            const fields = [
+                { key: 'temp', label: 'Temperature (°C)', unit: '°C', transform: value => value, yMin: null, yMax: null, canvasId: 'temp', chartType: 'line' },
+                { key: 'atmospheric_pressure', label: 'Atmospheric Pressure (KPa)', unit: 'KPa', transform: value => value / 10, yMin: null, yMax: null, canvasId: 'atmospheric_pressure', chartType: 'line' },
+                { key: 'heat_index', label: 'Heat Index (°C)', unit: '°C', transform: value => value, yMin: null, yMax: null, canvasId: 'heat_index', chartType: 'line' },
+                { key: 'dew_point', label: 'Dew Point (°C)', unit: '°C', transform: value => value, yMin: null, yMax: null, canvasId: 'dew_point', chartType: 'line' },
+                { key: 'relative_humidity', label: 'Relative Humidity (%)', unit: '%', transform: value => value, yMin: null, yMax: null, canvasId: 'relative_humidity', chartType: 'line' },
+                { key: 'wind_chill', label: 'Wind Chill (°C)', unit: '°C', transform: value => value, yMin: null, yMax: null, canvasId: 'wind_chill', chartType: 'line' },
+                { key: 'solar_radiation', label: 'Solar Radiation (W/m²)', unit: 'W/m²', transform: value => value, yMin: null, yMax: null, canvasId: 'solar_radiation', chartType: 'line' },
+                { key: 'wind_speed', label: 'Wind Speed (Km/h)', unit: 'km/h', transform: value => value, yMin: null, yMax: null, canvasId: 'wind_speed', chartType: 'line' },
+                { key: 'wind_gust', label: 'Wind Gust (Km/h)', unit: 'km/h', transform: value => value, yMin: null, yMax: null, canvasId: 'wind_gust', chartType: 'line' },
+                { key: 'wind_direction', label: 'Wind Direction (Deg)', unit: 'Deg', transform: value => value, yMin: 0, yMax: 360, canvasId: 'wind_direction', chartType: 'scatter' },
+                { key: 'precipitation_rate', label: 'Precipitation Rate (mm/h)', unit: 'mm/h', transform: value => value, yMin: 0, yMax: null, canvasId: 'precipitation_rate', chartType: 'line' },
+                { key: 'precipitation_total', label: 'Precipitation total (mm)', unit: 'mm', transform: value => value, yMin: null, yMax: null, canvasId: 'precipitation_total', chartType: 'line' },
+                { key: 'uv', label: 'UV (UV index)', unit: 'UV index', transform: value => value, yMin: null, yMax: null, canvasId: 'uv', chartType: 'line' },
+            ];
+            const labels = data.results.map(observation => new Date(observation.recorded_at)).reverse();
+
+            fields.forEach(field => {
+                const hasValidData = data.results.some(observation => observation[field.key] !== undefined && observation[field.key] !== null);
+                const values = hasValidData
+                    ? data.results.map(observation => observation[field.key] !== undefined && observation[field.key] !== null ? field.transform(observation[field.key].value) : null).reverse()
+                    : null;
+
+                const sampledLabels = labels.filter((_, index) => index % sampleSize === 0);
+                const sampledValues = values ? values.filter((_, index) => index % sampleSize === 0) : null;
+                cLoading.style.display = 'none';
+
+                createChart(field.canvasId, field.label, sampledLabels, sampledValues, `${field.label}`, field.yMin, field.yMax, field.chartType);
+                chartboxes.forEach(function (chartbox) {
+                    chartbox.style.visibility = 'visible';
+                });
+
+            });
+
+
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+
     function createChart(canvasId, label, labels, data, yAxisLabel, yMin, yMax, chartType) {
-        if(charts[canvasId]){
+        if (charts[canvasId]) {
             charts[canvasId].destroy();
         }
+
+
         const ctx = document.getElementById(canvasId).getContext('2d');
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Clear any previous content
-    
-    if (!data) {
-        // Display a message instead of creating a chart
-        ctx.font = '16px Arial';
-        ctx.fillStyle = 'red';
-        ctx.textAlign = 'center'; // Center horizontally
-        ctx.textBaseline = 'middle'; // Center vertically
-        ctx.fillText('No data available', ctx.canvas.width / 2, ctx.canvas.height / 2 - 10);
-        ctx.fillText('Try changing time range', ctx.canvas.width / 2, ctx.canvas.height / 2 + 10);
-        return;
-    }
-       
-      charts[canvasId] = new Chart(ctx, {
-        type: chartType,
-        data: {
-          labels: labels,
-          datasets: [{
-            label: label,
-            data: data,
-            borderColor: 'rgb(75, 192, 192)',
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderWidth: 2,
-            fill: false,
-            tension: 0
-          }]
-        },
-        options: {
-          responsive: true,
-          
-          scales: {
-            x: {
-              type: 'time',
-              time: {
-                unit: 'hour',
-                tooltipFormat: 'MM/dd/yyyy HH:mm',
-                displayFormats: {
-                  day: 'MM/dd/yyyy'
-                }
-              },
-              
-              title: {
-                display: true,
-                text: 'Time'
-              }
-            },
-            y: {
-              min: yMin,
-              max: yMax,
-              title: {
-                display: true,
-                text: yAxisLabel
-              },
-              beginAtZero: false
-            }
-          },
-          plugins: {
-            title: {
-        display: true,
-        text: yAxisLabel,
-      },
-            legend: {display:false,},
-            tooltip: {
-                callbacks: {
-          label: function(context) {
-            // Show only the first value
-           
-            return `${context.dataset.label}: ${context.raw}`;
-          },
-          title: function(tooltipItems) {
-            return tooltipItems[0].label;
-          }
-        },
-              mode: 'index',
-              intersect: false
-            },
-        
-          }
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Clear any previous content
+      
+        if (!data) {
+            // Display a message instead of creating a chart
+            ctx.font = '16px Arial';
+            ctx.fillStyle = 'red';
+            ctx.textAlign = 'center'; // Center horizontally
+            ctx.textBaseline = 'middle'; // Center vertically
+            ctx.fillText('No data available', ctx.canvas.width / 2, ctx.canvas.height / 2 - 10);
+            ctx.fillText('Try changing time range', ctx.canvas.width / 2, ctx.canvas.height / 2 + 10);
+            return;
         }
-      });
+        const maxValue = Math.max(...data);
+        const meanValue = data.reduce((a, b) => a + b, 0) / data.length;
+        charts[canvasId] = new Chart(ctx, {
+            type: chartType,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: label,
+                    data: data,
+                    borderColor: 'rgb(75, 192, 192)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        grid: {
+                            display: false,
+                        },
+                        display: true,
+                        type: 'time',
+                        time: {
+                            unit: 'hour',
+                            tooltipFormat: 'MM/dd/yyyy HH:mm',
+                            displayFormats: {
+                                day: 'MM/dd/yyyy'
+                            }
+                        },
+
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            backgroundColor: 'rgba(255,255,125,0.4)',
+                        },
+                        display: true,
+                        min: yMin,
+                        max: yMax,
+                        title: {
+                            display: true,
+                            text: yAxisLabel
+                        },
+                        beginAtZero: false
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: yAxisLabel,
+                    },
+                    legend: { display: false, },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                // Show only the first value
+
+                                return `${context.dataset.label}: ${context.raw}`;
+                            },
+                            title: function (tooltipItems) {
+                                return tooltipItems[0].label;
+                            }
+                        },
+                        mode: 'index',
+                        intersect: false
+                    },
+                    annotation: {
+                    annotations: {
+                        line1: {
+                            type: 'line',
+                            yMin: maxValue,
+                            yMax: maxValue,
+                            borderColor: 'red',
+                            borderWidth: 1,
+                            legend:{
+                                display:true
+                            },
+                            label: {
+                                content: `Max Value: ${maxValue}`,
+                                enabled: true,
+                                position: 'end',
+                                backgroundColor: 'rgba(0, 0, 125, 0.4)'
+                            }
+                        },
+                        line2: {
+                            type: 'line',
+                            yMin: meanValue,
+                            yMax: meanValue,
+                            borderColor: 'blue',
+                            borderWidth: 1,
+                            label: {
+                                content: `Mean Value: ${meanValue.toFixed(2)}`,
+                                enabled: true,
+                                position: 'end',
+                                backgroundColor: 'rgba(0, 0, 125, 0.4)'
+                            }
+                        }
+                    }
+                },
+
+
+                }
+            }
+        });
     }
 
 
@@ -398,54 +465,54 @@ updateSampleSize();
 
     function loadSmartCitizenData() {
         return fetch('https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/' +
-        'smart-citizen/latest-observations.geojson?user_tags=SCOREDUBLINCCLL&system_tags=online')
-        .then(function(response) {
-            return response.json();
-            
-        })
-        .then(function(geojsonFeatureCollection) {
-            var smartCitizenLayer = L.geoJSON(geojsonFeatureCollection, {
-                onEachFeature: forEachFeature,
-            });
+            'smart-citizen/latest-observations.geojson?user_tags=SCOREDUBLINCCLL&system_tags=online')
+            .then(function (response) {
+                return response.json();
 
-            smartCitizenMarkers.addLayer(smartCitizenLayer);
-            map.addLayer(smartCitizenMarkers);
-            document.getElementById('loading-gif').style.display = 'none';
-        })
-        .catch(function(error) {
-            console.error('Error fetching GeoJSON data:', error);
-            // Hide loading GIF
-            document.getElementById('loading-gif').style.display = 'none';
-        });
+            })
+            .then(function (geojsonFeatureCollection) {
+                var smartCitizenLayer = L.geoJSON(geojsonFeatureCollection, {
+                    onEachFeature: forEachFeature,
+                });
+
+                smartCitizenMarkers.addLayer(smartCitizenLayer);
+                map.addLayer(smartCitizenMarkers);
+                document.getElementById('loading-gif').style.display = 'none';
+            })
+            .catch(function (error) {
+                console.error('Error fetching GeoJSON data:', error);
+                // Hide loading GIF
+                document.getElementById('loading-gif').style.display = 'none';
+            });
     }
 
     function loadWUData() {
-        
+
         return fetch('https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/' +
-        'weather-underground/pws/latest-observations.geojson')
-        .then(function(response) {
-            return response.json();
-            
-        })
-        .then(function(geojsonFeatureCollection) {
-             
-            var wuPWSLayer = L.geoJSON(geojsonFeatureCollection, {
-                onEachFeature: forEachFeatureWU,
+            'weather-underground/pws/latest-observations.geojson')
+            .then(function (response) {
+                return response.json();
+
+            })
+            .then(function (geojsonFeatureCollection) {
+
+                var wuPWSLayer = L.geoJSON(geojsonFeatureCollection, {
+                    onEachFeature: forEachFeatureWU,
+                });
+                wuMarkers.addLayer(wuPWSLayer);
+                map.addLayer(wuMarkers);
+                // Hide loading GIF
+                document.getElementById('loading-gif').style.display = 'none';
+
+            })
+            .catch(function (error) {
+                console.error('Error fetching Weather Underground GeoJSON data:', error);
+                // Hide loading GIF
+                document.getElementById('loading-gif').style.display = 'none';
             });
-            wuMarkers.addLayer(wuPWSLayer);
-            map.addLayer(wuMarkers);
-            // Hide loading GIF
-            document.getElementById('loading-gif').style.display = 'none';
-          
-        })
-        .catch(function(error) {
-            console.error('Error fetching Weather Underground GeoJSON data:', error);
-            // Hide loading GIF
-            document.getElementById('loading-gif').style.display = 'none';
-        });
     }
 
-   
+
 
     Promise.all([loadSmartCitizenData(), loadWUData()])
         .then(() => {
@@ -458,10 +525,10 @@ updateSampleSize();
         });
 
 
-   function mapBoundsFit () {
-       try {
-           var smartCitizenBounds = smartCitizenMarkers.getBounds();
-           var wuBounds = wuMarkers.getBounds();
+    function mapBoundsFit() {
+        try {
+            var smartCitizenBounds = smartCitizenMarkers.getBounds();
+            var wuBounds = wuMarkers.getBounds();
 
             var combinedBounds = L.latLngBounds([]);
 
@@ -484,7 +551,7 @@ updateSampleSize();
         } catch (error) {
             console.error("Error fitting map bounds:", error);
         }
-   }
+    }
 
 
 

@@ -1,5 +1,6 @@
 {% extends "observations/base.html" %}
 {% load static %}
+
 {% block head %}
 {% include 'observations/map/css.html' %}
 {% endblock %}
@@ -16,70 +17,25 @@
         <div id="map"></div>
     </div>
 
+    
+
+
+   
 <div class="devicedetailsmain">
 
+   
+
     <div id="device-details">
-        <h3>Sensor Details</h4>
-        <p>Click on a point to see the sensor details and observations.</p>
-        <img id="loading-gif" alt="Loading..." style="display: none;">
+        <h3 style="text-align: center;">Sensor Details</h4>
+        <p  style="text-align: center;">Click on a point to see the sensor details and observations.</p>
+        <img id="loading-gif"  style="display: none;">
     </div>
     
    
-<!-- <div style="max-width: 78.5%;margin:0 auto;color: #004680;margin-bottom: 20px;padding-bottom: 10px;border-bottom: 2px solid #004680;">
-    <h3> <b> Current Conditions </b></h3>
-</div>
-    <div id="sidebar-container">  
-        <div class="container">
-            <canvas id="heatIndexChart" class="heatIndexChart"></canvas>
-            <div class="details" id="device-details">
-               
-            </div>
-        </div>
-        <div class="container">
-
-             <div class="gauge">
-                <div class="progress">
-                    <div class="bar"></div>
-                    <div class="needle"></div>
-                </div>
-            </div> 
-            <canvas id="heatIndexChart" class="heatIndexChart"></canvas>
-            <h1>Coming Soon</h1>
-            <p>Nore details coming soon</p>
-            
-
-
-        </div>
-        <div class="container">
-            <canvas id="heatIndexChart" class="heatIndexChart"></canvas>
-            <h1>Coming Soon</h1>
-            <p>Nore details coming soon</p>
-
-        </div>
-        <div class="container">
-            <canvas id="heatIndexChart" class="heatIndexChart"></canvas>
-            <div>
-                <h1>Coming Soon</h1>
-                <p>Nore details coming soon</p>
-            </div>
-        </div>
-        <div class="container">
-            <canvas id="heatIndexChart" class="heatIndexChart"></canvas>
-            <h1>Coming Soon</h1>
-            <p>Nore details coming soon</p>
-
-        </div>
-        <div class="container">
-            <canvas id="heatIndexChart" class="heatIndexChart"></canvas>
-            <h1>Coming Soon</h1>
-            <p>Nore details coming soon</p>
+    <div style="max-width: 78.5%;margin:20px auto;color: #004680;margin-bottom: 20px; border-bottom: 2px solid #004680;">
+        <h3  style="display: flex;     justify-content: center; " > <b id="sensor" style="margin-right: 4px;"> Graphs </b > <p id="datasensor"> Data </p></h3>
     </div>
-       
-    </div> -->
-    <div style="max-width: 78.5%;margin:0 auto;color: #004680;margin-bottom: 20px;padding-bottom: 10px;border-bottom: 2px solid #004680;">
-        <h3  style="display: flex;"> <b id="sensor" style="margin-right: 4px;"> Graphs </b > <p id="datasensor"> Data </p></h3>
-    </div>
-    <div id="dropdown">
+    <div  id="dropdown" style="max-width: 78.5%; margin: 0 auto; text-align: center;">
         <label for="timeRange">Select Time Range:</label>
         <select id="timeRange" onchange="onTimeRangeChange()">
             <option value="day">24 Hrs</option>
@@ -91,47 +47,69 @@
        
     </div>
     <div id="chartscontainer">
+        <div class="chartbox">
+            <canvas class="chart" id="temp" ></canvas>
+        </div>
         
-        <canvas class="chart" id="temp" ></canvas>
+        <div class="chartbox">
         <canvas class="chart" id="heat_index"></canvas>
+        </div>
 
+
+        <div class="chartbox">
         <canvas class="chart" id="precipitation_rate"></canvas>
+        </div> 
+
+        <div class="chartbox">
         <canvas class="chart" id="precipitation_total"></canvas>
+        </div>
+
+
+        <div class="chartbox">
         <canvas class="chart" id="atmospheric_pressure" ></canvas>
+        </div>
 
+        <div class="chartbox">
         <canvas class="chart" id="dew_point"></canvas>
+        </div> 
+
+        <div class="chartbox">
         <canvas class="chart" id="relative_humidity"></canvas>
+        </div>
 
+        <div class="chartbox">
         <canvas class="chart" id="uv"></canvas>
+        </div>
+
+        <div class="chartbox">
         <canvas class="chart" id="solar_radiation"></canvas>
-
-
-       
-
-       
         
-        <canvas class="chart" id="wind_chill"></canvas>
-        <canvas class="chart" id="wind_speed"></canvas>
-        <canvas class="chart" id="wind_gust"></canvas>
-        <canvas class="chart" id="wind_direction"></canvas>
+       </div>   
 
+       
+
+       
+       <div class="chartbox">
+        <canvas class="chart" id="wind_chill"></canvas>
+    </div>
+
+        <div class="chartbox">
+        <canvas class="chart" id="wind_speed"></canvas>
+    </div>
+
+        <div class="chartbox">
+        <canvas class="chart" id="wind_gust"></canvas>
+    </div>
+        <div class="chartbox">
+        <canvas class="chart" id="wind_direction"></canvas>
+    </div>
        
         
     </div>
+
+
+    <button id="backToTopBtn" title="Go to top">Back to top</button>
     
-    <!-- temp
-  
-   
-    map/:575 
-    map/:575 
-    map/:575 wind_direction
-    map/:575 wind_speed
-    map/:575 wind_gust
-    
-    map/:575 precipitation_rate
-    map/:575 precipitation_total
-    map/:575 uv
-    map/:575  -->
 </div>
    
 
