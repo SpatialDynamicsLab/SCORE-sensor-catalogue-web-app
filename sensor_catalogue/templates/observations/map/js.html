@@ -13,6 +13,26 @@
     var dropdownarea = document.getElementById('dropdown');
     var cLoading = document.getElementById('chart-loading');
     var chartboxes = document.querySelectorAll('.chartbox');
+    const cardinalPoints = [
+        { label: "N", min: 348.75, max: 360 },
+        { label: "N", min: 0, max: 11.25 },
+        { label: "NNE", min: 11.25, max: 33.75 },
+        { label: "NE", min: 33.75, max: 56.25 },
+        { label: "ENE", min: 56.25, max: 78.75 },
+        { label: "E", min: 78.75, max: 101.25 },
+        { label: "ESE", min: 101.25, max: 123.75 },
+        { label: "SE", min: 123.75, max: 146.25 },
+        { label: "SSE", min: 146.25, max: 168.75 },
+        { label: "S", min: 168.75, max: 191.25 },
+        { label: "SSW", min: 191.25, max: 213.75 },
+        { label: "SW", min: 213.75, max: 236.25 },
+        { label: "WSW", min: 236.25, max: 258.75 },
+        { label: "W", min: 258.75, max: 281.25 },
+        { label: "WNW", min: 281.25, max: 303.75 },
+        { label: "NW", min: 303.75, max: 326.25 },
+        { label: "NNW", min: 326.25, max: 348.75 }
+    ];
+
 
     document.getElementById('loading-gif').style.display = 'block';
     var smartCitizenMarkers = L.markerClusterGroup({
@@ -39,23 +59,36 @@
         maxZoom: 18
     }).addTo(map);
 
-    window.onscroll = function() {
-    scrollFunction();
-};
+    window.onscroll = function () {
+        scrollFunction();
+    };
 
 
-function scrollFunction() {
-    if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
-        backToTopBtn.style.display = "block";
-    } else {
-        backToTopBtn.style.display = "none";
+
+
+    function getCardinalDirection(degree) {
+        for (let i = 0; i < cardinalPoints.length; i++) {
+            const point = cardinalPoints[i];
+            if (degree >= point.min && degree < point.max) {
+                return point.label;
+            }
+        }
+        return "Invalid degree";
     }
-}
-// When the user clicks on the button, scroll to the top of the document
-backToTopBtn.addEventListener('click', function() {
-    document.body.scrollTop = 0; // For Safari
-    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-});
+
+   
+    function scrollFunction() {
+        if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+            backToTopBtn.style.display = "block";
+        } else {
+            backToTopBtn.style.display = "none";
+        }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    backToTopBtn.addEventListener('click', function () {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    });
 
 
     let formattedPreviousDate, formattedCurrentDate;
@@ -76,7 +109,7 @@ backToTopBtn.addEventListener('click', function() {
         formattedCurrentDate = formatDate(currentDate);
         formattedPreviousDate = formatDate(previousDate);
 
-        
+
     }
 
     // Initial date range (last 7 days)
@@ -171,7 +204,7 @@ backToTopBtn.addEventListener('click', function() {
                 </div>
                 </a>
             `;
-            
+
             }
         }
         detailsHtml += `
@@ -265,7 +298,7 @@ backToTopBtn.addEventListener('click', function() {
 
     async function loadEachWuStationObservation(stationName) {
         try {
-            cLoading.style.display = 'inline';
+            cLoading.style.display = 'unset';
             const data = await fetchData(`https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/weather-underground/pws/observations/?station_name=${stationName}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=10000`);
 
             if (!data.results || data.results.length === 0) {
@@ -277,7 +310,7 @@ backToTopBtn.addEventListener('click', function() {
             sensor.style.display = 'inline';
             datasensor.style.display = 'inline';
             chartsarea.style.display = 'block';
-            dropdownarea.style.display = 'inline';
+            dropdownarea.style.display = 'block';
 
 
             const fields = [
@@ -290,7 +323,7 @@ backToTopBtn.addEventListener('click', function() {
                 { key: 'solar_radiation', label: 'Solar Radiation (W/m²)', unit: 'W/m²', transform: value => value, yMin: null, yMax: null, canvasId: 'solar_radiation', chartType: 'line' },
                 { key: 'wind_speed', label: 'Wind Speed (Km/h)', unit: 'km/h', transform: value => value, yMin: null, yMax: null, canvasId: 'wind_speed', chartType: 'line' },
                 { key: 'wind_gust', label: 'Wind Gust (Km/h)', unit: 'km/h', transform: value => value, yMin: null, yMax: null, canvasId: 'wind_gust', chartType: 'line' },
-                { key: 'wind_direction', label: 'Wind Direction (Deg)', unit: 'Deg', transform: value => value, yMin: 0, yMax: 360, canvasId: 'wind_direction', chartType: 'scatter' },
+                { key: 'wind_direction', label: 'Wind Direction (Deg)', unit: 'Deg', transform: value => value, yMin: 0, yMax: 360, canvasId: 'wind_direction', chartType: 'line' },
                 { key: 'precipitation_rate', label: 'Precipitation Rate (mm/h)', unit: 'mm/h', transform: value => value, yMin: 0, yMax: null, canvasId: 'precipitation_rate', chartType: 'line' },
                 { key: 'precipitation_total', label: 'Precipitation total (mm)', unit: 'mm', transform: value => value, yMin: null, yMax: null, canvasId: 'precipitation_total', chartType: 'line' },
                 { key: 'uv', label: 'UV (UV index)', unit: 'UV index', transform: value => value, yMin: null, yMax: null, canvasId: 'uv', chartType: 'line' },
@@ -306,8 +339,37 @@ backToTopBtn.addEventListener('click', function() {
                 const sampledLabels = labels.filter((_, index) => index % sampleSize === 0);
                 const sampledValues = values ? values.filter((_, index) => index % sampleSize === 0) : null;
                 cLoading.style.display = 'none';
+                let meandisplay = true;
+                let maxdisplay = true;
+                let directionLabels;
+                if (field.canvasId == 'wind_direction') {
+                    meandisplay = false;
+                    maxdisplay = false;
+                    if(sampledValues){
 
-                createChart(field.canvasId, field.label, sampledLabels, sampledValues, `${field.label}`, field.yMin, field.yMax, field.chartType);
+                    
+                    const validSampledValues = sampledValues.filter(value => value !== null && value !== undefined);
+                    directionLabels = validSampledValues.map(value => getCardinalDirection(value));
+
+                    const directionCounts = {};
+                    directionLabels.forEach(direction => {
+                        directionCounts[direction] = (directionCounts[direction] || 0) + 1;
+                    });
+                    const windDirectionData = Object.keys(directionCounts).map(direction => ({
+                        direction,
+                        frequency: directionCounts[direction]
+                    }));
+
+                    
+
+                }
+                windChart(directionLabels, sampledLabels, field.canvasId, `${field.label}`)
+
+
+                } else {
+                    createChart(field.canvasId, field.label, sampledLabels, sampledValues, `${field.label}`, field.yMin, field.yMax, field.chartType, meandisplay, maxdisplay);
+                }
+
                 chartboxes.forEach(function (chartbox) {
                     chartbox.style.visibility = 'visible';
                 });
@@ -321,16 +383,113 @@ backToTopBtn.addEventListener('click', function() {
         }
     }
 
-
-    function createChart(canvasId, label, labels, data, yAxisLabel, yMin, yMax, chartType) {
+    function windChart(data1, data2, canvasId, yAxisLabel) {
         if (charts[canvasId]) {
             charts[canvasId].destroy();
+        }
+        const labels = data2;
+        const ctx = document.getElementById(canvasId).getContext('2d');
+       
+        if (!data1) {
+            // Display a message instead of creating a chart
+            ctx.font = '16px Arial';
+            ctx.fillStyle = 'red';
+            ctx.textAlign = 'center'; // Center horizontally
+            ctx.textBaseline = 'middle'; // Center vertically
+            ctx.fillText('No data available', ctx.canvas.width / 2, ctx.canvas.height / 2 - 10);
+            ctx.fillText('Try changing time range', ctx.canvas.width / 2, ctx.canvas.height / 2 + 10);
+            return;
+        }
+
+        const chartData = {
+            labels: labels,
+            datasets: [{
+                label: 'Wind Direction',
+                data: data1,
+                borderColor: 'rgb(75, 192, 192)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderWidth: 2,
+                fill: false
+            }]
+        };
+
+        const config = {
+            type: 'scatter',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        type: 'category',
+                        labels: ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'],
+                        title: {
+                            display: true,
+                            text: yAxisLabel,
+                        }
+
+                    },
+                    x: {
+                        grid: {
+                            display: false,
+                        },
+                        display: true,
+                        type: 'time',
+                        time: {
+                            unit: 'hour',
+                            tooltipFormat: 'MM/dd/yyyy HH:mm',
+                            displayFormats: {
+                                day: 'MM/dd/yyyy'
+                            }
+                        },
+
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        }
+                    },
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: yAxisLabel,
+                    },
+                    legend: { display: false, },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                // Show only the first value
+
+                                return `${context.dataset.label}: ${context.raw}`;
+                            },
+                            title: function (tooltipItems) {
+                                return tooltipItems[0].label;
+                            }
+                        },
+                        mode: 'index',
+                        intersect: false
+                    },
+
+
+
+                }
+
+            }
+        };
+
+        charts[canvasId] = new Chart(ctx, config);
+    }
+
+    function createChart(canvasId, label, labels, data, yAxisLabel, yMin, yMax, chartType, meandisplay, maxdisplay) {
+        if (charts[canvasId]) {
+            charts[canvasId].destroy();
+            console.log("destroyed chart: ", charts[canvasId])
         }
 
 
         const ctx = document.getElementById(canvasId).getContext('2d');
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Clear any previous content
-      
+
         if (!data) {
             // Display a message instead of creating a chart
             ctx.font = '16px Arial';
@@ -415,38 +574,40 @@ backToTopBtn.addEventListener('click', function() {
                         intersect: false
                     },
                     annotation: {
-                    annotations: {
-                        line1: {
-                            type: 'line',
-                            yMin: maxValue,
-                            yMax: maxValue,
-                            borderColor: 'red',
-                            borderWidth: 1,
-                            legend:{
-                                display:true
+                        annotations: {
+                            line1: {
+                                display: maxdisplay,
+                                type: 'line',
+                                yMin: maxValue,
+                                yMax: maxValue,
+                                borderColor: 'red',
+                                borderWidth: 1,
+                                legend: {
+                                    display: true
+                                },
+                                label: {
+                                    content: `Max Value: ${maxValue}`,
+                                    enabled: true,
+                                    position: 'end',
+                                    backgroundColor: 'rgba(0, 0, 125, 0.4)'
+                                }
                             },
-                            label: {
-                                content: `Max Value: ${maxValue}`,
-                                enabled: true,
-                                position: 'end',
-                                backgroundColor: 'rgba(0, 0, 125, 0.4)'
-                            }
-                        },
-                        line2: {
-                            type: 'line',
-                            yMin: meanValue,
-                            yMax: meanValue,
-                            borderColor: 'blue',
-                            borderWidth: 1,
-                            label: {
-                                content: `Mean Value: ${meanValue.toFixed(2)}`,
-                                enabled: true,
-                                position: 'end',
-                                backgroundColor: 'rgba(0, 0, 125, 0.4)'
+                            line2: {
+                                display: meandisplay,
+                                type: 'line',
+                                yMin: meanValue,
+                                yMax: meanValue,
+                                borderColor: 'blue',
+                                borderWidth: 1,
+                                label: {
+                                    content: `Mean Value: ${meanValue.toFixed(2)}`,
+                                    enabled: true,
+                                    position: 'end',
+                                    backgroundColor: 'rgba(0, 0, 125, 0.4)'
+                                }
                             }
                         }
-                    }
-                },
+                    },
 
 
                 }
