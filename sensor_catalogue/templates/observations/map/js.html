@@ -36,6 +36,9 @@
 
     document.getElementById('loading-gif').style.display = 'block';
     var smartCitizenMarkers = L.markerClusterGroup({
+
+
+
         spiderfyOnMaxZoom: true,
         showCoverageOnHover: false,
         zoomToBoundsOnClick: true
@@ -76,7 +79,7 @@
         return "Invalid degree";
     }
 
-   
+
     function scrollFunction() {
         if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
             backToTopBtn.style.display = "block";
@@ -129,40 +132,81 @@
 
     function displayDeviceDetails(feature) {
 
-        properties = feature.properties
-        var detailsHtml = '<h3 style="color:#004680"><b>' + properties.name + '</b></h3>';
-        detailsHtml += '<p>' + properties.description + '<br><br><strong>Last Observation: '
-            + properties.last_reading_at +
-            '</strong><br><small>Platform provider: ' +
-            '<a href="' + properties.platform_provider.url + '" className="ml-2" target="_blank"> ' +
-            properties.platform_provider.name + '</a></small></p>'
+        var properties = feature.properties
 
-        // Horizontal table with one row for CCLL Tags, System Tags, and Owner
-        detailsHtml += '<table class="table table-sm table-responsive-sm" >';
-        detailsHtml += '<tr>';
-        detailsHtml += '<th>CCLL Tags:</th>';
-        detailsHtml += '<td>' + properties.user_tags.join(", ") + '</td>';
-        detailsHtml += '<th>System Tags:</th>';
-        detailsHtml += '<td>' + properties.system_tags.join(", ") + '</td>';
-        detailsHtml += '<th>Owner:</th>';
-        detailsHtml += '<td>' + properties.owner + '</td>';
-        // detailsHtml += '<th>Time series:</th>';
-        // detailsHtml += '<td>' + ' <a href="https://dashboard.smartcitizen.me/?id='
-        //     + feature.id + '" class="ml-2" target="_blank">Open</a></td>';
-        detailsHtml += '</tr>';
-        detailsHtml += '</table>';
-        // Observations table without 'Added At' column
-        detailsHtml += '<table class="table table-sm table-bordered table-hover table-responsive-md">' +
-            '<thead class="thead-light">' +
-            '<tr><th>Sensor</th><th>Measurement</th><th>Value</th><th>Unit</th></tr></thead><tbody>';
-        properties.observations.forEach(function (obs) {
-            detailsHtml += '<tr><td>' + obs.sensor_name + '</td><td>' + obs.measurement_name +
-                '</td><td>' + obs.value + '</td><td>' + obs.unit + '</td></tr>';
-        });
-        detailsHtml += '</tbody></table>';
+        var detailsHtml = `
+        <div  style=" display: flex;
+    justify-content: space-evenly;
+    font-size: 10px;
+    font-weight: bolder;
+    background-color: cadetblue;
+    max-width: 80%;
+    margin: 0 auto;
+    /* align-items: center; */
+    text-align: center;
+    border-radius: 10px 1px 10px 1px; ">  
 
-        $('#device-details').html(detailsHtml);
+                    <p style="   
+                     margin-top: 4px;
+                    margin-bottom: 0px;
+                    color: white;">CCLL Tags: ${properties.user_tags.join(", ")}</p>
 
+                   
+
+                    <p style="   
+                     margin-top: 4px;
+                    margin-bottom: 0px;
+                    color: white; "
+                    >System Tags: ${properties.system_tags.join(", ")}</p>
+
+                   
+
+                    <p style="   
+                     margin-top: 4px;
+                    margin-bottom: 0px;
+                    color: white; "
+                    >Owner: ${properties.owner}</p>
+
+                  
+        </div>
+        <div class="slider-container">
+            <button class="slide-button left" onclick="slideLeft()">&#10094;</button>
+            <div class="observations-container">
+                
+    `;
+    properties.observations.forEach(function (obs) {
+        detailsHtml += `
+            <a href=#${obs.sensor_name} style="border-right: 1px solid #ddd">
+                <div class="observation-item">
+                    <div class="obsTop">
+                        <span class="value">${obs.value}</span>
+                        <p class="unit">${obs.unit}</p>
+                    </div>
+                    <span class="measurement">${obs.measurement_name}</span>
+                </div>
+            </a>
+        `;
+    });
+    detailsHtml += `
+            </div>
+            <button class="slide-button right" onclick="slideRight()">&#10095;</button>
+        </div>
+         
+                
+                   
+               
+          
+        <div class="deviceInfo">
+            <p><strong>${properties.name}: </strong>${properties.description}</p>
+           
+            <p><strong>Last Observation: </strong>${properties.last_reading_at}</p>
+            <p><small>Platform provider: <a href="${properties.platform_provider.url}" class="ml-2" target="_blank"> ${properties.platform_provider.name}</a></small></p>
+           
+        </div>
+        <p style="color:rgba(243, 0, 32, 0.89); text-align:center;">Data Charts Coming Soon ... </p>
+    `;
+
+        document.getElementById('device-details').innerHTML = detailsHtml;
         sensor.style.display = 'none';
         chartsarea.style.display = 'none';
         dropdownarea.style.display = 'none';
@@ -182,6 +226,39 @@
         loadEachWuStationObservation(properties.name);
         sensor.textContent = properties.name;
         var detailsHtml = `
+
+         <div  style=" display: flex;
+    justify-content: space-evenly;
+    font-size: 10px;
+    font-weight: bolder;
+    background-color: cadetblue;
+    max-width: 80%;
+    margin: 0 auto;
+    /* align-items: center; */
+    text-align: center;
+    border-radius: 10px 1px 10px 1px; ">  
+
+                    <p style="   
+                     margin-top: 4px;
+                    margin-bottom: 0px;
+                    color: white;">CCLL Tags: SCOREDUBLINCCLL,UCD</p>
+
+                   
+
+                    <p style="   
+                     margin-top: 4px;
+                    margin-bottom: 0px;
+                    color: white; "
+                    >System Tags: Indoor,online</p>
+
+                   
+
+                    <p style="   
+                     margin-top: 4px;
+                    margin-bottom: 0px;
+                    color: white; "
+                    >Owner: SCORE</p>
+                </div>
                 
             <div class="slider-container">
             <button class="slide-button left" onclick="slideLeft()">&#10094;</button>
@@ -345,25 +422,25 @@
                 if (field.canvasId == 'wind_direction') {
                     meandisplay = false;
                     maxdisplay = false;
-                    if(sampledValues){
+                    if (sampledValues) {
 
-                    
-                    const validSampledValues = sampledValues.filter(value => value !== null && value !== undefined);
-                    directionLabels = validSampledValues.map(value => getCardinalDirection(value));
 
-                    const directionCounts = {};
-                    directionLabels.forEach(direction => {
-                        directionCounts[direction] = (directionCounts[direction] || 0) + 1;
-                    });
-                    const windDirectionData = Object.keys(directionCounts).map(direction => ({
-                        direction,
-                        frequency: directionCounts[direction]
-                    }));
+                        const validSampledValues = sampledValues.filter(value => value !== null && value !== undefined);
+                        directionLabels = validSampledValues.map(value => getCardinalDirection(value));
 
-                    
+                        const directionCounts = {};
+                        directionLabels.forEach(direction => {
+                            directionCounts[direction] = (directionCounts[direction] || 0) + 1;
+                        });
+                        const windDirectionData = Object.keys(directionCounts).map(direction => ({
+                            direction,
+                            frequency: directionCounts[direction]
+                        }));
 
-                }
-                windChart(directionLabels, sampledLabels, field.canvasId, `${field.label}`)
+
+
+                    }
+                    windChart(directionLabels, sampledLabels, field.canvasId, `${field.label}`)
 
 
                 } else {
@@ -389,7 +466,7 @@
         }
         const labels = data2;
         const ctx = document.getElementById(canvasId).getContext('2d');
-       
+
         if (!data1) {
             // Display a message instead of creating a chart
             ctx.font = '16px Arial';
@@ -622,7 +699,80 @@
         });
     }
 
+    function createDefaultIcon(color, size, x) {
+        if (x === 'smart') {
+            return L.divIcon({
+                className: 'custom-circle-icon',
+                html: `<div style="
+                background-color: ${color};
+                width: ${size}px;
+                height: ${size}px;
+                align-content:center;
+                text-align:center;
+                border-radius: 50%;
+                border: 2px solid rgba(63, 245, 39, 0.75);
+                ">S</div>`,
+                iconSize: [size, size],
+                iconAnchor: [size / 2, size / 2]
+            });
 
+        }
+        return L.divIcon({
+            className: 'custom-circle-icon',
+            html: `<div style="
+                background-color: ${color};
+                width: ${size}px;
+                height: ${size}px;
+                align-content:center;
+                text-align:center;
+                border-radius: 50%;
+                border: 2px solid rgba(63, 245, 39, 0.75);
+                ">W</div>`,
+            iconSize: [size, size],
+            iconAnchor: [size / 2, size / 2]
+        });
+
+    }
+    function createClickedIcon(size, x) {
+        if (x === 'smart') {
+            return L.divIcon({
+                html: `<div style="
+                background-color:rgba(243, 0, 32, 0.59) ;
+                width: 30px;
+                height: 30px;
+                align-content:center;
+                text-align:center;
+                border-radius: 50%;
+                border: 2px solid rgba(243, 0, 32, 0.89);
+                ">S</div>`,
+                iconSize: [size, size],
+                iconAnchor: [size / 2, size / 2]
+                ,
+                className: '',
+            });
+
+
+        }
+        return L.divIcon({
+            html: `<div style="
+                background-color:rgba(243, 0, 32, 0.59) ;
+                width: 30px;
+                height: 30px;
+                align-content:center;
+                text-align:center;
+                border-radius: 50%;
+                border: 2px solid rgba(243, 0, 32, 0.89);
+                ">W</div>`,
+            iconSize: [size, size],
+            iconAnchor: [size / 2, size / 2]
+            ,
+            className: '',
+        });
+
+    }
+
+    var selectedMarker = null;
+    var selectedMarkerType = null;
 
     function loadSmartCitizenData() {
         return fetch('https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/' +
@@ -633,6 +783,20 @@
             })
             .then(function (geojsonFeatureCollection) {
                 var smartCitizenLayer = L.geoJSON(geojsonFeatureCollection, {
+                    pointToLayer: function (feature, latlng) {
+                        var marker = L.marker(latlng, {
+                            icon: createDefaultIcon('rgba(63, 245, 39, 0.48)', 30, 'smart')
+                        });
+                        marker.on('click', function () {
+                            if (selectedMarker) {
+                                selectedMarker.setIcon(createDefaultIcon('rgba(63, 245, 39, 0.48)', 30, selectedMarkerType));
+                            }
+                            marker.setIcon(createClickedIcon(30, 'smart'));
+                            selectedMarker = marker;
+                            selectedMarkerType = 'smart';
+                        });
+                        return marker;
+                    },
                     onEachFeature: forEachFeature,
                 });
 
@@ -647,6 +811,7 @@
             });
     }
 
+
     function loadWUData() {
 
         return fetch('https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/' +
@@ -658,6 +823,20 @@
             .then(function (geojsonFeatureCollection) {
 
                 var wuPWSLayer = L.geoJSON(geojsonFeatureCollection, {
+                    pointToLayer: function (feature, latlng) {
+                        var marker = L.marker(latlng, {
+                            icon: createDefaultIcon('rgba(63, 245, 39, 0.48)', 30, 'wu')
+                        });
+                        marker.on('click', function () {
+                            if (selectedMarker) {
+                                selectedMarker.setIcon(createDefaultIcon('rgba(63, 245, 39, 0.48)', 30, selectedMarkerType));
+                            }
+                            marker.setIcon(createClickedIcon(30, 'wu'));
+                            selectedMarker = marker;
+                            selectedMarkerType = 'wu';
+                        });
+                        return marker;
+                    },
                     onEachFeature: forEachFeatureWU,
                 });
                 wuMarkers.addLayer(wuPWSLayer);
