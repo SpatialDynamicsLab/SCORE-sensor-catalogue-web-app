@@ -7,12 +7,14 @@
     // Display loading GIF
     let charts = {};
     let backToTopBtn = document.getElementById("backToTopBtn");
-    var sensor = document.getElementById('sensor');
-    var datasensor = document.getElementById('datasensor');
-    var chartsarea = document.getElementById('chartscontainer');
-    var dropdownarea = document.getElementById('dropdown');
-    var cLoading = document.getElementById('chart-loading');
-    var chartboxes = document.querySelectorAll('.chartbox');
+    const sensor = document.getElementById('sensor');
+    const datasensor = document.getElementById('datasensor');
+    const chartsarea = document.getElementById('chartscontainer');
+    const smartChartArea = document.getElementById('smartChartContainer');
+    const dropdownarea = document.getElementById('dropdown');
+    const cLoading = document.getElementById('chart-loading');
+    const chartboxes = document.querySelectorAll('.chartbox');
+    let dda = "";
     const cardinalPoints = [
         { label: "N", min: 348.75, max: 360 },
         { label: "N", min: 0, max: 11.25 },
@@ -129,10 +131,17 @@
     }
     // L.control.layers(baseLayers, overlayLayers).addTo(map);
 
-
+    // smart citizen data display
+    let senId = null;
     function displayDeviceDetails(feature) {
-
+        chartsarea.style.display = 'none';
+        dda = "";
+        dda = "wu";
         var properties = feature.properties
+        sensor.textContent = properties.name;
+
+
+
 
         var detailsHtml = `
         <div  style=" display: flex;
@@ -174,9 +183,9 @@
             <div class="observations-container">
                 
     `;
-    properties.observations.forEach(function (obs) {
-        detailsHtml += `
-            <a href=#${obs.sensor_name} style="border-right: 1px solid #ddd">
+        properties.observations.forEach(function (obs) {
+            detailsHtml += `
+            <a href=#${obs.sensor_name}  onclick="updateChart(${obs.sensor_id})" style="border-right: 1px solid #ddd">
                 <div class="observation-item">
                     <div class="obsTop">
                         <span class="value">${obs.value}</span>
@@ -186,8 +195,8 @@
                 </div>
             </a>
         `;
-    });
-    detailsHtml += `
+        });
+        detailsHtml += `
             </div>
             <button class="slide-button right" onclick="slideRight()">&#10095;</button>
         </div>
@@ -203,17 +212,23 @@
             <p><small>Platform provider: <a href="${properties.platform_provider.url}" class="ml-2" target="_blank"> ${properties.platform_provider.name}</a></small></p>
            
         </div>
-        <p style="color:rgba(243, 0, 32, 0.89); text-align:center;">Data Charts Coming Soon ... </p>
+        <p style="text-align:center"                                         ><small>Click on an observation to view the chart</small></p>
+      
     `;
 
         document.getElementById('device-details').innerHTML = detailsHtml;
-        sensor.style.display = 'none';
-        chartsarea.style.display = 'none';
-        dropdownarea.style.display = 'none';
+
+        dropdownarea.style.display = 'block';
         datasensor.style.display = 'none';
 
     }
 
+    function updateChart(sId) {
+        senId = sId;
+        chartsarea.style.display = 'none';
+        smartChartArea.style.display = 'block';
+        loadEachSmartStationObservation(sensor.textContent, sId);
+    }
     function forEachFeature(feature, layer) {
         layer.on('click', function (e) {
             displayDeviceDetails(feature);
@@ -221,9 +236,14 @@
     }
 
     function displayWUDetails(feature) {
+        dda = "";
+        dda = "sc";
         var properties = feature.properties;
         var observations = properties.observations;
+
+        smartChartArea.style.display = 'none';
         loadEachWuStationObservation(properties.name);
+        chartsarea.style.display = 'none';
         sensor.textContent = properties.name;
         var detailsHtml = `
 
@@ -338,9 +358,6 @@
             sampleSize = isMobile ? 10 : 5;
         }
 
-
-
-        console.log('Sample Size:', sampleSize); // For debugging purposes
     }
 
     // Update sample size and chart data based on screen size
@@ -348,6 +365,8 @@
         updateSampleSize();
         if (charts['temp']) {
             loadEachWuStationObservation(sensor.textContent);
+        } else if (charts['smart-chart']) {
+            updateChart(senId);;
         }
     }
     // Add event listener for screen size changes
@@ -369,7 +388,16 @@
         }
         updateSampleSize();
         if (sensor.textContent) {
-            loadEachWuStationObservation(sensor.textContent);
+            if (dda == "wu") {
+                updateChart(senId);
+
+
+            } else if (dda == "sc") {
+                loadEachWuStationObservation(sensor.textContent);
+
+            }
+
+
         }
     }
 
@@ -459,6 +487,51 @@
             console.error('Error:', error);
         }
     }
+
+
+
+    async function loadEachSmartStationObservation(deviceName, sId) {
+        try {
+            cLoading.style.display = 'unset';
+
+
+            const url = `https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/smart-citizen/observations/?device_name=${deviceName}&sensor_id=${sId}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=10000`;
+            console.log("Fetching data from URL:", url);
+            const data = await fetchData(url);
+
+
+            if (!data.results || data.results.length === 0) {
+                console.log('No data available for this station.');
+                cLoading.style.display = 'none';
+                return;
+            }
+
+
+            const measurementName = data.results[0].measurement_name;
+            const sensorName = data.results[0].sensor_name;
+
+
+
+            const labels = data.results.map(observation => new Date(observation.recorded_at)).reverse();
+            const values = data.results.map(observation => observation.value).reverse();
+
+            // Filter null values
+            const filteredLabels = labels.filter((_, index) => values[index] !== null);
+            const filteredValues = values.filter(value => value !== null);
+
+            // Downsample data if necessary
+            const maxPoints = 100; // Maximum number of points to display in the chart
+            const step = Math.ceil(filteredValues.length / maxPoints);
+            const sampledLabels = filteredLabels.filter((_, index) => index % step === 0);
+            const sampledValues = filteredValues.filter((_, index) => index % step === 0);
+            createChart('smart-chart', `${sensorName}`, sampledLabels, sampledValues, measurementName, null, null, 'line', true, true);
+            //smartChart(sampledLabels, sampledValues);
+            cLoading.style.display = 'none';
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
 
     function windChart(data1, data2, canvasId, yAxisLabel) {
         if (charts[canvasId]) {
@@ -558,6 +631,7 @@
     }
 
     function createChart(canvasId, label, labels, data, yAxisLabel, yMin, yMax, chartType, meandisplay, maxdisplay) {
+
         if (charts[canvasId]) {
             charts[canvasId].destroy();
             console.log("destroyed chart: ", charts[canvasId])
@@ -633,7 +707,7 @@
                 plugins: {
                     title: {
                         display: true,
-                        text: yAxisLabel,
+                        text: label,
                     },
                     legend: { display: false, },
                     tooltip: {
@@ -711,7 +785,7 @@
                 text-align:center;
                 border-radius: 50%;
                 border: 2px solid rgba(63, 245, 39, 0.75);
-                ">S</div>`,
+                ">SC</div>`,
                 iconSize: [size, size],
                 iconAnchor: [size / 2, size / 2]
             });
@@ -727,7 +801,7 @@
                 text-align:center;
                 border-radius: 50%;
                 border: 2px solid rgba(63, 245, 39, 0.75);
-                ">W</div>`,
+                ">WS</div>`,
             iconSize: [size, size],
             iconAnchor: [size / 2, size / 2]
         });
@@ -744,7 +818,7 @@
                 text-align:center;
                 border-radius: 50%;
                 border: 2px solid rgba(243, 0, 32, 0.89);
-                ">S</div>`,
+                ">SC</div>`,
                 iconSize: [size, size],
                 iconAnchor: [size / 2, size / 2]
                 ,
@@ -762,7 +836,7 @@
                 text-align:center;
                 border-radius: 50%;
                 border: 2px solid rgba(243, 0, 32, 0.89);
-                ">W</div>`,
+                ">WS</div>`,
             iconSize: [size, size],
             iconAnchor: [size / 2, size / 2]
             ,
