@@ -1,5 +1,8 @@
 from django.shortcuts import render
+import requests
 
-
-def map_view(request):
-    return render(request, "observations/map/map.html", {})
+def map_view(request, sensor_id=None):
+    context = {}
+    if sensor_id:
+        context['sensor_id'] = sensor_id
+    return render(request, "observations/map/map.html", context)

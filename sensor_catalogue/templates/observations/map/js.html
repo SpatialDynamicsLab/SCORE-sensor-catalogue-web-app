@@ -1,12 +1,12 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-gauge@0.2.1/dist/chartjs-gauge.min.js"></script>
+
 
 <script>
     // Display loading GIF
     let charts = {};
-    let backToTopBtn = document.getElementById("backToTopBtn");
+    // let backToTopBtn = document.getElementById("backToTopBtn");
     const sensor = document.getElementById('sensor');
     const datasensor = document.getElementById('datasensor');
     const chartsarea = document.getElementById('chartscontainer');
@@ -14,7 +14,30 @@
     const dropdownarea = document.getElementById('dropdown');
     const cLoading = document.getElementById('chart-loading');
     const chartboxes = document.querySelectorAll('.chartbox');
+    const noData = document.getElementById('noData');
     let dda = "";
+
+    // socials
+    document.getElementById('facebook-btn').addEventListener('click', function() {
+    const url = window.location.href;
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+    window.open(facebookUrl, '_blank');
+});
+
+document.getElementById('twitter-btn').addEventListener('click', function() {
+    const url = window.location.href;
+    const text = encodeURIComponent('Check out this sensor data!');
+    const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${text}`;
+    window.open(twitterUrl, '_blank');
+});
+
+// document.getElementById('instagram-btn').addEventListener('click', function() {
+//     // Note: Instagram doesn't support direct sharing of URLs via a web link like Facebook and Twitter.
+//     // This button can provide instructions or open Instagram if installed.
+//     alert('Instagram does not support direct URL sharing. Please share the link manually.');
+// });
+
+
     const cardinalPoints = [
         { label: "N", min: 348.75, max: 360 },
         { label: "N", min: 0, max: 11.25 },
@@ -38,9 +61,6 @@
 
     document.getElementById('loading-gif').style.display = 'block';
     var smartCitizenMarkers = L.markerClusterGroup({
-
-
-
         spiderfyOnMaxZoom: true,
         showCoverageOnHover: false,
         zoomToBoundsOnClick: true
@@ -64,12 +84,9 @@
         maxZoom: 18
     }).addTo(map);
 
-    window.onscroll = function () {
-        scrollFunction();
-    };
-
-
-
+    // window.onscroll = function () {
+    //     scrollFunction();
+    // };
 
     function getCardinalDirection(degree) {
         for (let i = 0; i < cardinalPoints.length; i++) {
@@ -81,19 +98,18 @@
         return "Invalid degree";
     }
 
-
-    function scrollFunction() {
-        if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
-            backToTopBtn.style.display = "block";
-        } else {
-            backToTopBtn.style.display = "none";
-        }
-    }
+    // function scrollFunction() {
+    //     if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+    //         backToTopBtn.style.display = "block";
+    //     } else {
+    //         backToTopBtn.style.display = "none";
+    //     }
+    // }
     // When the user clicks on the button, scroll to the top of the document
-    backToTopBtn.addEventListener('click', function () {
-        document.body.scrollTop = 0; // For Safari
-        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-    });
+    // backToTopBtn.addEventListener('click', function () {
+    //     document.body.scrollTop = 0; // For Safari
+    //     document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    // });
 
 
     let formattedPreviousDate, formattedCurrentDate;
@@ -131,6 +147,55 @@
     }
     // L.control.layers(baseLayers, overlayLayers).addTo(map);
 
+
+
+
+    function getUrlParams() {
+    let params = {};
+    let url = window.location.href;
+    let parser = document.createElement('a');
+    parser.href = url;
+    let query = parser.search.substring(1);
+    let vars = query.split('&');
+    vars.forEach(function(v) {
+        let pair = v.split('=');
+        params[pair[0]] = decodeURIComponent(pair[1]);
+    });
+    return params;
+}
+
+function zoomToSensorFromUrl() {
+    let urlParts = window.location.pathname.split('/');
+    let sensorId = urlParts[urlParts.length - 2];
+    
+   
+    // TODO:  use sensorId to zoom to the sensor
+    function zoomToSensor(markers) {
+        markers.eachLayer(function(layer) {
+            if (layer.feature.id == sensorId) {
+                map.setView(layer.getLatLng(), 15);  // Zoom level 15 can be adjusted
+                layer.openPopup();
+            }
+        });
+    }
+
+    // Search in Smart Citizen Markers
+    zoomToSensor(smartCitizenMarkers);
+
+    // Search in WU Markers
+    zoomToSensor(wuMarkers);
+
+}
+
+
+
+
+
+
+
+
+
+
     // smart citizen data display
     let senId = null;
     function displayDeviceDetails(feature) {
@@ -140,6 +205,9 @@
         var properties = feature.properties
         sensor.textContent = properties.name;
 
+        let sensorId = feature.id;
+  let sensorUrl = `${window.location.origin}/map/${sensorId}/`;
+    history.pushState(null, null, sensorUrl);
 
 
 
@@ -206,13 +274,13 @@
                
           
         <div class="deviceInfo">
-            <p><strong>${properties.name}: </strong>${properties.description}</p>
+            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;" ><strong>${properties.name}: </strong>${properties.description}</p>
            
-            <p><strong>Last Observation: </strong>${properties.last_reading_at}</p>
-            <p><small>Platform provider: <a href="${properties.platform_provider.url}" class="ml-2" target="_blank"> ${properties.platform_provider.name}</a></small></p>
+            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;" ><strong>Last Observation: </strong>${properties.last_reading_at}</p>
+            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;" ><small>Platform provider: <a href="${properties.platform_provider.url}" class="ml-2" target="_blank"> ${properties.platform_provider.name}</a></small></p>
            
         </div>
-        <p style="text-align:center"                                         ><small>Click on an observation to view the chart</small></p>
+        <p style="text-align:center"   ><small>Click on an observation to view the chart</small></p>
       
     `;
 
@@ -235,16 +303,39 @@
         });
     }
 
+    let keywu = null;
+    function showChart(key) {
+        keywu = key;
+       console.log("Key:", key);
+
+       loadEachWuStationObservation(sensor.textContent,key);
+    }
+
+
+
+
+
+
     function displayWUDetails(feature) {
         dda = "";
         dda = "sc";
         var properties = feature.properties;
         var observations = properties.observations;
-
+        x = feature
+        console.log("User tags:", x);
         smartChartArea.style.display = 'none';
-        loadEachWuStationObservation(properties.name);
+        
         chartsarea.style.display = 'none';
         sensor.textContent = properties.name;
+
+        let sensorId = feature.id;
+   
+    
+    let sensorUrl = `${window.location.origin}/map/${sensorId}/`;
+    history.pushState(null, null, sensorUrl);
+
+
+
         var detailsHtml = `
 
          <div  style=" display: flex;
@@ -261,7 +352,7 @@
                     <p style="   
                      margin-top: 4px;
                     margin-bottom: 0px;
-                    color: white;">CCLL Tags: SCOREDUBLINCCLL,UCD</p>
+                    color: white;">CCLL Tags:  ${properties.user_tags}</p>
 
                    
 
@@ -269,7 +360,7 @@
                      margin-top: 4px;
                     margin-bottom: 0px;
                     color: white; "
-                    >System Tags: Indoor,online</p>
+                    >System Tags:  ${properties.system_tags}</p>
 
                    
 
@@ -289,7 +380,7 @@
         for (var key in observations) {
             if (observations.hasOwnProperty(key) && key !== 'id' && key !== 'recorded_at' && key !== 'station_id' && key !== 'station_name') {
                 detailsHtml += `
-            <a href=#${key} style="border-right: 1px solid #ddd">
+            <a href=#${key}  onclick="showChart('${key}')" style="border-right: 1px solid #ddd">
                 <div class="observation-item">
                     <div class="obsTop">
                     <span class="value">${observations[key].value}</span>
@@ -311,12 +402,14 @@
            </div>
            <div class="deviceInfo"> 
             
-            <p>Sensor ID: <strong>${properties.name}</strong></p>
-            <p><strong>Last observation: </strong>${properties.observations.recorded_at}</p>
+            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;">Sensor ID: <strong>${properties.name}</strong></p>
+            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;" ><strong>Last observation: </strong>${properties.observations.recorded_at}</p>
 
-            <p><small>Platform provider: <a href="${properties.platform_provider.url}" class="ml-2" target="_blank"> ${properties.platform_provider.name}</a></small></p>    
+            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;"  ><small>Platform provider: <a href="${properties.platform_provider.url}" class="ml-2" target="_blank"> ${properties.platform_provider.name}</a></small></p>    
             
             </div>
+                    <p style="text-align:center"   ><small>Click on an observation to view the chart</small></p>
+
         
     `;
 
@@ -328,14 +421,17 @@
 
 
     }
+  
     function slideLeft() {
         const container = document.querySelector('.observations-container');
-        container.scrollBy({ left: -400, behavior: 'smooth' });
+        container.scrollBy({ left: -200, behavior: 'smooth' });
+        
     }
+    
 
     function slideRight() {
         const container = document.querySelector('.observations-container');
-        container.scrollBy({ left: 400, behavior: 'smooth' });
+        container.scrollBy({ left: 200, behavior: 'smooth' });
     }
 
 
@@ -364,9 +460,11 @@
     function onResize() {
         updateSampleSize();
         if (charts['temp']) {
-            loadEachWuStationObservation(sensor.textContent);
+            console.log("")
+            showChart(keywu);
+        
         } else if (charts['smart-chart']) {
-            updateChart(senId);;
+            updateChart(senId);
         }
     }
     // Add event listener for screen size changes
@@ -379,6 +477,7 @@
     // Handle time range selection
     function onTimeRangeChange() {
         const timeRange = document.getElementById('timeRange').value;
+        console.log("Time range selected:", timeRange);
         if (timeRange === 'week') {
             updateDateRange(7);
         } else if (timeRange === 'month') {
@@ -393,7 +492,8 @@
 
 
             } else if (dda == "sc") {
-                loadEachWuStationObservation(sensor.textContent);
+                showChart(keywu);
+                
 
             }
 
@@ -401,14 +501,17 @@
         }
     }
 
-    async function loadEachWuStationObservation(stationName) {
+
+    async function loadEachWuStationObservation(stationName, chartobsType) {
         try {
             cLoading.style.display = 'unset';
+            noData.style.display = 'none';
             const data = await fetchData(`https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/weather-underground/pws/observations/?station_name=${stationName}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=10000`);
 
             if (!data.results || data.results.length === 0) {
                 console.log('No data available for this station.');
                 cLoading.style.display = 'none';
+                noData.style.display = 'block';
                 return;
 
             }
@@ -420,22 +523,26 @@
 
             const fields = [
                 { key: 'temp', label: 'Temperature (°C)', unit: '°C', transform: value => value, yMin: null, yMax: null, canvasId: 'temp', chartType: 'line' },
-                { key: 'atmospheric_pressure', label: 'Atmospheric Pressure (KPa)', unit: 'KPa', transform: value => value / 10, yMin: null, yMax: null, canvasId: 'atmospheric_pressure', chartType: 'line' },
-                { key: 'heat_index', label: 'Heat Index (°C)', unit: '°C', transform: value => value, yMin: null, yMax: null, canvasId: 'heat_index', chartType: 'line' },
-                { key: 'dew_point', label: 'Dew Point (°C)', unit: '°C', transform: value => value, yMin: null, yMax: null, canvasId: 'dew_point', chartType: 'line' },
-                { key: 'relative_humidity', label: 'Relative Humidity (%)', unit: '%', transform: value => value, yMin: null, yMax: null, canvasId: 'relative_humidity', chartType: 'line' },
-                { key: 'wind_chill', label: 'Wind Chill (°C)', unit: '°C', transform: value => value, yMin: null, yMax: null, canvasId: 'wind_chill', chartType: 'line' },
-                { key: 'solar_radiation', label: 'Solar Radiation (W/m²)', unit: 'W/m²', transform: value => value, yMin: null, yMax: null, canvasId: 'solar_radiation', chartType: 'line' },
-                { key: 'wind_speed', label: 'Wind Speed (Km/h)', unit: 'km/h', transform: value => value, yMin: null, yMax: null, canvasId: 'wind_speed', chartType: 'line' },
-                { key: 'wind_gust', label: 'Wind Gust (Km/h)', unit: 'km/h', transform: value => value, yMin: null, yMax: null, canvasId: 'wind_gust', chartType: 'line' },
-                { key: 'wind_direction', label: 'Wind Direction (Deg)', unit: 'Deg', transform: value => value, yMin: 0, yMax: 360, canvasId: 'wind_direction', chartType: 'line' },
-                { key: 'precipitation_rate', label: 'Precipitation Rate (mm/h)', unit: 'mm/h', transform: value => value, yMin: 0, yMax: null, canvasId: 'precipitation_rate', chartType: 'line' },
-                { key: 'precipitation_total', label: 'Precipitation total (mm)', unit: 'mm', transform: value => value, yMin: null, yMax: null, canvasId: 'precipitation_total', chartType: 'line' },
-                { key: 'uv', label: 'UV (UV index)', unit: 'UV index', transform: value => value, yMin: null, yMax: null, canvasId: 'uv', chartType: 'line' },
+                { key: 'atmospheric_pressure', label: 'Atmospheric Pressure (KPa)', unit: 'KPa', transform: value => value / 10, yMin: null, yMax: null, canvasId: 'temp', chartType: 'line' },
+                { key: 'heat_index', label: 'Heat Index (°C)', unit: '°C', transform: value => value, yMin: null, yMax: null, canvasId: 'temp', chartType: 'line' },
+                { key: 'dew_point', label: 'Dew Point (°C)', unit: '°C', transform: value => value, yMin: null, yMax: null, canvasId: 'temp', chartType: 'line' },
+                { key: 'relative_humidity', label: 'Relative Humidity (%)', unit: '%', transform: value => value, yMin: null, yMax: null, canvasId: 'temp', chartType: 'line' },
+                { key: 'wind_chill', label: 'Wind Chill (°C)', unit: '°C', transform: value => value, yMin: null, yMax: null, canvasId: 'temp', chartType: 'line' },
+                { key: 'solar_radiation', label: 'Solar Radiation (W/m²)', unit: 'W/m²', transform: value => value, yMin: null, yMax: null, canvasId: 'temp', chartType: 'line' },
+                { key: 'wind_speed', label: 'Wind Speed (Km/h)', unit: 'km/h', transform: value => value, yMin: null, yMax: null, canvasId: 'temp', chartType: 'line' },
+                { key: 'wind_gust', label: 'Wind Gust (Km/h)', unit: 'km/h', transform: value => value, yMin: null, yMax: null, canvasId: 'temp', chartType: 'line' },
+                { key: 'wind_direction', label: 'Wind Direction (Deg)', unit: 'Deg', transform: value => value, yMin: 0, yMax: 360, canvasId: 'temp', chartType: 'line' },
+                { key: 'precipitation_rate', label: 'Precipitation Rate (mm/h)', unit: 'mm/h', transform: value => value, yMin: 0, yMax: null, canvasId: 'temp', chartType: 'line' },
+                { key: 'precipitation_total', label: 'Precipitation total (mm)', unit: 'mm', transform: value => value, yMin: null, yMax: null, canvasId: 'temp', chartType: 'line' },
+                { key: 'uv', label: 'UV (UV index)', unit: 'UV index', transform: value => value, yMin: null, yMax: null, canvasId:'temp', chartType: 'line' },
             ];
             const labels = data.results.map(observation => new Date(observation.recorded_at)).reverse();
 
             fields.forEach(field => {
+                // only show chart for obstype selected
+                if (chartobsType && field.key == chartobsType) {
+                    
+                
                 const hasValidData = data.results.some(observation => observation[field.key] !== undefined && observation[field.key] !== null);
                 const values = hasValidData
                     ? data.results.map(observation => observation[field.key] !== undefined && observation[field.key] !== null ? field.transform(observation[field.key].value) : null).reverse()
@@ -447,7 +554,7 @@
                 let meandisplay = true;
                 let maxdisplay = true;
                 let directionLabels;
-                if (field.canvasId == 'wind_direction') {
+                if (field.unit == 'Deg') {
                     meandisplay = false;
                     maxdisplay = false;
                     if (sampledValues) {
@@ -475,10 +582,14 @@
                     createChart(field.canvasId, field.label, sampledLabels, sampledValues, `${field.label}`, field.yMin, field.yMax, field.chartType, meandisplay, maxdisplay);
                 }
 
-                chartboxes.forEach(function (chartbox) {
-                    chartbox.style.visibility = 'visible';
-                });
+                for (let i = 0; i < chartboxes.length; i++) {
+                    chartboxes[i].style.display = 'block';
+                }
+                
 
+            }else{
+                return;
+            }
             });
 
 
@@ -493,7 +604,7 @@
     async function loadEachSmartStationObservation(deviceName, sId) {
         try {
             cLoading.style.display = 'unset';
-
+            noData.style.display = 'none';
 
             const url = `https://environmental-data-ie.spatialdynamicslab.xyz/api/v1/smart-citizen/observations/?device_name=${deviceName}&sensor_id=${sId}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=10000`;
             console.log("Fetching data from URL:", url);
@@ -503,6 +614,7 @@
             if (!data.results || data.results.length === 0) {
                 console.log('No data available for this station.');
                 cLoading.style.display = 'none';
+                noData.style.display = 'block';
                 return;
             }
 
@@ -876,7 +988,7 @@
 
                 smartCitizenMarkers.addLayer(smartCitizenLayer);
                 map.addLayer(smartCitizenMarkers);
-                document.getElementById('loading-gif').style.display = 'none';
+          
             })
             .catch(function (error) {
                 console.error('Error fetching GeoJSON data:', error);
@@ -916,8 +1028,7 @@
                 wuMarkers.addLayer(wuPWSLayer);
                 map.addLayer(wuMarkers);
                 // Hide loading GIF
-                document.getElementById('loading-gif').style.display = 'none';
-
+                
             })
             .catch(function (error) {
                 console.error('Error fetching Weather Underground GeoJSON data:', error);
@@ -931,6 +1042,8 @@
     Promise.all([loadSmartCitizenData(), loadWUData()])
         .then(() => {
             mapBoundsFit(); // Call this function only after both layers are loaded
+         
+            zoomToSensorFromUrl();
             document.getElementById('loading-gif').style.display = 'none';
         })
         .catch(error => {
