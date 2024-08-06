@@ -221,7 +221,7 @@ function zoomToSensorFromUrl() {
     margin: 0 auto;
     /* align-items: center; */
     text-align: center;
-    border-radius: 10px 1px 10px 1px; ">  
+    border-radius: 10px 10px 10px 10px; ">  
 
                     <p style="   
                      margin-top: 4px;
@@ -274,10 +274,13 @@ function zoomToSensorFromUrl() {
                
           
         <div class="deviceInfo">
-            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;" ><strong>${properties.name}: </strong>${properties.description}</p>
+            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: rgb(255, 255, 255); " ><strong>${properties.name}: </strong>${properties.description}</p>
            
-            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;" ><strong>Last Observation: </strong>${properties.last_reading_at}</p>
-            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;" ><small>Platform provider: <a href="${properties.platform_provider.url}" class="ml-2" target="_blank"> ${properties.platform_provider.name}</a></small></p>
+            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: rgb(255, 255, 255); " ><strong>Last Observation: </strong>${properties.last_reading_at}</p>
+            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: rgb(255, 255, 255); " ><small>Platform provider: <a href="${properties.platform_provider.url}" class="ml-2" target="_blank"> ${properties.platform_provider.name}</a></small></p>
            
         </div>
         <p style="text-align:center"   ><small>Click on an observation to view the chart</small></p>
@@ -347,7 +350,7 @@ function zoomToSensorFromUrl() {
     margin: 0 auto;
     /* align-items: center; */
     text-align: center;
-    border-radius: 10px 1px 10px 1px; ">  
+    border-radius: 10px 10px 10px 10px; ">  
 
                     <p style="   
                      margin-top: 4px;
@@ -402,10 +405,13 @@ function zoomToSensorFromUrl() {
            </div>
            <div class="deviceInfo"> 
             
-            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;">Sensor ID: <strong>${properties.name}</strong></p>
-            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;" ><strong>Last observation: </strong>${properties.observations.recorded_at}</p>
+            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: rgb(255, 255, 255);  ">Sensor ID: <strong>${properties.name}</strong></p>
+            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: rgb(255, 255, 255); " ><strong>Last observation: </strong>${properties.observations.recorded_at}</p>
 
-            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;"  ><small>Platform provider: <a href="${properties.platform_provider.url}" class="ml-2" target="_blank"> ${properties.platform_provider.name}</a></small></p>    
+            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: rgb(255, 255, 255); "  ><small>Platform provider: <a href="${properties.platform_provider.url}" class="ml-2" target="_blank"> ${properties.platform_provider.name}</a></small></p>    
             
             </div>
                     <p style="text-align:center"   ><small>Click on an observation to view the chart</small></p>
@@ -487,11 +493,15 @@ function zoomToSensorFromUrl() {
         }
         updateSampleSize();
         if (sensor.textContent) {
-            if (dda == "wu") {
+
+            if (dda == "wu" && senId != null) {
+                console.log("senid:", senId)
+                
                 updateChart(senId);
 
 
-            } else if (dda == "sc") {
+            } else if (dda == "sc" && keywu != null) {
+                console.log("keyu", keywu)
                 showChart(keywu);
                 
 
@@ -976,10 +986,25 @@ function zoomToSensorFromUrl() {
                         marker.on('click', function () {
                             if (selectedMarker) {
                                 selectedMarker.setIcon(createDefaultIcon('rgba(63, 245, 39, 0.48)', 30, selectedMarkerType));
+                
+                                map.setView(marker.getLatLng(), 20);
+
                             }
                             marker.setIcon(createClickedIcon(30, 'smart'));
                             selectedMarker = marker;
                             selectedMarkerType = 'smart';
+                            
+                            map.setView(marker.getLatLng(), 20);
+
+                            const tp =  document.getElementById('device-details');
+             
+                            window.scrollTo({
+
+                                top: 200,
+                                behavior: 'smooth' // Smooth scroll
+
+                            })
+                            
                         });
                         return marker;
                     },
@@ -1016,10 +1041,21 @@ function zoomToSensorFromUrl() {
                         marker.on('click', function () {
                             if (selectedMarker) {
                                 selectedMarker.setIcon(createDefaultIcon('rgba(63, 245, 39, 0.48)', 30, selectedMarkerType));
+                                map.setView(marker.getLatLng(), 20);
+
                             }
                             marker.setIcon(createClickedIcon(30, 'wu'));
+                            map.setView(marker.getLatLng(), 20);
                             selectedMarker = marker;
                             selectedMarkerType = 'wu';
+                            const tp =  document.getElementById('device-details');
+                     
+                            window.scrollTo({
+
+                                top: 200,
+                                behavior: 'smooth' // Smooth scroll
+
+                            })
                         });
                         return marker;
                     },

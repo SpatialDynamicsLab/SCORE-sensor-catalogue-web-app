@@ -108,7 +108,7 @@ background-repeat: no-repeat;
 
     .deviceInfo{
         display: flex;
-        justify-content: center;
+        justify-content: space-around;
         
     }
 
@@ -175,12 +175,12 @@ background-repeat: no-repeat;
 
 .chart {
     background-color: rgb(255, 255, 255);
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
     padding: 10px;
-    border-radius: 5%;
-    border: 1px solid #ccc;
+    border-radius: 20px;
+    border-left: 1px solid #ccc;
     
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
     
 }
 
@@ -397,14 +397,24 @@ background-repeat: no-repeat;
     margin-bottom: 20px;
     padding: 10px;
     border-radius: 15px;
-    border: 1px solid #ccc;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+   
+    
     
 }
 
 .container-fluid {
     padding: 0;
     margin: 0;
+    border-radius: 15px;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: rgb(255, 255, 255);
+}
+.row{
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 0px;
+    margin-right: 0px;
 }
 
 .sideMenuItem {
@@ -466,7 +476,7 @@ select:not(:invalid) {
     height: 50px;
     text-align: center;
     text-decoration: none;
-  
+background-color: white;
     color: #fff;
     border: none;
     cursor: pointer;
