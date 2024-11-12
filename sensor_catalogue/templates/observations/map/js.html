@@ -516,7 +516,7 @@ function zoomToSensorFromUrl() {
         try {
             cLoading.style.display = 'unset';
             noData.style.display = 'none';
-            const data = await fetchData(`http://159.89.28.169/api/v1/weather-underground/pws/observations/?station_name=${stationName}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=10000`);
+            const data = await fetchData(`https://environmental-data.spatialdynamics.cloud/api/v1/weather-underground/pws/observations/?station_name=${stationName}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=10000`);
 
             if (!data.results || data.results.length === 0) {
                 console.log('No data available for this station.');
@@ -616,7 +616,7 @@ function zoomToSensorFromUrl() {
             cLoading.style.display = 'unset';
             noData.style.display = 'none';
 
-            const url = `http://159.89.28.169/api/v1/smart-citizen/observations/?device_name=${deviceName}&sensor_id=${sId}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=10000`;
+            const url = `https://environmental-data.spatialdynamics.cloud/api/v1/smart-citizen/observations/?device_name=${deviceName}&sensor_id=${sId}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=10000`;
             console.log("Fetching data from URL:", url);
             const data = await fetchData(url);
 
@@ -971,7 +971,7 @@ function zoomToSensorFromUrl() {
     var selectedMarkerType = null;
 
     function loadSmartCitizenData() {
-        return fetch('http://159.89.28.169/api/v1/' +
+        return fetch('https://environmental-data.spatialdynamics.cloud/api/v1/' +
             'smart-citizen/latest-observations.geojson?user_tags=SCOREDUBLINCCLL&system_tags=online')
             .then(function (response) {
                 return response.json();
@@ -1025,7 +1025,7 @@ function zoomToSensorFromUrl() {
 
     function loadWUData() {
 
-        return fetch('http://159.89.28.169/api/v1/' +
+        return fetch('https://environmental-data.spatialdynamics.cloud/api/v1/' +
             'weather-underground/pws/latest-observations.geojson')
             .then(function (response) {
                 return response.json();
