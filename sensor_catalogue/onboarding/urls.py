@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-
+from .views import create_installation_step, get_available_step_numbers
 app_name = 'onboarding'
 
 urlpatterns = [
@@ -22,4 +22,9 @@ urlpatterns = [
 
     path('data/', views.onboarded_sensor_data_view, name='onboarded_sensor_data'),
 
+    path('edit/', create_installation_step, name='new_installation_step'),
+    path('update-step-order/', views.update_step_order, name='update_step_order'),
+    path('update-step/<int:step_id>/', views.update_step, name='update_step'),
+# New path for fetching available step numbers
+    path('api/available-step-numbers/<int:sensor_id>/', get_available_step_numbers, name='available_step_numbers'),
 ]

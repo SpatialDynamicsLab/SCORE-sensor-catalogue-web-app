@@ -99,6 +99,15 @@
                     </button>
                 </div>
             </form>
+            <!-- <p>Curent User: {{request.user}}</p>
+            {% if request.user.is_authenticated %}
+           
+            {% if request.user.is_superuser %}
+            <button id="addStepBtn" class="btn btn-primary" style="font-size: 12px;">Add New Installation Step</button>
+            {% else %}
+            <button id="addStepBtn" class="btn btn-primary" disabled="true" style="font-size: 12px;">Add New Installation Step</button>
+            {% endif %}
+            {% endif %} -->
 
         </div>
     </div>
@@ -111,6 +120,9 @@
     var mapContainer = document.getElementById('mapid');
     var locationInput = document.getElementById('location');
 
+    document.getElementById('addStepBtn').addEventListener('click', function() {
+        window.location.href = "{% url 'onboarding:new_installation_step' %}";
+    });
     // Initialize the map but do not display it yet
     var map = L.map('mapid').setView([53.35, -6.2], 11);
     L.tileLayer('https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {

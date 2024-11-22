@@ -9,7 +9,11 @@ from django.views import View
 from django.views.decorators.clickjacking import xframe_options_exempt
 from .models import Sensor, SensorThing, InstallationStep
 from django.http import JsonResponse
-
+from .forms import InstallationStepForm
+from django.views.decorators.csrf import csrf_exempt
+from django.db import transaction
+from django.db.models import Max
+from django.contrib.auth.decorators import login_required
 
 @method_decorator(xframe_options_exempt, name='dispatch')
 class SensorThingCreateView(View):
@@ -50,7 +54,7 @@ class SensorThingCreateView(View):
                 {'error': 'Sensor type not found.'}, status=404)
 
         # Check if location is required and validate it.
-        if sensor.id != 18:
+        if sensor.id != 2:
             try:
                 location_coords = json.loads(location_json)
                 location = {
@@ -169,3 +173,109 @@ def onboarded_sensor_data_view(request):
     return render(request,
                   'onboarding/onboarded_sensor_data.html',
                   context)
+@login_required
+def create_installation_step(request):
+    sensors = Sensor.objects.all()  # Get all sensors
+    steps = InstallationStep.objects.all()  # Get all steps
+
+    if request.method == 'POST':
+        form = InstallationStepForm(request.POST, request.FILES)
+      
+        if form.is_valid():
+            form.save()
+           # Redirect to a success page or another relevant view
+    else:
+        form = InstallationStepForm()
+
+    return render(request, 'onboarding/installation_step_form.html', {
+        'form': form,
+        'sensors': sensors,
+        'steps': steps,
+    })
+
+
+@csrf_exempt
+def update_step_order(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            sensor_id = data.get('sensor_id')
+            ordered_step_ids = data.get('ordered_step_ids', [])
+
+            if not sensor_id or not ordered_step_ids:
+                return JsonResponse({'success': False, 'error': 'Missing sensor ID or step IDs'}, status=400)
+            
+            steps = InstallationStep.objects.filter(sensor_id=sensor_id, id__in=ordered_step_ids)
+             # Ensure all ordered_step_ids belong to the specified sensor
+            if steps.count() != len(ordered_step_ids):
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Some steps do not belong to the specified sensor.'
+                }, status=400)
+
+            # Update step order atomically
+            with transaction.atomic():
+                # Temporarily assign high step numbers to avoid conflicts
+                for step in steps:
+                    step.step_number = 1000 + step.id  # Unique temporary value
+                    step.save()
+
+                # Assign new step numbers based on the provided order
+                for index, step_id in enumerate(ordered_step_ids, start=1):
+                    step = InstallationStep.objects.get(id=step_id)
+                    step.step_number = index
+                    step.save()
+
+
+
+
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=500)
+    return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=405)
+           
+
+@csrf_exempt
+def update_step(request, step_id):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        try:
+            step = InstallationStep.objects.get(id=step_id)
+
+            # List of valid fields for InstallationStep model
+            valid_fields = [
+                'step_number', 'title', 'description',
+                'image', 'video', 'input_type', 'input_label',
+                'redirect_url', 'input_processing_url'
+            ]
+
+            # Only update fields that are in the valid fields list
+            for field, value in data.items():
+                if field in valid_fields:
+                    setattr(step, field, value)
+
+            step.save()  # Save to database
+            return JsonResponse({"success": True})
+        except InstallationStep.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Step not found"})
+    return JsonResponse({"success": False, "error": "Invalid request"})
+
+
+def get_available_step_numbers(request, sensor_id):
+    if request.method == "GET":
+        # Get all assigned step numbers for the sensor
+        assigned_step_numbers = InstallationStep.objects.filter(
+            sensor_id=sensor_id
+        ).values_list('step_number', flat=True)
+        print(assigned_step_numbers)
+        # Define the range of step numbers (1-100, for example)
+        max_steps = 100
+        available_step_numbers = [
+            i for i in range(1, max_steps + 1) if i not in assigned_step_numbers
+        ]
+
+        return JsonResponse({
+            'available_step_numbers': available_step_numbers,
+             'assigned_step_numbers': list(assigned_step_numbers),  # Convert QuerySet to a list
+            })
+    return JsonResponse({'error': 'Invalid request'}, status=400)

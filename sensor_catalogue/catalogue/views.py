@@ -56,11 +56,29 @@ def home(request):
         price_step = 100
     min_price = 0 if not sensors_by_price.first() or not \
         sensors_by_price.first().price else sensors_by_price.first().price
-    min_price = int(math.floor(min_price / price_step) * price_step)
+    
+    if price_step and price_step != 0:
+        min_price = int(math.floor(min_price / price_step) * price_step)
+    else:
+        min_price = 0
+        
+    # min_price = int(math.floor(min_price / price_step) * price_step)
+    
+    
+    
     max_price = 3000 if not sensors_by_price.last() \
                         or sensors_by_price.last().price > 3000 \
         else sensors_by_price.last().price
-    max_price = int(math.ceil(max_price / price_step) * price_step)
+    
+    if price_step and price_step != 0:
+        max_price = int(math.ceil(max_price / price_step) * price_step)
+    else:
+        # logger.error("price_step is undefined or zero")
+        max_price = 0  # or some other appropriate default value
+
+
+
+    # max_price = int(math.ceil(max_price / price_step) * price_step)
     context = {
         'hazards': hazards,
         'monitored': monitored,

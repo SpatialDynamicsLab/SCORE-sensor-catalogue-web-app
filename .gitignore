@@ -138,3 +138,4 @@ sensor_catalogue/images/
 .DS_Store
 
 sensor_catalogue/node_modules/
+node_modules
