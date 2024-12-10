@@ -972,13 +972,12 @@ function zoomToSensorFromUrl() {
 
     function loadSmartCitizenData() {
         return fetch('https://environmental-data.spatialdynamics.cloud/api/v1/' +
-            'smart-citizen/latest-observations.geojson?user_tags=SCOREDUBLINCCLL&system_tags=online')
+            'smart-citizen/sck-devices.geojson?user_tags=SCORE&system_tags=online')
             .then(function (response) {
                 return response.json();
-
             })
             .then(function (geojsonFeatureCollection) {
-                var smartCitizenLayer = L.geoJSON(geojsonFeatureCollection, {
+                var smartCitizenLayer = L.geoJSON(geojsonFeatureCollection.results, {
                     pointToLayer: function (feature, latlng) {
                         var marker = L.marker(latlng, {
                             icon: createDefaultIcon('rgba(63, 245, 39, 0.48)', 30, 'smart')
@@ -1026,14 +1025,14 @@ function zoomToSensorFromUrl() {
     function loadWUData() {
 
         return fetch('https://environmental-data.spatialdynamics.cloud/api/v1/' +
-            'weather-underground/pws/latest-observations.geojson')
+            'weather-underground/pws-stations.geojson?system_tags=online')
             .then(function (response) {
                 return response.json();
 
             })
             .then(function (geojsonFeatureCollection) {
 
-                var wuPWSLayer = L.geoJSON(geojsonFeatureCollection, {
+                var wuPWSLayer = L.geoJSON(geojsonFeatureCollection.results, {
                     pointToLayer: function (feature, latlng) {
                         var marker = L.marker(latlng, {
                             icon: createDefaultIcon('rgba(63, 245, 39, 0.48)', 30, 'wu')
