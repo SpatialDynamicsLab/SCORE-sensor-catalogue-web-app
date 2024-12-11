@@ -15,28 +15,24 @@
 {% include 'observations/base/navbar.html' %}
 <div>
     <div id="map-container">
+        <div class="loading-gif"></div>
         <div id="map"></div>
     </div>
 
-
-
-
-
     <div class="devicedetailsmain">
 
-<div id="wrapper">
+        <div id="wrapper">
    
 
-        <div id="device-details">
-            <img id="loading-gif" style="display: none;">
-            <h3 style="text-align: center;">No Sensor Selected</h4>
-                <p style="text-align: center;">Click on a point to see the sensor details and observations.</p>
+            <div id="device-details">
+                <div class="loading-gif"></div>
+                <h4 style="text-align: center;">No Sensor Selected</h4>
+                    <p style="text-align: center;">Click on a point to see the sensor details and observations.</p>
 
-        </div>
+            </div>
 
         <div id="chartTop">
 
-        
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-2 col-md-3 col-sm-12" id="sidemenu">
@@ -87,7 +83,7 @@
                     </div>
                 </div>
             </div>
-    </div>
+        </div>
 
 
         <!-- <button id="backToTopBtn" title="Go to top">Back to top</button> -->

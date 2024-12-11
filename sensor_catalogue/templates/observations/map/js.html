@@ -1,8 +1,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
-
-
 <script>
     // Display loading GIF
     let charts = {};
@@ -59,7 +57,17 @@ document.getElementById('twitter-btn').addEventListener('click', function() {
     ];
 
 
-    document.getElementById('loading-gif').style.display = 'block';
+    const showLoading = (containerId) => {
+        document.querySelector(`#${containerId} .loading-gif`).style.display = 'block';
+    };
+
+    const hideLoading = (containerId) => {
+        document.querySelector(`#${containerId} .loading-gif`).style.display = 'none';
+    };
+
+    showLoading('map-container');
+    showLoading('device-details');
+
     var smartCitizenMarkers = L.markerClusterGroup({
         spiderfyOnMaxZoom: true,
         showCoverageOnHover: false,
@@ -77,7 +85,7 @@ document.getElementById('twitter-btn').addEventListener('click', function() {
         "WU Personal Weather Stations": wuMarkers
     };
 
-    var map = L.map('map').setView([53.3105866, -6.2359141], 13);
+    var map = L.map('map').setView([49, -6.2359141], 5);
     // Load and display tile layer on the map
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; CARTO © OpenStreetMap contributors',
@@ -129,14 +137,10 @@ document.getElementById('twitter-btn').addEventListener('click', function() {
 
         formattedCurrentDate = formatDate(currentDate);
         formattedPreviousDate = formatDate(previousDate);
-
-
     }
 
     // Initial date range (last 7 days)
     updateDateRange(1);
-
-
 
     async function fetchData(url) {
         const response = await fetch(url);
@@ -145,10 +149,8 @@ document.getElementById('twitter-btn').addEventListener('click', function() {
         }
         return await response.json();
     }
+    // Leaflet layers control
     // L.control.layers(baseLayers, overlayLayers).addTo(map);
-
-
-
 
     function getUrlParams() {
     let params = {};
@@ -167,8 +169,7 @@ document.getElementById('twitter-btn').addEventListener('click', function() {
 function zoomToSensorFromUrl() {
     let urlParts = window.location.pathname.split('/');
     let sensorId = urlParts[urlParts.length - 2];
-    
-   
+
     // TODO:  use sensorId to zoom to the sensor
     function zoomToSensor(markers) {
         markers.eachLayer(function(layer) {
@@ -188,14 +189,6 @@ function zoomToSensorFromUrl() {
 }
 
 
-
-
-
-
-
-
-
-
     // smart citizen data display
     let senId = null;
     function displayDeviceDetails(feature) {
@@ -206,50 +199,39 @@ function zoomToSensorFromUrl() {
         sensor.textContent = properties.name;
 
         let sensorId = feature.id;
-  let sensorUrl = `${window.location.origin}/map/${sensorId}/`;
-    history.pushState(null, null, sensorUrl);
-
+        let sensorUrl = `${window.location.origin}/map/${sensorId}/`;
+        history.pushState(null, null, sensorUrl);
 
 
         var detailsHtml = `
         <div  style=" display: flex;
-    justify-content: space-evenly;
-    font-size: 10px;
-    font-weight: bolder;
-    background-color: cadetblue;
-    max-width: 80%;
-    margin: 0 auto;
-    /* align-items: center; */
-    text-align: center;
-    border-radius: 10px 10px 10px 10px; ">  
-
+                justify-content: space-evenly;
+                font-size: 10px;
+                font-weight: bolder;
+                background-color: cadetblue;
+                max-width: 80%;
+                margin: 0 auto;
+                /* align-items: center; */
+                text-align: center;
+                border-radius: 10px 10px 10px 10px; ">
                     <p style="   
                      margin-top: 4px;
                     margin-bottom: 0px;
                     color: white;">CCLL Tags: ${properties.user_tags.join(", ")}</p>
-
-                   
-
                     <p style="   
                      margin-top: 4px;
                     margin-bottom: 0px;
                     color: white; "
                     >System Tags: ${properties.system_tags.join(", ")}</p>
-
-                   
-
                     <p style="   
                      margin-top: 4px;
                     margin-bottom: 0px;
                     color: white; "
                     >Owner: ${properties.owner}</p>
-
-                  
         </div>
         <div class="slider-container">
             <button class="slide-button left" onclick="slideLeft()">&#10094;</button>
             <div class="observations-container">
-                
     `;
         properties.observations.forEach(function (obs) {
             detailsHtml += `
@@ -268,16 +250,11 @@ function zoomToSensorFromUrl() {
             </div>
             <button class="slide-button right" onclick="slideRight()">&#10095;</button>
         </div>
-         
-                
-                   
-               
-          
         <div class="deviceInfo">
             <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: rgb(255, 255, 255); " ><strong>${properties.name}: </strong>${properties.description}</p>
            
-            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: rgb(255, 255, 255); " ><strong>Last Observation: </strong>${properties.last_reading_at}</p>
             <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: rgb(255, 255, 255); " ><small>Platform provider: <a href="${properties.platform_provider.url}" class="ml-2" target="_blank"> ${properties.platform_provider.name}</a></small></p>
@@ -314,119 +291,97 @@ function zoomToSensorFromUrl() {
        loadEachWuStationObservation(sensor.textContent,key);
     }
 
+    async function displayWUDetails(feature) {
+    dda = "";
+    dda = "sc";
+    var properties = feature.properties;
+    x = feature;
+    console.log("User tags:", x);
+    smartChartArea.style.display = 'none';
 
+    chartsarea.style.display = 'none';
+    sensor.textContent = properties.name;
 
+    let sensorId = feature.id;
 
-
-
-    function displayWUDetails(feature) {
-        dda = "";
-        dda = "sc";
-        var properties = feature.properties;
-        var observations = properties.observations;
-        x = feature
-        console.log("User tags:", x);
-        smartChartArea.style.display = 'none';
-        
-        chartsarea.style.display = 'none';
-        sensor.textContent = properties.name;
-
-        let sensorId = feature.id;
-   
-    
     let sensorUrl = `${window.location.origin}/map/${sensorId}/`;
     history.pushState(null, null, sensorUrl);
 
-
-
-        var detailsHtml = `
-
-         <div  style=" display: flex;
-    justify-content: space-evenly;
-    font-size: 10px;
-    font-weight: bolder;
-    background-color: cadetblue;
-    max-width: 80%;
-    margin: 0 auto;
-    /* align-items: center; */
-    text-align: center;
-    border-radius: 10px 10px 10px 10px; ">  
-
-                    <p style="   
-                     margin-top: 4px;
-                    margin-bottom: 0px;
-                    color: white;">CCLL Tags:  ${properties.user_tags}</p>
-
-                   
-
-                    <p style="   
-                     margin-top: 4px;
-                    margin-bottom: 0px;
-                    color: white; "
-                    >System Tags:  ${properties.system_tags}</p>
-
-                   
-
-                    <p style="   
-                     margin-top: 4px;
-                    margin-bottom: 0px;
-                    color: white; "
-                    >Owner: SCORE</p>
-                </div>
-                
-            <div class="slider-container">
+    let detailsHtml = `
+        <div style="display: flex; justify-content: space-evenly; font-size: 10px; font-weight: bolder; background-color: cadetblue; max-width: 80%; margin: 0 auto; text-align: center; border-radius: 10px;">
+            <p style="margin-top: 4px; margin-bottom: 0px; color: white;">CCLL Tags: ${properties.user_tags}</p>
+            <p style="margin-top: 4px; margin-bottom: 0px; color: white;">System Tags: ${properties.system_tags}</p>
+            <p style="margin-top: 4px; margin-bottom: 0px; color: white;">Owner: SCORE</p>
+        </div>
+        <div class="slider-container">
             <button class="slide-button left" onclick="slideLeft()">&#10094;</button>
-               <div class="observations-container">
-           
-            `;
-
-        for (var key in observations) {
-            if (observations.hasOwnProperty(key) && key !== 'id' && key !== 'recorded_at' && key !== 'station_id' && key !== 'station_name') {
-                detailsHtml += `
-            <a href=#${key}  onclick="showChart('${key}')" style="border-right: 1px solid #ddd">
-                <div class="observation-item">
-                    <div class="obsTop">
-                    <span class="value">${observations[key].value}</span>
-                    <p class="unit">${observations[key].unit}</p>
-                    </div>
-                    
-                   
-                    <span class="measurement">${key.replace(/_/g, ' ').toUpperCase()}</span>
-                </div>
-                </a>
-            `;
-
-            }
-        }
-        detailsHtml += `
-        	
-            </div>
-            <button class="slide-button right" onclick="slideRight()">&#10095;</button>
-           </div>
-           <div class="deviceInfo"> 
-            
-            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: rgb(255, 255, 255);  ">Sensor ID: <strong>${properties.name}</strong></p>
-            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: rgb(255, 255, 255); " ><strong>Last observation: </strong>${properties.observations.recorded_at}</p>
-
-            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: rgb(255, 255, 255); "  ><small>Platform provider: <a href="${properties.platform_provider.url}" class="ml-2" target="_blank"> ${properties.platform_provider.name}</a></small></p>    
-            
-            </div>
-                    <p style="text-align:center"   ><small>Click on an observation to view the chart</small></p>
-
-        
+            <div class="observations-container">
     `;
 
+    // Fetch observations from the API
+    const apiUrl = `https://environmental-data.spatialdynamics.cloud/api/v1/weather-underground/pws/observations/?station_id=${sensorId}&limit=1`;
 
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-        document.getElementById('device-details').innerHTML = detailsHtml;
+        const data = await response.json();
 
-        // heatIndexMeter(temparature,humidity,heatIndex);
+        if (data.results && data.results.length > 0) {
+            const observations = data.results[0];
 
-
+            for (let key in observations) {
+                if (
+                    observations.hasOwnProperty(key) &&
+                    key !== 'id' &&
+                    key !== 'recorded_at' &&
+                    key !== 'station_id' &&
+                    key !== 'station_name'
+                ) {
+                    detailsHtml += `
+                        <a href="#${key}" onclick="showChart('${key}')" style="border-right: 1px solid #ddd">
+                            <div class="observation-item">
+                                <div class="obsTop">
+                                    <span class="value">${observations[key].value}</span>
+                                    <p class="unit">${observations[key].unit}</p>
+                                </div>
+                                <span class="measurement">${key.replace(/_/g, ' ').toUpperCase()}</span>
+                            </div>
+                        </a>
+                    `;
+                }
+            }
+        } else {
+            detailsHtml += `<p>No observations available</p>`;
+        }
+    } catch (error) {
+        console.error("Error fetching observations:", error);
+        detailsHtml += `<p>Failed to load observations</p>`;
     }
+
+    detailsHtml += `
+            </div>
+            <button class="slide-button right" onclick="slideRight()">&#10095;</button>
+        </div>
+        <div class="deviceInfo">
+            <p style="border: 2px solid #5f9ea0; padding: 5px; border-radius: 20px; font-size: 10px; background-color: rgb(255, 255, 255);">Sensor ID: <strong>${properties.name}</strong></p>
+            <p style="border: 2px solid #5f9ea0; padding: 5px; border-radius: 20px; font-size: 10px; background-color: rgb(255, 255, 255);"><strong>Last observation: </strong>${properties.last_reading_at}</p>
+            <p style="border: 2px solid #5f9ea0; padding: 5px; border-radius: 20px; font-size: 10px; background-color: rgb(255, 255, 255);">
+                <small>Platform provider:
+                    <a href="${properties.platform_provider.url}" class="ml-2" target="_blank">
+                        ${properties.platform_provider.name}
+                    </a>
+                </small>
+            </p>
+        </div>
+        <p style="text-align: center;"><small>Click on an observation to view the chart</small></p>
+    `;
+
+    document.getElementById('device-details').innerHTML = detailsHtml;
+}
+
   
     function slideLeft() {
         const container = document.querySelector('.observations-container');
@@ -888,7 +843,6 @@ function zoomToSensorFromUrl() {
         });
     }
 
-
     function forEachFeatureWU(feature, layer) {
         layer.on('click', function (e) {
             displayWUDetails(feature);
@@ -1017,7 +971,9 @@ function zoomToSensorFromUrl() {
             .catch(function (error) {
                 console.error('Error fetching GeoJSON data:', error);
                 // Hide loading GIF
-                document.getElementById('loading-gif').style.display = 'none';
+                // document.getElementById('loading-gif').style.display = 'none';
+                hideLoading('device-details');
+                hideLoading('map-container')
             });
     }
 
@@ -1068,7 +1024,9 @@ function zoomToSensorFromUrl() {
             .catch(function (error) {
                 console.error('Error fetching Weather Underground GeoJSON data:', error);
                 // Hide loading GIF
-                document.getElementById('loading-gif').style.display = 'none';
+                // document.getElementById('loading-gif').style.display = 'none';
+                hideLoading('device-details');
+                hideLoading('map-container')
             });
     }
 
@@ -1079,11 +1037,16 @@ function zoomToSensorFromUrl() {
             mapBoundsFit(); // Call this function only after both layers are loaded
          
             zoomToSensorFromUrl();
-            document.getElementById('loading-gif').style.display = 'none';
+            // document.getElementById('loading-gif').style.display = 'none';
+            hideLoading('map-container');
+            hideLoading('device-details')
         })
         .catch(error => {
             console.error('Error loading data:', error);
-            document.getElementById('loading-gif').style.display = 'none';
+            // document.getElementById('loading-gif').style.display = 'none';
+            hideLoading('map-container');
+            hideLoading('device-details');
+
         });
 
 
