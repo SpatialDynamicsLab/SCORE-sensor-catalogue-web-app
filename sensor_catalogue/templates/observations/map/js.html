@@ -6,35 +6,33 @@
     let charts = {};
     // let backToTopBtn = document.getElementById("backToTopBtn");
     const sensor = document.getElementById('sensor');
-    const datasensor = document.getElementById('datasensor');
     const chartsarea = document.getElementById('chartscontainer');
     const smartChartArea = document.getElementById('smartChartContainer');
     const dropdownarea = document.getElementById('dropdown');
-    const cLoading = document.getElementById('chart-loading');
+    // const cLoading = document.getElementById('chart-loading');
     const chartboxes = document.querySelectorAll('.chartbox');
     const noData = document.getElementById('noData');
     let dda = "";
 
     // socials
     document.getElementById('facebook-btn').addEventListener('click', function() {
-    const url = window.location.href;
-    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
-    window.open(facebookUrl, '_blank');
-});
+        const url = window.location.href;
+        const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+        window.open(facebookUrl, '_blank');
+    });
 
-document.getElementById('twitter-btn').addEventListener('click', function() {
-    const url = window.location.href;
-    const text = encodeURIComponent('Check out this sensor data!');
-    const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${text}`;
-    window.open(twitterUrl, '_blank');
-});
+    document.getElementById('twitter-btn').addEventListener('click', function() {
+        const url = window.location.href;
+        const text = encodeURIComponent('Check out this sensor data!');
+        const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${text}`;
+        window.open(twitterUrl, '_blank');
+    });
 
-// document.getElementById('instagram-btn').addEventListener('click', function() {
-//     // Note: Instagram doesn't support direct sharing of URLs via a web link like Facebook and Twitter.
-//     // This button can provide instructions or open Instagram if installed.
-//     alert('Instagram does not support direct URL sharing. Please share the link manually.');
+    // document.getElementById('instagram-btn').addEventListener('click', function() {
+    //     // Note: Instagram doesn't support direct sharing of URLs via a web link like Facebook and Twitter.
+    //     // This button can provide instructions or open Instagram if installed.
+    //     alert('Instagram does not support direct URL sharing. Please share the link manually.');
 // });
-
 
     const cardinalPoints = [
         { label: "N", min: 348.75, max: 360 },
@@ -56,9 +54,12 @@ document.getElementById('twitter-btn').addEventListener('click', function() {
         { label: "NNW", min: 326.25, max: 348.75 }
     ];
 
-
     const showLoading = (containerId) => {
+        try {
         document.querySelector(`#${containerId} .loading-gif`).style.display = 'block';
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const hideLoading = (containerId) => {
@@ -66,7 +67,7 @@ document.getElementById('twitter-btn').addEventListener('click', function() {
     };
 
     showLoading('map-container');
-    showLoading('device-details');
+    showLoading('wrapper');
 
     var smartCitizenMarkers = L.markerClusterGroup({
         spiderfyOnMaxZoom: true,
@@ -166,27 +167,26 @@ document.getElementById('twitter-btn').addEventListener('click', function() {
     return params;
 }
 
-function zoomToSensorFromUrl() {
-    let urlParts = window.location.pathname.split('/');
-    let sensorId = urlParts[urlParts.length - 2];
+    function zoomToSensorFromUrl() {
+        let urlParts = window.location.pathname.split('/');
+        let sensorId = urlParts[urlParts.length - 2];
 
-    // TODO:  use sensorId to zoom to the sensor
-    function zoomToSensor(markers) {
-        markers.eachLayer(function(layer) {
-            if (layer.feature.id == sensorId) {
-                map.setView(layer.getLatLng(), 15);  // Zoom level 15 can be adjusted
-                layer.openPopup();
-            }
-        });
+        // TODO:  use sensorId to zoom to the sensor
+        function zoomToSensor(markers) {
+            markers.eachLayer(function(layer) {
+                if (layer.feature.id == sensorId) {
+                    map.setView(layer.getLatLng(), 15);  // Zoom level 15 can be adjusted
+                    layer.openPopup();
+                }
+            });
+        }
+
+        // Search in Smart Citizen Markers
+        zoomToSensor(smartCitizenMarkers);
+
+        // Search in WU Markers
+        zoomToSensor(wuMarkers);
     }
-
-    // Search in Smart Citizen Markers
-    zoomToSensor(smartCitizenMarkers);
-
-    // Search in WU Markers
-    zoomToSensor(wuMarkers);
-
-}
 
 
     // smart citizen data display
@@ -201,7 +201,6 @@ function zoomToSensorFromUrl() {
         let sensorId = feature.id;
         let sensorUrl = `${window.location.origin}/map/${sensorId}/`;
         history.pushState(null, null, sensorUrl);
-
 
         var detailsHtml = `
         <div  style=" display: flex;
@@ -267,7 +266,7 @@ function zoomToSensorFromUrl() {
         document.getElementById('device-details').innerHTML = detailsHtml;
 
         dropdownarea.style.display = 'block';
-        datasensor.style.display = 'none';
+        // datasensor.style.display = 'none';
 
     }
 
@@ -292,111 +291,109 @@ function zoomToSensorFromUrl() {
     }
 
     async function displayWUDetails(feature) {
-    dda = "";
-    dda = "sc";
-    var properties = feature.properties;
-    x = feature;
-    console.log("User tags:", x);
-    smartChartArea.style.display = 'none';
+        showLoading('wrapper')
+        dda = "";
+        dda = "sc";
+        var properties = feature.properties;
+        x = feature;
+        console.log("User tags:", x);
+        smartChartArea.style.display = 'none';
 
-    chartsarea.style.display = 'none';
-    sensor.textContent = properties.name;
+        chartsarea.style.display = 'none';
+        sensor.textContent = properties.name;
 
-    let sensorId = feature.id;
+        let sensorId = feature.id;
 
-    let sensorUrl = `${window.location.origin}/map/${sensorId}/`;
-    history.pushState(null, null, sensorUrl);
+        let sensorUrl = `${window.location.origin}/map/${sensorId}/`;
+        history.pushState(null, null, sensorUrl);
 
-    let detailsHtml = `
-        <div style="display: flex; justify-content: space-evenly; font-size: 10px; font-weight: bolder; background-color: cadetblue; max-width: 80%; margin: 0 auto; text-align: center; border-radius: 10px;">
-            <p style="margin-top: 4px; margin-bottom: 0px; color: white;">CCLL Tags: ${properties.user_tags}</p>
-            <p style="margin-top: 4px; margin-bottom: 0px; color: white;">System Tags: ${properties.system_tags}</p>
-            <p style="margin-top: 4px; margin-bottom: 0px; color: white;">Owner: SCORE</p>
-        </div>
-        <div class="slider-container">
-            <button class="slide-button left" onclick="slideLeft()">&#10094;</button>
-            <div class="observations-container">
-    `;
+        let detailsHtml = `
+            <div style="display: flex; justify-content: space-evenly; font-size: 10px; font-weight: bolder; background-color: cadetblue; max-width: 80%; margin: 0 auto; text-align: center; border-radius: 10px;">
+                <p style="margin-top: 4px; margin-bottom: 0px; color: white;">CCLL Tags: ${properties.user_tags}</p>
+                <p style="margin-top: 4px; margin-bottom: 0px; color: white;">System Tags: ${properties.system_tags}</p>
+                <p style="margin-top: 4px; margin-bottom: 0px; color: white;">Owner: SCORE</p>
+            </div>
+            <div class="slider-container">
+                <button class="slide-button left" onclick="slideLeft()">&#10094;</button>
+                <div class="observations-container">
+        `;
 
-    // Fetch observations from the API
-    const apiUrl = `https://environmental-data.spatialdynamics.cloud/api/v1/weather-underground/pws/observations/?station_id=${sensorId}&limit=1`;
+        // Fetch observations from the API
+        const apiUrl = `https://environmental-data.spatialdynamics.cloud/api/v1/weather-underground/pws/observations/?station_id=${sensorId}&limit=1`;
 
-    try {
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (data.results && data.results.length > 0) {
-            const observations = data.results[0];
-
-            for (let key in observations) {
-                if (
-                    observations.hasOwnProperty(key) &&
-                    key !== 'id' &&
-                    key !== 'recorded_at' &&
-                    key !== 'station_id' &&
-                    key !== 'station_name'
-                ) {
-                    detailsHtml += `
-                        <a href="#${key}" onclick="showChart('${key}')" style="border-right: 1px solid #ddd">
-                            <div class="observation-item">
-                                <div class="obsTop">
-                                    <span class="value">${observations[key].value}</span>
-                                    <p class="unit">${observations[key].unit}</p>
-                                </div>
-                                <span class="measurement">${key.replace(/_/g, ' ').toUpperCase()}</span>
-                            </div>
-                        </a>
-                    `;
-                }
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                hideLoading('wrapper')
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        } else {
-            detailsHtml += `<p>No observations available</p>`;
+
+            const data = await response.json();
+
+            if (data.results && data.results.length > 0) {
+                hideLoading('wrapper')
+                const observations = data.results[0];
+
+                for (let key in observations) {
+                    if (
+                        observations.hasOwnProperty(key) &&
+                        key !== 'id' &&
+                        key !== 'recorded_at' &&
+                        key !== 'station_id' &&
+                        key !== 'station_name'
+                    ) {
+                        detailsHtml += `
+                            <a href="#${key}" onclick="showChart('${key}')" style="border-right: 1px solid #ddd">
+                                <div class="observation-item">
+                                    <div class="obsTop">
+                                        <span class="value">${observations[key].value}</span>
+                                        <p class="unit">${observations[key].unit}</p>
+                                    </div>
+                                    <span class="measurement">${key.replace(/_/g, ' ').toUpperCase()}</span>
+                                </div>
+                            </a>
+                        `;
+                    }
+                }
+            } else {
+                detailsHtml += `<p>No observations available</p>`;
+            }
+        } catch (error) {
+            console.error("Error fetching observations:", error);
+            detailsHtml += `<p>Failed to load observations</p>`;
         }
-    } catch (error) {
-        console.error("Error fetching observations:", error);
-        detailsHtml += `<p>Failed to load observations</p>`;
+
+        detailsHtml += `
+                </div>
+                <button class="slide-button right" onclick="slideRight()">&#10095;</button>
+            </div>
+            <div class="deviceInfo">
+                <p style="border: 2px solid #5f9ea0; padding: 5px; border-radius: 20px; font-size: 10px; background-color: rgb(255, 255, 255);">Sensor ID: <strong>${properties.name}</strong></p>
+                <p style="border: 2px solid #5f9ea0; padding: 5px; border-radius: 20px; font-size: 10px; background-color: rgb(255, 255, 255);"><strong>Last observation: </strong>${properties.last_reading_at}</p>
+                <p style="border: 2px solid #5f9ea0; padding: 5px; border-radius: 20px; font-size: 10px; background-color: rgb(255, 255, 255);">
+                    <small>Platform provider:
+                        <a href="${properties.platform_provider.url}" class="ml-2" target="_blank">
+                            ${properties.platform_provider.name}
+                        </a>
+                    </small>
+                </p>
+            </div>
+            <p style="text-align: center;"><small>Click on an observation to view the chart</small></p>
+        `;
+
+        document.getElementById('device-details').innerHTML = detailsHtml;
     }
 
-    detailsHtml += `
-            </div>
-            <button class="slide-button right" onclick="slideRight()">&#10095;</button>
-        </div>
-        <div class="deviceInfo">
-            <p style="border: 2px solid #5f9ea0; padding: 5px; border-radius: 20px; font-size: 10px; background-color: rgb(255, 255, 255);">Sensor ID: <strong>${properties.name}</strong></p>
-            <p style="border: 2px solid #5f9ea0; padding: 5px; border-radius: 20px; font-size: 10px; background-color: rgb(255, 255, 255);"><strong>Last observation: </strong>${properties.last_reading_at}</p>
-            <p style="border: 2px solid #5f9ea0; padding: 5px; border-radius: 20px; font-size: 10px; background-color: rgb(255, 255, 255);">
-                <small>Platform provider:
-                    <a href="${properties.platform_provider.url}" class="ml-2" target="_blank">
-                        ${properties.platform_provider.name}
-                    </a>
-                </small>
-            </p>
-        </div>
-        <p style="text-align: center;"><small>Click on an observation to view the chart</small></p>
-    `;
-
-    document.getElementById('device-details').innerHTML = detailsHtml;
-}
-
-  
     function slideLeft() {
         const container = document.querySelector('.observations-container');
         container.scrollBy({ left: -200, behavior: 'smooth' });
         
     }
-    
 
     function slideRight() {
         const container = document.querySelector('.observations-container');
         container.scrollBy({ left: 200, behavior: 'smooth' });
     }
-
-
-
 
     var sampleSize = 1;
 
@@ -469,19 +466,22 @@ function zoomToSensorFromUrl() {
 
     async function loadEachWuStationObservation(stationName, chartobsType) {
         try {
-            cLoading.style.display = 'unset';
+            // cLoading.style.display = 'unset';
+            showLoading('sidemenu');
             noData.style.display = 'none';
             const data = await fetchData(`https://environmental-data.spatialdynamics.cloud/api/v1/weather-underground/pws/observations/?station_name=${stationName}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=10000`);
+            console.log(data.results.length)
 
             if (!data.results || data.results.length === 0) {
                 console.log('No data available for this station.');
-                cLoading.style.display = 'none';
+                // cLoading.style.display = 'none';
+                hideLoading('sidemenu')
                 noData.style.display = 'block';
                 return;
 
             }
             sensor.style.display = 'inline';
-            datasensor.style.display = 'inline';
+            // datasensor.style.display = 'inline';
             chartsarea.style.display = 'block';
             dropdownarea.style.display = 'block';
 
@@ -515,7 +515,8 @@ function zoomToSensorFromUrl() {
 
                 const sampledLabels = labels.filter((_, index) => index % sampleSize === 0);
                 const sampledValues = values ? values.filter((_, index) => index % sampleSize === 0) : null;
-                cLoading.style.display = 'none';
+                // cLoading.style.display = 'none';
+                hideLoading('sidemenu')
                 let meandisplay = true;
                 let maxdisplay = true;
                 let directionLabels;
@@ -568,7 +569,8 @@ function zoomToSensorFromUrl() {
 
     async function loadEachSmartStationObservation(deviceName, sId) {
         try {
-            cLoading.style.display = 'unset';
+            // cLoading.style.display = 'unset';
+            showLoading('sidemenu')
             noData.style.display = 'none';
 
             const url = `https://environmental-data.spatialdynamics.cloud/api/v1/smart-citizen/observations/?device_name=${deviceName}&sensor_id=${sId}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=10000`;
@@ -578,7 +580,8 @@ function zoomToSensorFromUrl() {
 
             if (!data.results || data.results.length === 0) {
                 console.log('No data available for this station.');
-                cLoading.style.display = 'none';
+                // cLoading.style.display = 'none';
+                hideLoading('sidemenu')
                 noData.style.display = 'block';
                 return;
             }
@@ -603,7 +606,8 @@ function zoomToSensorFromUrl() {
             const sampledValues = filteredValues.filter((_, index) => index % step === 0);
             createChart('smart-chart', `${sensorName}`, sampledLabels, sampledValues, measurementName, null, null, 'line', true, true);
             //smartChart(sampledLabels, sampledValues);
-            cLoading.style.display = 'none';
+            // cLoading.style.display = 'none';
+            hideLoading('sidemenu')
         } catch (error) {
             console.error('Error:', error);
         }
@@ -972,7 +976,7 @@ function zoomToSensorFromUrl() {
                 console.error('Error fetching GeoJSON data:', error);
                 // Hide loading GIF
                 // document.getElementById('loading-gif').style.display = 'none';
-                hideLoading('device-details');
+                hideLoading('wrapper');
                 hideLoading('map-container')
             });
     }
@@ -1025,7 +1029,7 @@ function zoomToSensorFromUrl() {
                 console.error('Error fetching Weather Underground GeoJSON data:', error);
                 // Hide loading GIF
                 // document.getElementById('loading-gif').style.display = 'none';
-                hideLoading('device-details');
+                hideLoading('wrapper');
                 hideLoading('map-container')
             });
     }
@@ -1039,13 +1043,13 @@ function zoomToSensorFromUrl() {
             zoomToSensorFromUrl();
             // document.getElementById('loading-gif').style.display = 'none';
             hideLoading('map-container');
-            hideLoading('device-details')
+            hideLoading('wrapper')
         })
         .catch(error => {
             console.error('Error loading data:', error);
             // document.getElementById('loading-gif').style.display = 'none';
             hideLoading('map-container');
-            hideLoading('device-details');
+            hideLoading('wrapper');
 
         });
 
@@ -1077,7 +1081,5 @@ function zoomToSensorFromUrl() {
             console.error("Error fitting map bounds:", error);
         }
     }
-
-
 
 </script>
