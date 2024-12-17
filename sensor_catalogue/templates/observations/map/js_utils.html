@@ -1,0 +1,198 @@
+<script>
+    // socials
+    document.getElementById('facebook-btn').addEventListener('click', function() {
+        const url = window.location.href;
+        const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+        window.open(facebookUrl, '_blank');
+    });
+
+    document.getElementById('twitter-btn').addEventListener('click', function() {
+        const url = window.location.href;
+        const text = encodeURIComponent('Check out this sensor data!');
+        const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${text}`;
+        window.open(twitterUrl, '_blank');
+    });
+
+    // document.getElementById('instagram-btn').addEventListener('click', function() {
+    //     // Note: Instagram doesn't support direct sharing of URLs via a web link like Facebook and Twitter.
+    //     // This button can provide instructions or open Instagram if installed.
+    //     alert('Instagram does not support direct URL sharing. Please share the link manually.');
+// });
+
+    const cardinalPoints = [
+        { label: "N", min: 348.75, max: 360 },
+        { label: "N", min: 0, max: 11.25 },
+        { label: "NNE", min: 11.25, max: 33.75 },
+        { label: "NE", min: 33.75, max: 56.25 },
+        { label: "ENE", min: 56.25, max: 78.75 },
+        { label: "E", min: 78.75, max: 101.25 },
+        { label: "ESE", min: 101.25, max: 123.75 },
+        { label: "SE", min: 123.75, max: 146.25 },
+        { label: "SSE", min: 146.25, max: 168.75 },
+        { label: "S", min: 168.75, max: 191.25 },
+        { label: "SSW", min: 191.25, max: 213.75 },
+        { label: "SW", min: 213.75, max: 236.25 },
+        { label: "WSW", min: 236.25, max: 258.75 },
+        { label: "W", min: 258.75, max: 281.25 },
+        { label: "WNW", min: 281.25, max: 303.75 },
+        { label: "NW", min: 303.75, max: 326.25 },
+        { label: "NNW", min: 326.25, max: 348.75 }
+    ];
+
+    function getCardinalDirection(degree) {
+        for (let i = 0; i < cardinalPoints.length; i++) {
+            const point = cardinalPoints[i];
+            if (degree >= point.min && degree < point.max) {
+                return point.label;
+            }
+        }
+        return "Invalid degree";
+    }
+
+    const showLoading = (containerId) => {
+        try {
+        document.querySelector(`#${containerId} .loading-gif`).style.display = 'block';
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const hideLoading = (containerId) => {
+        try {
+        document.querySelector(`#${containerId} .loading-gif`).style.display = 'none';
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+     // window.onscroll = function () {
+    //     scrollFunction();
+    // };
+
+    // function scrollFunction() {
+    //     if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+    //         backToTopBtn.style.display = "block";
+    //     } else {
+    //         backToTopBtn.style.display = "none";
+    //     }
+    // }
+    // When the user clicks on the button, scroll to the top of the document
+    // backToTopBtn.addEventListener('click', function () {
+    //     document.body.scrollTop = 0; // For Safari
+    //     document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    // });
+
+    let formattedPreviousDate, formattedCurrentDate;
+
+    // Function to format date
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    function updateDateRange(days) {
+        const currentDate = new Date();
+        const previousDate = new Date(currentDate);
+        previousDate.setDate(currentDate.getDate() - days);
+
+        formattedCurrentDate = formatDate(currentDate);
+        formattedPreviousDate = formatDate(previousDate);
+    }
+
+    // Initial date range (last 1 day)
+    updateDateRange(1);
+
+    function getUrlParams() {
+        let params = {};
+        let url = window.location.href;
+        let parser = document.createElement('a');
+        parser.href = url;
+        let query = parser.search.substring(1);
+        let vars = query.split('&');
+        vars.forEach(function(v) {
+            let pair = v.split('=');
+            params[pair[0]] = decodeURIComponent(pair[1]);
+        });
+        return params;
+    }
+
+    function slideLeft() {
+        const container = document.querySelector('.observations-container');
+        container.scrollBy({ left: -200, behavior: 'smooth' });
+
+    }
+
+    function slideRight() {
+        const container = document.querySelector('.observations-container');
+        container.scrollBy({ left: 200, behavior: 'smooth' });
+    }
+
+    var sampleSize = 1;
+
+    // Function to update sampleSize based on screen size
+    function updateSampleSize() {
+        var isMobile = window.matchMedia("(max-width: 600px)").matches;
+        if (document.getElementById('timeRange').value === 'month') {
+            sampleSize = isMobile ? 100 : 50;
+
+        }
+        else if (document.getElementById('timeRange').value === 'week') {
+            sampleSize = isMobile ? 30 : 10;
+
+        }
+        else if (document.getElementById('timeRange').value === 'day') {
+            sampleSize = isMobile ? 10 : 5;
+        }
+
+    }
+
+    // Update sample size and chart data based on screen size
+    function onResize() {
+        updateSampleSize();
+        if (charts['temp']) {
+            console.log("")
+            showChart(keywu);
+
+        } else if (charts['smart-chart']) {
+            updateChart(senId);
+        }
+    }
+    // Add event listener for screen size changes
+    window.matchMedia("(max-width: 600px)").addListener(onResize);
+
+    updateSampleSize();
+
+    // Handle time range selection
+    function onTimeRangeChange() {
+        const timeRange = document.getElementById('timeRange').value;
+        console.log("Time range selected:", timeRange);
+        if (timeRange === 'week') {
+            updateDateRange(7);
+        } else if (timeRange === 'month') {
+            updateDateRange(30);
+        } else if (timeRange == 'day') {
+            updateDateRange(1);
+        }
+        updateSampleSize();
+        if (sensor.textContent) {
+
+            if (dda == "wu" && senId != null) {
+                console.log("senid:", senId)
+
+                updateChart(senId);
+
+
+            } else if (dda == "sc" && keywu != null) {
+                console.log("keyu", keywu)
+                showChart(keywu);
+
+
+            }
+
+
+        }
+    }
+
+</script>

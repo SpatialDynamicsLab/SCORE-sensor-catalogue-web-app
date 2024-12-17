@@ -1,147 +1,146 @@
+{% load static %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
+{% include 'observations/map/js_utils.html' %}
 <script>
-    // Display loading GIF
     let charts = {};
-    // let backToTopBtn = document.getElementById("backToTopBtn");
     const sensor = document.getElementById('sensor');
     const chartsarea = document.getElementById('chartscontainer');
     const smartChartArea = document.getElementById('smartChartContainer');
     const dropdownarea = document.getElementById('dropdown');
-    // const cLoading = document.getElementById('chart-loading');
     const chartboxes = document.querySelectorAll('.chartbox');
     const noData = document.getElementById('noData');
     let dda = "";
 
-    // socials
-    document.getElementById('facebook-btn').addEventListener('click', function() {
-        const url = window.location.href;
-        const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
-        window.open(facebookUrl, '_blank');
-    });
-
-    document.getElementById('twitter-btn').addEventListener('click', function() {
-        const url = window.location.href;
-        const text = encodeURIComponent('Check out this sensor data!');
-        const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${text}`;
-        window.open(twitterUrl, '_blank');
-    });
-
-    // document.getElementById('instagram-btn').addEventListener('click', function() {
-    //     // Note: Instagram doesn't support direct sharing of URLs via a web link like Facebook and Twitter.
-    //     // This button can provide instructions or open Instagram if installed.
-    //     alert('Instagram does not support direct URL sharing. Please share the link manually.');
-// });
-
-    const cardinalPoints = [
-        { label: "N", min: 348.75, max: 360 },
-        { label: "N", min: 0, max: 11.25 },
-        { label: "NNE", min: 11.25, max: 33.75 },
-        { label: "NE", min: 33.75, max: 56.25 },
-        { label: "ENE", min: 56.25, max: 78.75 },
-        { label: "E", min: 78.75, max: 101.25 },
-        { label: "ESE", min: 101.25, max: 123.75 },
-        { label: "SE", min: 123.75, max: 146.25 },
-        { label: "SSE", min: 146.25, max: 168.75 },
-        { label: "S", min: 168.75, max: 191.25 },
-        { label: "SSW", min: 191.25, max: 213.75 },
-        { label: "SW", min: 213.75, max: 236.25 },
-        { label: "WSW", min: 236.25, max: 258.75 },
-        { label: "W", min: 258.75, max: 281.25 },
-        { label: "WNW", min: 281.25, max: 303.75 },
-        { label: "NW", min: 303.75, max: 326.25 },
-        { label: "NNW", min: 326.25, max: 348.75 }
-    ];
-
-    const showLoading = (containerId) => {
-        try {
-        document.querySelector(`#${containerId} .loading-gif`).style.display = 'block';
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const hideLoading = (containerId) => {
-        document.querySelector(`#${containerId} .loading-gif`).style.display = 'none';
-    };
-
-    showLoading('map-container');
-    showLoading('wrapper');
-
-    var smartCitizenMarkers = L.markerClusterGroup({
+    // Single markers cluster for all data
+    var combinedMarkers = L.markerClusterGroup({
         spiderfyOnMaxZoom: true,
         showCoverageOnHover: false,
         zoomToBoundsOnClick: true
     });
-    var wuMarkers = L.markerClusterGroup({
-        spiderfyOnMaxZoom: true,
-        showCoverageOnHover: false,
-        zoomToBoundsOnClick: true
-    });
-
-    var baseLayers = {};
-    var overlayLayers = {
-        "Smart Citizen Devices": smartCitizenMarkers,
-        "WU Personal Weather Stations": wuMarkers
-    };
 
     var map = L.map('map').setView([49, -6.2359141], 5);
+
     // Load and display tile layer on the map
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; CARTO © OpenStreetMap contributors',
         maxZoom: 18
     }).addTo(map);
 
-    // window.onscroll = function () {
-    //     scrollFunction();
-    // };
+    var selectedMarker = null;
+    var selectedMarkerType = null;
 
-    function getCardinalDirection(degree) {
-        for (let i = 0; i < cardinalPoints.length; i++) {
-            const point = cardinalPoints[i];
-            if (degree >= point.min && degree < point.max) {
-                return point.label;
+    // Load Smart Citizen Data
+    function loadSmartCitizenData() {
+        return fetch('https://environmental-data.spatialdynamics.cloud/api/v1/' +
+            'smart-citizen/sck-devices.geojson?user_tags=SCORE&system_tags=online')
+            .then(response => response.json())
+            .then(geojsonFeatureCollection => {
+                var smartCitizenLayer = L.geoJSON(geojsonFeatureCollection.results, {
+                    pointToLayer: function (feature, latlng) {
+                        var marker = L.marker(latlng, {
+                            icon: createDefaultIcon('rgba(63, 245, 39, 0.48)', 30, 'smart')
+                        });
+                        addMarkerClickHandler(marker, 'smart', feature);
+                        return marker;
+                    },
+                    onEachFeature: forEachFeatureSCK,
+                });
+                combinedMarkers.addLayer(smartCitizenLayer);
+            })
+            .catch(error => console.error('Error fetching Smart Citizen GeoJSON:', error));
+    }
+
+    // Load WU Data
+    function loadWUData() {
+        return fetch('https://environmental-data.spatialdynamics.cloud/api/v1/' +
+            'weather-underground/pws-stations.geojson?system_tags=online')
+            .then(response => response.json())
+            .then(geojsonFeatureCollection => {
+                var wuPWSLayer = L.geoJSON(geojsonFeatureCollection.results, {
+                    pointToLayer: function (feature, latlng) {
+                        var marker = L.marker(latlng, {
+                            icon: createDefaultIcon('rgba(63, 245, 39, 0.48)', 30, 'wu')
+                        });
+                        addMarkerClickHandler(marker, 'wu', feature);
+                        return marker;
+                    },
+                    onEachFeature: forEachFeatureWU,
+                });
+                combinedMarkers.addLayer(wuPWSLayer);
+            })
+            .catch(error => console.error('Error fetching WU GeoJSON:', error));
+    }
+
+    // Shared Marker Click Handler
+    function addMarkerClickHandler(marker, type, feature) {
+        marker.on('click', function () {
+            if (selectedMarker) {
+                selectedMarker.setIcon(createDefaultIcon('rgba(63, 245, 39, 0.48)', 30, selectedMarkerType));
             }
+            marker.setIcon(createClickedIcon(30, type));
+            selectedMarker = marker;
+            selectedMarkerType = type;
+
+            map.setView(marker.getLatLng(), 20);
+
+            window.scrollTo({
+                top: 200,
+                behavior: 'smooth'
+            });
+
+            if (type === 'smart') {
+                displaySCKDetails(feature);
+            } else {
+                displayWUDetails(feature);
+            }
+        });
+    }
+
+    function forEachFeatureSCK(feature, layer) {
+        layer.on('click', function () {
+            displaySCKDetails(feature);
+        });
+    }
+
+    function forEachFeatureWU(feature, layer) {
+        layer.on('click', function () {
+            displayWUDetails(feature);
+        });
+    }
+
+    // Load all data into combinedMarkers
+    Promise.all([
+        loadSmartCitizenData(),
+        loadWUData(),
+        showLoading('map-container'),
+        showLoading('wrapper'),
+    ]).then(() => {
+        map.addLayer(combinedMarkers); // Add the combined cluster to the map
+        mapBoundsFit();
+        hideLoading('map-container');
+        hideLoading('wrapper');
+        zoomToSensorFromUrl();
+    }).catch(error => {
+        console.error('Error loading data:', error);
+        hideLoading('map-container');
+        hideLoading('wrapper');
+    });
+
+    // Fit bounds to combined markers
+    function mapBoundsFit() {
+        try {
+            var combinedBounds = combinedMarkers.getBounds();
+            if (combinedBounds.isValid()) {
+                map.fitBounds(combinedBounds);
+            } else {
+                console.log("No valid bounds for combined markers.");
+            }
+        } catch (error) {
+            console.error("Error fitting map bounds:", error);
         }
-        return "Invalid degree";
     }
-
-    // function scrollFunction() {
-    //     if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
-    //         backToTopBtn.style.display = "block";
-    //     } else {
-    //         backToTopBtn.style.display = "none";
-    //     }
-    // }
-    // When the user clicks on the button, scroll to the top of the document
-    // backToTopBtn.addEventListener('click', function () {
-    //     document.body.scrollTop = 0; // For Safari
-    //     document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-    // });
-
-
-    let formattedPreviousDate, formattedCurrentDate;
-
-    // Function to format date
-    function formatDate(date) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
-
-    function updateDateRange(days) {
-        const currentDate = new Date();
-        const previousDate = new Date(currentDate);
-        previousDate.setDate(currentDate.getDate() - days);
-
-        formattedCurrentDate = formatDate(currentDate);
-        formattedPreviousDate = formatDate(previousDate);
-    }
-
-    // Initial date range (last 7 days)
-    updateDateRange(1);
 
     async function fetchData(url) {
         const response = await fetch(url);
@@ -150,22 +149,6 @@
         }
         return await response.json();
     }
-    // Leaflet layers control
-    // L.control.layers(baseLayers, overlayLayers).addTo(map);
-
-    function getUrlParams() {
-    let params = {};
-    let url = window.location.href;
-    let parser = document.createElement('a');
-    parser.href = url;
-    let query = parser.search.substring(1);
-    let vars = query.split('&');
-    vars.forEach(function(v) {
-        let pair = v.split('=');
-        params[pair[0]] = decodeURIComponent(pair[1]);
-    });
-    return params;
-}
 
     function zoomToSensorFromUrl() {
         let urlParts = window.location.pathname.split('/');
@@ -181,21 +164,18 @@
             });
         }
 
-        // Search in Smart Citizen Markers
-        zoomToSensor(smartCitizenMarkers);
-
-        // Search in WU Markers
-        zoomToSensor(wuMarkers);
+        // Zoom to all available markers
+        zoomToSensor(combinedMarkers);
     }
-
 
     // smart citizen data display
     let senId = null;
-    function displayDeviceDetails(feature) {
+    async function displaySCKDetails(feature) {
+        showLoading('wrapper')
         chartsarea.style.display = 'none';
         dda = "";
         dda = "wu";
-        var properties = feature.properties
+        var properties = feature.properties;
         sensor.textContent = properties.name;
 
         let sensorId = feature.id;
@@ -203,83 +183,94 @@
         history.pushState(null, null, sensorUrl);
 
         var detailsHtml = `
-        <div  style=" display: flex;
-                justify-content: space-evenly;
-                font-size: 10px;
-                font-weight: bolder;
-                background-color: cadetblue;
-                max-width: 80%;
-                margin: 0 auto;
-                /* align-items: center; */
-                text-align: center;
-                border-radius: 10px 10px 10px 10px; ">
-                    <p style="   
-                     margin-top: 4px;
-                    margin-bottom: 0px;
-                    color: white;">CCLL Tags: ${properties.user_tags.join(", ")}</p>
-                    <p style="   
-                     margin-top: 4px;
-                    margin-bottom: 0px;
-                    color: white; "
-                    >System Tags: ${properties.system_tags.join(", ")}</p>
-                    <p style="   
-                     margin-top: 4px;
-                    margin-bottom: 0px;
-                    color: white; "
-                    >Owner: ${properties.owner}</p>
-        </div>
-        <div class="slider-container">
-            <button class="slide-button left" onclick="slideLeft()">&#10094;</button>
-            <div class="observations-container">
-    `;
-        properties.observations.forEach(function (obs) {
-            detailsHtml += `
-            <a href=#${obs.sensor_name}  onclick="updateChart(${obs.sensor_id})" style="border-right: 1px solid #ddd">
-                <div class="observation-item">
-                    <div class="obsTop">
-                        <span class="value">${obs.value}</span>
-                        <p class="unit">${obs.unit}</p>
-                    </div>
-                    <span class="measurement">${obs.measurement_name}</span>
-                </div>
-            </a>
+            <div style="display: flex; justify-content: space-evenly; font-size: 10px; font-weight: bolder; background-color: cadetblue; max-width: 80%; margin: 0 auto; text-align: center; border-radius: 10px;">
+                <p style="margin-top: 4px; margin-bottom: 0px; color: white;">CCLL Tags: ${properties.user_tags.join(", ")}</p>
+                <p style="margin-top: 4px; margin-bottom: 0px; color: white;">System Tags: ${properties.system_tags.join(", ")}</p>
+                <p style="margin-top: 4px; margin-bottom: 0px; color: white;">Owner: ${properties.owner}</p>
+            </div>
+            <div class="slider-container">
+                <button class="slide-button left" onclick="slideLeft()">&#10094;</button>
+                <div class="observations-container">
         `;
-        });
+
+        const apiUrl = `https://environmental-data.spatialdynamics.cloud/api/v1/smart-citizen/observations/?device_id=${sensorId}&limit=20`;
+
+        try {
+            // Fetch observations from the API
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                hideLoading('wrapper');
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const observations = data.results;
+
+            // Object to keep track of the most recent observation per sensor_id
+            const latestObservations = {};
+
+            // Iterate through observations and store the most recent one for each sensor_id
+            observations.forEach(obs => {
+                if (!latestObservations[obs.sensor_id]) {
+                    latestObservations[obs.sensor_id] = obs;
+                }
+            });
+
+            // Generate the HTML for the last observations
+            Object.values(latestObservations).forEach(obs => {
+                detailsHtml += `
+                    <a href="#${obs.sensor_name}" onclick="updateChart(${obs.sensor_id})" style="border-right: 1px solid #ddd">
+                        <div class="observation-item">
+                            <div class="obsTop">
+                                <span class="value">${obs.value}</span>
+                                <p class="unit">${obs.unit}</p>
+                            </div>
+                            <span class="measurement">${obs.measurement_name}</span>
+                        </div>
+                    </a>
+                `;
+            });
+        } catch (error) {
+            console.error("Error fetching observations:", error);
+            detailsHtml += `<p>Failed to load observations</p>`;
+            hideLoading('wrapper');
+        }
+
         detailsHtml += `
             </div>
-            <button class="slide-button right" onclick="slideRight()">&#10095;</button>
-        </div>
-        <div class="deviceInfo">
-            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: rgb(255, 255, 255); " ><strong>${properties.name}: </strong>${properties.description}</p>
-           
-            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: rgb(255, 255, 255); " ><strong>Last Observation: </strong>${properties.last_reading_at}</p>
-            <p style="border:2px solid #5f9ea0; padding:5px; border-radius: 20px; font-size:10px;     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: rgb(255, 255, 255); " ><small>Platform provider: <a href="${properties.platform_provider.url}" class="ml-2" target="_blank"> ${properties.platform_provider.name}</a></small></p>
-           
-        </div>
-        <p style="text-align:center"   ><small>Click on an observation to view the chart</small></p>
-      
-    `;
+                <button class="slide-button right" onclick="slideRight()">&#10095;</button>
+            </div>
+             <p style="text-align: center; padding-top:2px; font-size: 14px; font-weight:900">
+                Want to see trends? Click on a value to display its time series chart
+            </p>
+            <div class="deviceInfo">
+                <p style="border: 2px solid #5f9ea0; padding: 5px; border-radius: 20px; font-size: 10px; background-color: rgb(255, 255, 255);">
+                    <strong>${properties.name}: </strong>${properties.description}
+                </p>
+                <p style="border: 2px solid #5f9ea0; padding: 5px; border-radius: 20px; font-size: 10px; background-color: rgb(255, 255, 255);">
+                    <strong>Last Observation: </strong>${properties.last_reading_at}
+                </p>
+                <p style="border: 2px solid #5f9ea0; padding: 5px; border-radius: 20px; font-size: 10px; background-color: rgb(255, 255, 255);">
+                    <small>Platform provider:
+                        <a href="${properties.platform_provider.url}" class="ml-2" target="_blank">
+                            ${properties.platform_provider.name}
+                        </a>
+                    </small>
+                </p>
+            </div>
+        `;
 
         document.getElementById('device-details').innerHTML = detailsHtml;
-
         dropdownarea.style.display = 'block';
-        // datasensor.style.display = 'none';
-
+        hideLoading('wrapper');
     }
+
 
     function updateChart(sId) {
         senId = sId;
         chartsarea.style.display = 'none';
         smartChartArea.style.display = 'block';
         loadEachSmartStationObservation(sensor.textContent, sId);
-    }
-    function forEachFeature(feature, layer) {
-        layer.on('click', function (e) {
-            displayDeviceDetails(feature);
-        });
     }
 
     let keywu = null;
@@ -364,9 +355,12 @@
         }
 
         detailsHtml += `
-                </div>
+            </div>
                 <button class="slide-button right" onclick="slideRight()">&#10095;</button>
             </div>
+             <p style="text-align: center; padding-top:2px; font-size: 14px; font-weight:900">
+                Want to see trends? Click on a value to display its time series chart
+            </p>
             <div class="deviceInfo">
                 <p style="border: 2px solid #5f9ea0; padding: 5px; border-radius: 20px; font-size: 10px; background-color: rgb(255, 255, 255);">Sensor ID: <strong>${properties.name}</strong></p>
                 <p style="border: 2px solid #5f9ea0; padding: 5px; border-radius: 20px; font-size: 10px; background-color: rgb(255, 255, 255);"><strong>Last observation: </strong>${properties.last_reading_at}</p>
@@ -378,104 +372,24 @@
                     </small>
                 </p>
             </div>
-            <p style="text-align: center;"><small>Click on an observation to view the chart</small></p>
         `;
 
         document.getElementById('device-details').innerHTML = detailsHtml;
     }
 
-    function slideLeft() {
-        const container = document.querySelector('.observations-container');
-        container.scrollBy({ left: -200, behavior: 'smooth' });
-        
-    }
-
-    function slideRight() {
-        const container = document.querySelector('.observations-container');
-        container.scrollBy({ left: 200, behavior: 'smooth' });
-    }
-
-    var sampleSize = 1;
-
-    // Function to update sampleSize based on screen size
-    function updateSampleSize() {
-        var isMobile = window.matchMedia("(max-width: 600px)").matches;
-        if (document.getElementById('timeRange').value === 'month') {
-            sampleSize = isMobile ? 100 : 50;
-
-        }
-        else if (document.getElementById('timeRange').value === 'week') {
-            sampleSize = isMobile ? 30 : 10;
-
-        }
-        else if (document.getElementById('timeRange').value === 'day') {
-            sampleSize = isMobile ? 10 : 5;
-        }
-
-    }
-
-    // Update sample size and chart data based on screen size
-    function onResize() {
-        updateSampleSize();
-        if (charts['temp']) {
-            console.log("")
-            showChart(keywu);
-        
-        } else if (charts['smart-chart']) {
-            updateChart(senId);
-        }
-    }
-    // Add event listener for screen size changes
-    window.matchMedia("(max-width: 600px)").addListener(onResize);
-
-    updateSampleSize();
-
-
-
-    // Handle time range selection
-    function onTimeRangeChange() {
-        const timeRange = document.getElementById('timeRange').value;
-        console.log("Time range selected:", timeRange);
-        if (timeRange === 'week') {
-            updateDateRange(7);
-        } else if (timeRange === 'month') {
-            updateDateRange(30);
-        } else if (timeRange == 'day') {
-            updateDateRange(1);
-        }
-        updateSampleSize();
-        if (sensor.textContent) {
-
-            if (dda == "wu" && senId != null) {
-                console.log("senid:", senId)
-                
-                updateChart(senId);
-
-
-            } else if (dda == "sc" && keywu != null) {
-                console.log("keyu", keywu)
-                showChart(keywu);
-                
-
-            }
-
-
-        }
-    }
-
-
     async function loadEachWuStationObservation(stationName, chartobsType) {
         try {
             // cLoading.style.display = 'unset';
-            showLoading('sidemenu');
+            showLoading('wrapper');
             noData.style.display = 'none';
-            const data = await fetchData(`https://environmental-data.spatialdynamics.cloud/api/v1/weather-underground/pws/observations/?station_name=${stationName}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=10000`);
+            const data = await fetchData(
+                `https://environmental-data.spatialdynamics.cloud/api/v1/weather-underground/pws/observations/?station_name=${stationName}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=10000`);
             console.log(data.results.length)
 
             if (!data.results || data.results.length === 0) {
                 console.log('No data available for this station.');
                 // cLoading.style.display = 'none';
-                hideLoading('sidemenu')
+                hideLoading('wrapper')
                 noData.style.display = 'block';
                 return;
 
@@ -484,7 +398,6 @@
             // datasensor.style.display = 'inline';
             chartsarea.style.display = 'block';
             dropdownarea.style.display = 'block';
-
 
             const fields = [
                 { key: 'temp', label: 'Temperature (°C)', unit: '°C', transform: value => value, yMin: null, yMax: null, canvasId: 'temp', chartType: 'line' },
@@ -516,7 +429,7 @@
                 const sampledLabels = labels.filter((_, index) => index % sampleSize === 0);
                 const sampledValues = values ? values.filter((_, index) => index % sampleSize === 0) : null;
                 // cLoading.style.display = 'none';
-                hideLoading('sidemenu')
+                hideLoading('wrapper')
                 let meandisplay = true;
                 let maxdisplay = true;
                 let directionLabels;
@@ -558,19 +471,15 @@
             }
             });
 
-
-
         } catch (error) {
             console.error('Error:', error);
         }
     }
 
-
-
     async function loadEachSmartStationObservation(deviceName, sId) {
         try {
             // cLoading.style.display = 'unset';
-            showLoading('sidemenu')
+            showLoading('wrapper')
             noData.style.display = 'none';
 
             const url = `https://environmental-data.spatialdynamics.cloud/api/v1/smart-citizen/observations/?device_name=${deviceName}&sensor_id=${sId}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=10000`;
@@ -581,7 +490,7 @@
             if (!data.results || data.results.length === 0) {
                 console.log('No data available for this station.');
                 // cLoading.style.display = 'none';
-                hideLoading('sidemenu')
+                hideLoading('wrapper')
                 noData.style.display = 'block';
                 return;
             }
@@ -589,8 +498,6 @@
 
             const measurementName = data.results[0].measurement_name;
             const sensorName = data.results[0].sensor_name;
-
-
 
             const labels = data.results.map(observation => new Date(observation.recorded_at)).reverse();
             const values = data.results.map(observation => observation.value).reverse();
@@ -607,12 +514,11 @@
             createChart('smart-chart', `${sensorName}`, sampledLabels, sampledValues, measurementName, null, null, 'line', true, true);
             //smartChart(sampledLabels, sampledValues);
             // cLoading.style.display = 'none';
-            hideLoading('sidemenu')
+            hideLoading('wrapper')
         } catch (error) {
             console.error('Error:', error);
         }
     }
-
 
     function windChart(data1, data2, canvasId, yAxisLabel) {
         if (charts[canvasId]) {
@@ -847,12 +753,6 @@
         });
     }
 
-    function forEachFeatureWU(feature, layer) {
-        layer.on('click', function (e) {
-            displayWUDetails(feature);
-        });
-    }
-
     function createDefaultIcon(color, size, x) {
         if (x === 'smart') {
             return L.divIcon({
@@ -923,163 +823,6 @@
             className: '',
         });
 
-    }
-
-    var selectedMarker = null;
-    var selectedMarkerType = null;
-
-    function loadSmartCitizenData() {
-        return fetch('https://environmental-data.spatialdynamics.cloud/api/v1/' +
-            'smart-citizen/sck-devices.geojson?user_tags=SCORE&system_tags=online')
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (geojsonFeatureCollection) {
-                var smartCitizenLayer = L.geoJSON(geojsonFeatureCollection.results, {
-                    pointToLayer: function (feature, latlng) {
-                        var marker = L.marker(latlng, {
-                            icon: createDefaultIcon('rgba(63, 245, 39, 0.48)', 30, 'smart')
-                        });
-                        marker.on('click', function () {
-                            if (selectedMarker) {
-                                selectedMarker.setIcon(createDefaultIcon('rgba(63, 245, 39, 0.48)', 30, selectedMarkerType));
-                
-                                map.setView(marker.getLatLng(), 20);
-
-                            }
-                            marker.setIcon(createClickedIcon(30, 'smart'));
-                            selectedMarker = marker;
-                            selectedMarkerType = 'smart';
-                            
-                            map.setView(marker.getLatLng(), 20);
-
-                            const tp =  document.getElementById('device-details');
-             
-                            window.scrollTo({
-
-                                top: 200,
-                                behavior: 'smooth' // Smooth scroll
-
-                            })
-                            
-                        });
-                        return marker;
-                    },
-                    onEachFeature: forEachFeature,
-                });
-
-                smartCitizenMarkers.addLayer(smartCitizenLayer);
-                map.addLayer(smartCitizenMarkers);
-          
-            })
-            .catch(function (error) {
-                console.error('Error fetching GeoJSON data:', error);
-                // Hide loading GIF
-                // document.getElementById('loading-gif').style.display = 'none';
-                hideLoading('wrapper');
-                hideLoading('map-container')
-            });
-    }
-
-
-    function loadWUData() {
-
-        return fetch('https://environmental-data.spatialdynamics.cloud/api/v1/' +
-            'weather-underground/pws-stations.geojson?system_tags=online')
-            .then(function (response) {
-                return response.json();
-
-            })
-            .then(function (geojsonFeatureCollection) {
-
-                var wuPWSLayer = L.geoJSON(geojsonFeatureCollection.results, {
-                    pointToLayer: function (feature, latlng) {
-                        var marker = L.marker(latlng, {
-                            icon: createDefaultIcon('rgba(63, 245, 39, 0.48)', 30, 'wu')
-                        });
-                        marker.on('click', function () {
-                            if (selectedMarker) {
-                                selectedMarker.setIcon(createDefaultIcon('rgba(63, 245, 39, 0.48)', 30, selectedMarkerType));
-                                map.setView(marker.getLatLng(), 20);
-
-                            }
-                            marker.setIcon(createClickedIcon(30, 'wu'));
-                            map.setView(marker.getLatLng(), 20);
-                            selectedMarker = marker;
-                            selectedMarkerType = 'wu';
-                            const tp =  document.getElementById('device-details');
-                     
-                            window.scrollTo({
-
-                                top: 200,
-                                behavior: 'smooth' // Smooth scroll
-
-                            })
-                        });
-                        return marker;
-                    },
-                    onEachFeature: forEachFeatureWU,
-                });
-                wuMarkers.addLayer(wuPWSLayer);
-                map.addLayer(wuMarkers);
-                // Hide loading GIF
-                
-            })
-            .catch(function (error) {
-                console.error('Error fetching Weather Underground GeoJSON data:', error);
-                // Hide loading GIF
-                // document.getElementById('loading-gif').style.display = 'none';
-                hideLoading('wrapper');
-                hideLoading('map-container')
-            });
-    }
-
-
-
-    Promise.all([loadSmartCitizenData(), loadWUData()])
-        .then(() => {
-            mapBoundsFit(); // Call this function only after both layers are loaded
-         
-            zoomToSensorFromUrl();
-            // document.getElementById('loading-gif').style.display = 'none';
-            hideLoading('map-container');
-            hideLoading('wrapper')
-        })
-        .catch(error => {
-            console.error('Error loading data:', error);
-            // document.getElementById('loading-gif').style.display = 'none';
-            hideLoading('map-container');
-            hideLoading('wrapper');
-
-        });
-
-
-    function mapBoundsFit() {
-        try {
-            var smartCitizenBounds = smartCitizenMarkers.getBounds();
-            var wuBounds = wuMarkers.getBounds();
-
-            var combinedBounds = L.latLngBounds([]);
-
-            if (smartCitizenMarkers.getLayers().length > 0) {
-                combinedBounds.extend(smartCitizenBounds);
-            }
-            if (wuMarkers.getLayers().length > 0) {
-                combinedBounds.extend(wuBounds);
-            }
-
-            console.log("Smart Citizen Bounds:", smartCitizenBounds);
-            console.log("WU Bounds:", wuBounds);
-            console.log("Combined Bounds:", combinedBounds);
-
-            if (combinedBounds.isValid()) {
-                map.fitBounds(combinedBounds);
-            } else {
-                console.log("Combined bounds are not valid.");
-            }
-        } catch (error) {
-            console.error("Error fitting map bounds:", error);
-        }
     }
 
 </script>
