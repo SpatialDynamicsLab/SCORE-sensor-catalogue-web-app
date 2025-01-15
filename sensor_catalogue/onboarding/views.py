@@ -175,7 +175,7 @@ def onboarded_sensor_data_view(request):
                   context)
 @login_required
 def create_installation_step(request):
-    sensors = Sensor.objects.all()  # Get all sensors
+    sensors = Sensor.objects.filter(published=True).order_by('id')
     steps = InstallationStep.objects.all()  # Get all steps
 
     if request.method == 'POST':
