@@ -1,0 +1,461 @@
+
+{% extends "onboarding/base.html" %}
+{% load i18n %}
+{% load compress %}
+{% load static %}
+{% block head %}
+{{ block.super }}
+{% include 'onboarding/base/css.html' %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js" defer></script>
+<!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css"> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js" defer></script>
+<style>
+    .equal-height {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .form-container {
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+    }
+
+    .steps-container {
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+    }
+
+    .drag-handle {
+        cursor: move;
+    }
+    tr{
+        border-bottom: 5px solid rgb(82 82 91 / 38%);
+    }
+    td{
+      
+        /* border-left:  1px solid rgb(82 82 91 / 38%); */
+    }
+    .edit-input {
+    width: 100%;
+    padding: 4px;
+    font-size: 0.9em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Ensures padding is included in width */
+}
+    #id_sensor, #id_step_number, #id_title, #id_step_type, #id_image, #id_video, #id_input_type, #id_input_label, #id_redirect_url, #id_input_processing_url {
+    background-color: #e0e2e4;
+    padding: 10px;
+    width: 315px;
+   
+    border-radius: 5px;
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'onboarding/base/navbar.html' %}
+<!-- {% if request.user.is_authenticated %}
+{% if request.user.is_superuser %} -->
+<div class="flex bg-white p-6 rounded-lg shadow-lg border border-gray-200"
+    style="max-width: 90%; width: 100%; margin: 0px auto; padding: 20px;">
+
+    <!-- Sensor Filter and Steps Section -->
+    <div style="width: 100%;">
+        <div class="mb-6">
+            <h2 class="text-lg font-semibold text-gray-700 text-center">Manage and Add installation steps</h2>
+            <div class="text-right mt-4">
+                <button id="addnewstepbutton"
+                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-lg font-semibold text-sm text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Add new step
+                </button>
+
+                     
+            </div>
+         <div class="flex flex-row min-h-screen justify-center items-center" id="stepsForm" style="display: none;">
+        
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="">
+
+                  
+                    {% for field in form %}
+                        <div class="mb-3 ">
+                            <label class="block text-gray-700 font-semibold text-sm mb-1" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            <div class="mt-1" style="width:fit-content">
+                                {{ field }}
+                            </div>
+                            {% if field.errors %}
+                                <p class="mt-1 text-xs text-red-600">{{ field.errors|striptags }}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                    <div class="mb-6">
+                        <button type="submit" class="inline-flex items-center px-3 py-1 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Save Step
+                        </button>
+                        <button id="closeFormBtn" style="background-color: red;"  class="inline-flex items-center px-3 py-1 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600">
+                            Cancel
+                        </button>
+                    </div>
+                      
+                  
+                </form>
+            </div>
+           
+
+            
+            <div>
+                <p for="sensor-filter" class="block text-gray-700 text-sm ">Select a sensor to view the steps</p>
+                <select id="sensor-filter"
+                    class="block w-full px-4 py-2 text-gray-900 bg-gray-100 border rounded-lg focus:ring focus:ring-indigo-300 focus:ring-opacity-50">
+                   <option value="">Select a sensor</option>
+                    {% for sensor in sensors %}
+                    <option value="{{ sensor.id }}">{{ sensor.sensor_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div id="stepsSortable" class="steps-container relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table id="stepsTable" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Sensor</th>
+                        <th scope="col" class="px-6 py-3">Step Number</th>
+                        <th scope="col" class="px-6 py-3">Title</th>
+                        <th scope="col" class="px-6 py-3">Description</th>
+                       
+                        <th scope="col" class="px-6 py-3">Step Type</th>
+                        <th scope="col" class="px-6 py-3">Input Type</th>
+                        <th scope="col" class="px-6 py-3">Input Label</th>
+                        <th scope="col" class="px-6 py-3">Redirect Url</th>
+                        <th scope="col" class="px-6 py-3">Input Processing Url</th>
+                        <th scope="col" class="px-6 py-3">Created at</th>
+                        <th scope="col" class="px-6 py-3">Updated at</th>
+                        <th scope="col" class="px-6 py-3">Actions</th>
+                        <th scope="col" class="px-6 py-3">Reorder</th>
+                 
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for step in steps %}
+
+                    <tr class="bg-slate-50  step-item"
+                        data-step-id="{{ step.id }}" data-sensor-id="{{ step.sensor.id }}">
+                        <td class="px-6 py-4">{{ step.sensor.sensor_name }}</td>
+                        <td class="px-6 py-4 font-medium text-gray-900  dark:text-white " data-name="step_number">{{step.step_number }}</td>
+                        <td class="px-6 py-4 editable" data-name="title" >{{ step.title }}</td>
+                        <td class="px-6 py-4 editable" data-name="description" style=" max-height: 50px; overflow: auto;">{{step.description }}</td>
+                       
+                        <td class="px-6 py-4">{{ step.step_type }}</td>
+                        <td class="px-6 py-4 editable" data-name="input_type">{{ step.input_type }}</td>
+                        <td class="px-6 py-4 editable" data-name="input_label">{{ step.input_label }}</td>
+                        <td class="px-6 py-4 editable" data-name="redirect_url"><a href="{{ step.redirect_url }}"></a>{{ step.redirect_url }}</td>
+                        <td class="px-6 py-4 editable" data-name="input_processing_url">{{ step.input_processing_url }}</td>
+                        <td class="px-6 py-4">{{ step.created_at }}</td>
+                        <td class="px-6 py-4">{{ step.updated_at }}</td>
+                        
+                        <td class="flex items-center px-6 py-4">
+                           
+                            <button class="edit-button" id="editButton"  style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; border: 2px solid #000; background-color: #f0f0f0; cursor: pointer; margin: 3px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 20h9" />
+                                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19.5 3 21l1.5-4L16.5 3.5z" />
+                                </svg>
+                            </button>
+                            <button class="save-button" id="saveButton" style="display:none; align-items: center; justify-content: center; width: fit-content; height: 40px; border: 2px solid #000; background-color: #c8f7c5; cursor: pointer; margin: 3px;">
+                                Confirm
+                            </button>
+                            <!-- <button style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; border: 2px solid #ff0000; background-color: #ffe6e6; cursor: pointer; margin: 3px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6" />
+                                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                    <path d="M10 11v6" />
+                                    <path d="M14 11v6" />
+                                    <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+                                </svg>
+                            </button> -->
+                            
+                           
+                            
+                          
+                        </td>
+                        <td class="drag-handle px-6 py-4">
+                            <i class="fas fa-grip-lines"><img style="width: 30px; height: 30px; margin-left: 5px;" src="/static/images/draganddrop.jpg" alt=""></i> <!-- Example drag icon -->
+                        </td>
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+         
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const stepsTable = document.getElementById('stepsTable').querySelector('tbody');
+        const sensorFilter = document.getElementById('sensor-filter');
+          // Initially hide all rows
+        const steps = document.querySelectorAll('.step-item');
+        let currentSortableInstance = null;
+        steps.forEach(step => step.style.display = 'none');
+
+        const edtbtn = document.getElementById("editButton");
+
+
+        sensorFilter.addEventListener('change', function () {
+        const selectedSensorId = this.value;
+        const visibleSteps = [];
+        
+        steps.forEach(step => {
+            if (step.getAttribute('data-sensor-id') === selectedSensorId) {
+                step.style.display = '';
+                visibleSteps.push(step);
+            } else {
+                step.style.display = 'none';
+            }
+        });
+
+        // Reinitialize Sortable for visible steps only
+        if (currentSortableInstance) {
+            currentSortableInstance.destroy();
+        }
+
+        if (visibleSteps.length > 0) {
+            currentSortableInstance = new Sortable(stepsTable, {
+                handle: '.drag-handle',
+                animation: 150,
+                onEnd: function () {
+                    const rows = Array.from(stepsTable.querySelectorAll('.step-item'))
+                        .filter(row => row.style.display !== 'none');
+                    const newOrder = rows.map(row => row.getAttribute('data-step-id'));
+
+                    fetch('{% url "onboarding:update_step_order" %}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}',
+                        },
+                        body: JSON.stringify({
+                            sensor_id: selectedSensorId,
+                            ordered_step_ids: newOrder,
+                        }),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                console.log('Step order updated successfully!');
+                                rows.forEach((row, index) => {
+                                    const stepNumberCell = row.querySelector('[data-name="step_number"]');
+                                    if (stepNumberCell) {
+                                        stepNumberCell.innerText = index + 1;
+                                    }
+                                });
+                            } else {
+                                console.error('Error updating step order:', data.error);
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                },
+            });
+        }
+    });
+
+
+            // Initialize Sortable for drag-and-drop functionality
+   
+
+        const saveButton = document.getElementById('saveButton');
+
+        document.querySelectorAll('.edit-button').forEach(button => {
+        button.addEventListener('click', function () {
+            saveButton.style.display = "inline-flex"
+            const row = button.closest('tr');
+            row.querySelectorAll('.editable').forEach(cell => {
+                const dataName = cell.getAttribute('data-name');
+                const value = cell.innerText.trim();
+                cell.innerHTML = `<input type="text" class="edit-input" name="${dataName}" value="${value}" />`;
+            });
+            button.style.display = 'none';
+            row.querySelector('.save-button').style.display = 'inline-flex';
+        });
+    });
+
+
+    document.querySelectorAll('.save-button').forEach(button => {
+        button.addEventListener('click', function () {
+            const row = button.closest('tr');
+            const stepId = row.getAttribute('data-step-id');
+            const updatedData = {};
+
+            row.querySelectorAll('.edit-input').forEach(input => {
+                updatedData[input.name] = input.value;
+            });
+
+            // Get CSRF token from meta tag
+            //const csrftoken = document.querySelector('[name=csrf-token]').content;
+
+            // Use Django's URL tag to dynamically generate the URL and replace the placeholder ID
+            const updateUrl = `{% url 'onboarding:update_step' 0 %}`.replace('0', stepId);
+
+            // AJAX request to save changes
+            fetch(updateUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',// Add CSRF token to the headers
+                },
+                body: JSON.stringify(updatedData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if (data.success) {
+                    // Update the row with new values
+                    row.querySelectorAll('.editable').forEach(cell => {
+                        const dataName = cell.getAttribute('data-name');
+                        cell.innerHTML = updatedData[dataName];
+                    });
+                    button.style.display = 'none';
+                    row.querySelector('.edit-button').style.display = 'inline-flex';
+                } else {
+                    alert('Failed to update. Please try again.');
+                }
+            })
+
+            .catch(error => console.error('Error:', error));
+        });
+    });
+
+
+        // const stepsContainer = document.getElementById('stepsSortable');
+         const formDiv = document.getElementById("stepsForm");
+
+        const stepsbutton = document.getElementById('addnewstepbutton');
+         const closeFormBtn = document.getElementById('closeFormBtn')
+         stepsbutton.addEventListener("click",function(){
+            formDiv.style.display = "flex"
+
+         })
+
+         closeFormBtn.addEventListener("click",function(){
+             formDiv.style.display = "none";
+         })
+
+
+
+   
+         const sensorDropdown = document.getElementById('id_sensor'); // Sensor dropdown
+    const stepNumberDropdown = document.getElementById('id_step_number'); // Step number dropdown
+
+    const stepNumberField = document.getElementById('id_step_number');
+    let availableSteps = []; 
+
+    sensorDropdown.addEventListener('change', function () {
+        const sensorId = this.value;
+       
+        if (sensorId) {
+            // Make an AJAX call to fetch available step numbers
+            fetch(`/onboarding/api/available-step-numbers/${sensorId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    availableSteps = data.available_step_numbers;
+                   
+                    if (availableSteps && availableSteps.length > 0) {
+                    // If no steps exist, start from 1
+                    const nextStep = Math.min(...availableSteps);
+                    stepNumberField.value = nextStep;
+                    stepNumberField.disabled = false; // Enable field
+
+                      // Reset validity
+                      stepNumberField.setCustomValidity('');
+
+                       // Set boundaries
+                       stepNumberField.setAttribute('min', Math.min(...availableSteps));
+                        stepNumberField.setAttribute('max', Math.max(...availableSteps));
+                    // Prevent manual input
+                    // stepNumberField.readOnly = true; // Disables manual typing
+
+                 
+                } else {
+                     // If no available steps, disable the field
+                    stepNumberField.value = '';
+                    stepNumberField.placeholder = 'No available steps';
+                    stepNumberField.readOnly = true;
+                }
+                    
+                })
+                .catch(error => console.error('Error fetching step numbers:', error));
+        } else {
+             // Clear and disable if no sensor is selected
+             stepNumberField.value = '';
+            stepNumberField.placeholder = 'Select a sensor first';
+            stepNumberField.disabled = true;
+        }
+    });
+
+      // Validate manual input in real-time
+      stepNumberField.addEventListener('input', function () {
+        const value = parseInt(this.value, 10);
+
+        if (!availableSteps.includes(value)) {
+            this.setCustomValidity('Invalid step number. Choose a valid step.');
+            this.reportValidity(); // Show error immediately
+        } else {
+            this.setCustomValidity(''); // Clear error if valid
+        }
+    });
+
+          // Arrow key navigation
+    stepNumberField.addEventListener('keydown', function (event) {
+        const currentStep = parseInt(this.value, 10);
+
+        if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+            event.preventDefault(); // Prevent default arrow key behavior
+
+            const currentIndex = availableSteps.indexOf(currentStep);
+
+            if (event.key === 'ArrowUp' && currentIndex < availableSteps.length - 1) {
+                this.value = availableSteps[currentIndex + 1];
+            }
+
+            if (event.key === 'ArrowDown' && currentIndex > 0) {
+                this.value = availableSteps[currentIndex - 1];
+            }
+        }
+    });
+      
+    });
+</script>
+<!-- {% else %}
+<div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+    <h6 class="text-lg text-red-600 font-semibold mb-4">You don't have permission to add installation steps.</h6>
+    <div class="text-center">
+        <a href="/accounts/login"
+            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            Login
+        </a>
+    </div>
+</div>
+{% endif %}
+{% else %}
+<div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+    <p class="text-lg text-gray-700">You must be logged in to view this page.</p>
+</div>
+<a href="/accounts/login"
+            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            Login
+        </a>
+{% endif %} -->
+{% endblock %}

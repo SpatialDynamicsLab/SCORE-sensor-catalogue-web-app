@@ -1,20 +1,101 @@
 {% extends "observations/base.html" %}
 {% load static %}
+
 {% block head %}
 {% include 'observations/map/css.html' %}
 {% endblock %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-gauge@0.2.1/dist/chartjs-gauge.min.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% block head_title %}Map {% endblock %}
 {% block content %}
 {% include 'observations/base/navbar.html' %}
-<div id="map-container">
-    <div id="map"></div>
-</div>
-<br>
-<div id="sidebar-container">
-    <img id="loading-gif" alt="Loading..." style="display: none;">
-    <div id="device-details">
-        <h4>Sensor Details</h4>
-        <p>Click on a point to see the sensor details and observations.</p>
+<div>
+    <div id="map-container">
+        <div class="loading-gif"></div>
+        <div id="map"></div>
+    </div>
+
+    <div class="devicedetailsmain">
+        <div id="wrapper">
+            <div class="loading-gif"></div>
+
+            <div id="device-details">
+                <h4 style="text-align: center;">No Sensor Selected</h4>
+                    <p style="text-align: center;">Click on a point to see the sensor details and observations.</p>
+            </div>
+
+            <div id="chartTop">
+                <div class="container-fluid">
+                    <div class="row">
+
+                        <div class="col-lg-2 col-md-3 col-sm-12" id="sidemenu">
+                            <div class="sideMenuItem">
+                                <div id="dropdown" style="align-self: end;">
+                                    <select id="timeRange" onchange="onTimeRangeChange()">
+                                        <option value="" disabled selected>Select Time Range</option>
+                                        <option value="day">24 Hrs</option>
+                                        <option value="week">Last Week</option>
+                                        <option value="month">Last Month</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="sideMenuItem">
+                                <div id="social-buttons">
+                                    <button id="facebook-btn" class=" fa-brands fa-facebook">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="62"
+                                             width="62" viewBox="0 0 512 512">
+                                            <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                                            <path fill="#1877F2" d="M512 256C512
+                                            114.6 397.4 0 256 0S0 114.6 0 256C0 376 82.7
+                                            476.8 194.2 504.5V334.2H141.4V256h52.8V222.3c0-87.1
+                                            39.4-127.5 125-127.5c16.2 0 44.2 3.2 55.7
+                                            6.4V172c-6-.6-16.5-1-29.6-1c-42 0-58.2 15.9-58.2
+                                            57.2V256h83.6l-14.4 78.2H287V510.1C413.8 494.8 512 386.9 512 256h0z"/>
+                                        </svg>
+                                    </button>
+                                    <button id="twitter-btn" class=" fa-twitter">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             height="32" width="32" viewBox="0 0 512 512">
+                                            <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                                            <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7
+                                            318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9
+                                            180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-10 col-md-9 col-sm-12" id="chart-container">
+                            <div style="display: flex; justify-content: center;">
+                                    <p class="menu-title">
+                                        <b id="sensor">Graphs</b>
+                                    </p>
+                            </div>
+                            <div id="noData" style="display: none;">
+                                <h3 style="text-align: center;">No Data Available</h3>
+                                <p style="text-align: center;">There is no data available for this sensor.</p>
+                            </div>
+                            <div id="smartChartContainer">
+                                <div class="smartchartbox" id="sChart">
+                                    <canvas class="chart" id="smart-chart"></canvas>
+                                </div>
+                            </div>
+                            <div id="chartscontainer">
+                                 <div class="chartbox">
+                                    <canvas class="chart" id="temp"></canvas>
+                                 </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% include 'observations/map/js.html' %}

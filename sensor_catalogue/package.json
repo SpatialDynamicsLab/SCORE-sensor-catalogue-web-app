@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "flowbite": "^2.5.1",
+    "svg-gauge": "^1.0.7"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.10"
+  }
+}

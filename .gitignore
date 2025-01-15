@@ -136,3 +136,6 @@ sensor_catalogue/images/
 
 .idea/
 .DS_Store
+
+sensor_catalogue/node_modules/
+node_modules
