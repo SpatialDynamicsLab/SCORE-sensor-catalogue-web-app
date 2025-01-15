@@ -126,7 +126,8 @@
             <table id="stepsTable" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
-                        <th scope="col" class="px-6 py-3">Sensor</th>
+<!--                        <th scope="col" class="px-6 py-3">Sensor</th>-->
+                        <th scope="col" class="px-6 py-3">Reorder</th>
                         <th scope="col" class="px-6 py-3">Step Number</th>
                         <th scope="col" class="px-6 py-3">Title</th>
                         <th scope="col" class="px-6 py-3">Description</th>
@@ -139,8 +140,6 @@
                         <th scope="col" class="px-6 py-3">Created at</th>
                         <th scope="col" class="px-6 py-3">Updated at</th>
                         <th scope="col" class="px-6 py-3">Actions</th>
-                        <th scope="col" class="px-6 py-3">Reorder</th>
-                 
                     </tr>
                 </thead>
                 <tbody>
@@ -148,7 +147,10 @@
 
                     <tr class="bg-slate-50  step-item"
                         data-step-id="{{ step.id }}" data-sensor-id="{{ step.sensor.id }}">
-                        <td class="px-6 py-4">{{ step.sensor.sensor_name }}</td>
+<!--                        <td class="px-6 py-4">{{ step.sensor.sensor_name }}</td>-->
+                        <td class="drag-handle px-6 py-4">
+                            <i class="fas fa-grip-lines"><img style="width: 30px; height: 30px; margin-left: 5px;" src="/static/images/draganddrop.jpg" alt=""></i> <!-- Example drag icon -->
+                        </td>
                         <td class="px-6 py-4 font-medium text-gray-900  dark:text-white " data-name="step_number">{{step.step_number }}</td>
                         <td class="px-6 py-4 editable" data-name="title" >{{ step.title }}</td>
                         <td class="px-6 py-4 editable" data-name="description" style=" max-height: 50px; overflow: auto;">{{step.description }}</td>
@@ -181,15 +183,7 @@
                                     <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
                                 </svg>
                             </button> -->
-                            
-                           
-                            
-                          
                         </td>
-                        <td class="drag-handle px-6 py-4">
-                            <i class="fas fa-grip-lines"><img style="width: 30px; height: 30px; margin-left: 5px;" src="/static/images/draganddrop.jpg" alt=""></i> <!-- Example drag icon -->
-                        </td>
-                        
                     </tr>
                     {% endfor %}
                 </tbody>
