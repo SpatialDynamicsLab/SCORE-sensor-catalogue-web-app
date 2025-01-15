@@ -54,7 +54,7 @@ class SensorThingCreateView(View):
                 {'error': 'Sensor type not found.'}, status=404)
 
         # Check if location is required and validate it.
-        if sensor.id != 2:
+        if sensor.id != 18:
             try:
                 location_coords = json.loads(location_json)
                 location = {
