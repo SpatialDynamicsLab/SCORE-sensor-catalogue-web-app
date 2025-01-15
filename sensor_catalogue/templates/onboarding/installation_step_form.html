@@ -129,6 +129,7 @@
 <!--                        <th scope="col" class="px-6 py-3">Sensor</th>-->
                         <th scope="col" class="px-6 py-3">Reorder</th>
                         <th scope="col" class="px-6 py-3">Step Number</th>
+                        <th scope="col" class="px-6 py-3">Actions</th>
                         <th scope="col" class="px-6 py-3">Title</th>
                         <th scope="col" class="px-6 py-3">Description</th>
                        
@@ -139,7 +140,6 @@
                         <th scope="col" class="px-6 py-3">Input Processing Url</th>
                         <th scope="col" class="px-6 py-3">Created at</th>
                         <th scope="col" class="px-6 py-3">Updated at</th>
-                        <th scope="col" class="px-6 py-3">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -152,19 +152,8 @@
                             <i class="fas fa-grip-lines"><img style="width: 30px; height: 30px; margin-left: 5px;" src="/static/images/draganddrop.jpg" alt=""></i> <!-- Example drag icon -->
                         </td>
                         <td class="px-6 py-4 font-medium text-gray-900  dark:text-white " data-name="step_number">{{step.step_number }}</td>
-                        <td class="px-6 py-4 editable" data-name="title" >{{ step.title }}</td>
-                        <td class="px-6 py-4 editable" data-name="description" style=" max-height: 50px; overflow: auto;">{{step.description }}</td>
-                       
-                        <td class="px-6 py-4">{{ step.step_type }}</td>
-                        <td class="px-6 py-4 editable" data-name="input_type">{{ step.input_type }}</td>
-                        <td class="px-6 py-4 editable" data-name="input_label">{{ step.input_label }}</td>
-                        <td class="px-6 py-4 editable" data-name="redirect_url"><a href="{{ step.redirect_url }}"></a>{{ step.redirect_url }}</td>
-                        <td class="px-6 py-4 editable" data-name="input_processing_url">{{ step.input_processing_url }}</td>
-                        <td class="px-6 py-4">{{ step.created_at }}</td>
-                        <td class="px-6 py-4">{{ step.updated_at }}</td>
-                        
                         <td class="flex items-center px-6 py-4">
-                           
+
                             <button class="edit-button" id="editButton"  style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; border: 2px solid #000; background-color: #f0f0f0; cursor: pointer; margin: 3px;">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M12 20h9" />
@@ -184,6 +173,16 @@
                                 </svg>
                             </button> -->
                         </td>
+                        <td class="px-6 py-4 editable" data-name="title" >{{ step.title }}</td>
+                        <td class="px-6 py-4 editable" data-name="description" style=" max-height: 50px; overflow: auto;">{{step.description }}</td>
+                       
+                        <td class="px-6 py-4">{{ step.step_type }}</td>
+                        <td class="px-6 py-4 editable" data-name="input_type">{{ step.input_type }}</td>
+                        <td class="px-6 py-4 editable" data-name="input_label">{{ step.input_label }}</td>
+                        <td class="px-6 py-4 editable" data-name="redirect_url"><a href="{{ step.redirect_url }}"></a>{{ step.redirect_url }}</td>
+                        <td class="px-6 py-4 editable" data-name="input_processing_url">{{ step.input_processing_url }}</td>
+                        <td class="px-6 py-4">{{ step.created_at }}</td>
+                        <td class="px-6 py-4">{{ step.updated_at }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
