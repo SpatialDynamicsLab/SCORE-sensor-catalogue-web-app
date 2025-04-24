@@ -34,7 +34,7 @@
     // Load Smart Citizen Data
     function loadSmartCitizenData() {
         return fetch('https://environmental-data.spatialdynamics.cloud/api/v1/' +
-            'smart-citizen/sck-devices.geojson?user_tags=SCORE&system_tags=online')
+            'smart-citizen/sck-devices.geojson?user_tags=SCORE')
             .then(response => response.json())
             .then(geojsonFeatureCollection => {
                 var smartCitizenLayer = L.geoJSON(geojsonFeatureCollection.results, {
@@ -55,7 +55,7 @@
     // Load WU Data
     function loadWUData() {
         return fetch('https://environmental-data.spatialdynamics.cloud/api/v1/' +
-            'weather-underground/pws-stations.geojson?system_tags=online')
+            'weather-underground/pws-stations.geojson')
             .then(response => response.json())
             .then(geojsonFeatureCollection => {
                 var wuPWSLayer = L.geoJSON(geojsonFeatureCollection.results, {
