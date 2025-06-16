@@ -110,10 +110,190 @@
         });
     }
 
+    const sensorThingsBaseUrl = "https://score.ccll.tero.gr/v1.1";
+
+    // Load SensorThings Device with Expanded Location & Metadata
+    function loadSensorThingsData() {
+        const url = `${sensorThingsBaseUrl}/Things?$expand=Locations,Datastreams/ObservedProperty,Datastreams/Sensor&$orderby=id&$filter=(name eq 'SCORE_HOBO_UCD_01')`;
+
+        return fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const features = data.value.map(thing => {
+                    const location = thing.Locations?.[0]?.location;
+                    if (!location) return null;
+
+                    return {
+                        type: "Feature",
+                        geometry: location,
+                        properties: {
+                            id: thing["@iot.id"],
+                            name: thing.name,
+                            description: thing.description,
+                            datastreams: thing.Datastreams || [],
+                            sensor: thing.Datastreams?.[0]?.Sensor || null
+                        }
+                    };
+                }).filter(Boolean);
+
+                const sensorThingsLayer = L.geoJSON(features, {
+                    pointToLayer: (feature, latlng) => {
+                        const marker = L.marker(latlng, {
+                            icon: createDefaultIcon('rgba(39, 130, 245, 0.48)', 30, 'sta')
+                        });
+                        addMarkerClickHandler(marker, 'sta', feature);
+                        return marker;
+                    }
+                });
+
+                combinedMarkers.addLayer(sensorThingsLayer);
+            })
+            .catch(error => console.error("SensorThings fetch error:", error));
+    }
+
+    // Add STA handling to marker click dispatcher
+    function addMarkerClickHandler(marker, type, feature) {
+        marker.on('click', function () {
+            if (selectedMarker) {
+                selectedMarker.setIcon(createDefaultIcon('rgba(63, 245, 39, 0.48)', 30, selectedMarkerType));
+            }
+            marker.setIcon(createClickedIcon(30, type));
+            selectedMarker = marker;
+            selectedMarkerType = type;
+
+            map.setView(marker.getLatLng(), 20);
+            window.scrollTo({ top: 200, behavior: 'smooth' });
+
+            if (type === 'smart') {
+                displaySCKDetails(feature);
+            } else if (type === 'wu') {
+                displayWUDetails(feature);
+            } else if (type === 'sta') {
+                displaySTAThingDetails(feature);
+            }
+        });
+    }
+
+    // Show STA device & chart
+    async function displaySTAThingDetails(feature) {
+        showLoading('wrapper');
+        chartsarea.style.display = 'none';
+        smartChartArea.style.display = 'block';
+        noData.style.display = 'none';
+
+        const thingId = feature.properties.id;
+        const thingName = feature.properties.name;
+        const thingDescription = feature.properties.description;
+        const datastreams = feature.properties.datastreams || [feature.properties.datastream]; // support single or multiple
+
+        sensor.textContent = thingName;
+        history.pushState(null, null, `${window.location.origin}/map/sta-${thingId}/`);
+
+        let detailsHtml = `
+            <div style="display: flex; justify-content: space-evenly; font-size: 10px; font-weight: bolder; background-color: steelblue; max-width: 80%; margin: 0 auto; text-align: center; border-radius: 10px;">
+                <p style="margin-top: 4px; margin-bottom: 0px; color: white;">Thing ID: ${thingId}</p>
+                <p style="margin-top: 4px; margin-bottom: 0px; color: white;">Sensor: ${datastreams[0]?.Sensor?.name || 'Unknown'}</p>
+            </div>
+            <div class="slider-container">
+                <button class="slide-button left" onclick="slideLeft()">&#10094;</button>
+                <div class="observations-container">
+        `;
+
+        for (const ds of datastreams) {
+            const obsName = ds?.ObservedProperty?.name || "Observation";
+            const unit = ds?.unitOfMeasurement?.symbol || "";
+            detailsHtml += `
+                <a href="#ds-${ds["@iot.id"]}" onclick="loadSTAChart(${ds["@iot.id"]}, '${obsName.replace(/'/g, "\\'")}', '${unit.replace(/'/g, "\\'")}')" style="border-right: 1px solid #ddd">
+                    <div class="observation-item">
+                        <div class="obsTop">
+                            <span class="value">${unit}</span>
+                            <p class="unit">${obsName}</p>
+                        </div>
+                        <span class="measurement">${ds.name}</span>
+                    </div>
+                </a>
+            `;
+        }
+
+        detailsHtml += `
+                </div>
+                <button class="slide-button right" onclick="slideRight()">&#10095;</button>
+            </div>
+            <p style="text-align: center; padding-top:2px; font-size: 14px; font-weight:900">
+                Want to see trends? Click on a value to display its time series chart
+            </p>
+            <div class="deviceInfo">
+                <p style="border: 2px solid #5f9ea0; padding: 5px; border-radius: 20px; font-size: 10px; background-color: rgb(255, 255, 255);">
+                    <strong>${thingName}: </strong>${thingDescription}
+                </p>
+                <p style="border: 2px solid #5f9ea0; padding: 5px; border-radius: 20px; font-size: 10px; background-color: rgb(255, 255, 255);">
+                    <small>Platform provider:
+                        <a href="https://score-eu-project.eu/" class="ml-2" target="_blank">SCORE Project</a>
+                    </small>
+                </p>
+            </div>
+        `;
+
+        document.getElementById('device-details').innerHTML = detailsHtml;
+        hideLoading('wrapper');
+    }
+
+
+    function loadSTAChart(datastreamId, observedName, unitLabel) {
+        chartsarea.style.display = 'none';
+        smartChartArea.style.display = 'block';
+        noData.style.display = 'none';
+
+        const url = `${sensorThingsBaseUrl}/Datastreams(${datastreamId})/Observations?$orderby=phenomenonTime desc&$select=phenomenonTime,result,id&$top=1000`;
+
+        fetchData(url).then(data => {
+            if (!data.value || data.value.length === 0) {
+                noData.style.display = 'block';
+                return;
+            }
+
+            const labels = data.value.map(obs => new Date(obs.phenomenonTime)).reverse();
+            const values = data.value.map(obs => obs.result).reverse();
+
+            const maxPoints = 100;
+            const step = Math.ceil(values.length / maxPoints);
+            const sampledLabels = labels.filter((_, i) => i % step === 0);
+            const sampledValues = values.filter((_, i) => i % step === 0);
+
+            createChart('smart-chart', `${observedName}`, sampledLabels, sampledValues, `${observedName} (${unitLabel})`, null, null, 'line', true, true);
+        }).catch(err => {
+            console.error("Error loading SensorThings chart:", err);
+        });
+    }
+
+
+    // Extend icon logic for SensorThings
+    function createDefaultIcon(color, size, x) {
+        if (x === 'smart') {
+            return L.divIcon({ html: `<div style="background-color: ${color}; width: ${size}px; height: ${size}px; border-radius: 50%; border: 2px solid rgba(63, 245, 39, 0.75);">SC</div>`, iconSize: [size, size], iconAnchor: [size / 2, size / 2] });
+        }
+        if (x === 'sta') {
+            return L.divIcon({ html: `<div style="background-color: ${color}; width: ${size}px; height: ${size}px; border-radius: 50%; border: 2px solid rgba(39, 130, 245, 0.75);">STA</div>`, iconSize: [size, size], iconAnchor: [size / 2, size / 2] });
+        }
+        return L.divIcon({ html: `<div style="background-color: ${color}; width: ${size}px; height: ${size}px; border-radius: 50%; border: 2px solid rgba(63, 245, 39, 0.75);">WS</div>`, iconSize: [size, size], iconAnchor: [size / 2, size / 2] });
+    }
+
+    function createClickedIcon(size, x) {
+        let label = x === 'smart' ? 'SC' : x === 'sta' ? 'STA' : 'WS';
+        return L.divIcon({
+            html: `<div style="background-color:rgba(243, 0, 32, 0.59); width: 30px; height: 30px; border-radius: 50%; border: 2px solid rgba(243, 0, 32, 0.89);">${label}</div>`,
+            iconSize: [size, size],
+            iconAnchor: [size / 2, size / 2],
+            className: ''
+        });
+    }
+
+
     // Load all data into combinedMarkers
     Promise.all([
         loadSmartCitizenData(),
         loadWUData(),
+        loadSensorThingsData(),
         showLoading('map-container'),
         showLoading('wrapper'),
     ]).then(() => {
