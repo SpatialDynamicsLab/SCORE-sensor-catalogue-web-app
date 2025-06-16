@@ -350,7 +350,10 @@
 
     // smart citizen data display
     let senId = null;
+    let smartCitizenDeviceId = null;
+
     async function displaySCKDetails(feature) {
+        smartCitizenDeviceId = feature.id;
         showLoading('wrapper')
         chartsarea.style.display = 'none';
         dda = "";
@@ -450,7 +453,8 @@
         senId = sId;
         chartsarea.style.display = 'none';
         smartChartArea.style.display = 'block';
-        loadEachSmartStationObservation(sensor.textContent, sId);
+        //loadEachSmartStationObservation(sensor.textContent, sId);
+        loadEachSmartStationObservation(smartCitizenDeviceId, sId);
     }
 
     let keywu = null;
@@ -656,25 +660,21 @@
         }
     }
 
-    async function loadEachSmartStationObservation(deviceName, sId) {
+    async function loadEachSmartStationObservation(deviceId, sId) {
         try {
-            // cLoading.style.display = 'unset';
-            showLoading('wrapper')
+            showLoading('wrapper');
             noData.style.display = 'none';
 
-            const url = `https://environmental-data.spatialdynamics.cloud/api/v1/smart-citizen/observations/?device_name=${deviceName}&sensor_id=${sId}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=10000`;
+            const url = `https://environmental-data.spatialdynamics.cloud/api/v1/smart-citizen/observations/?device_id=${deviceId}&sensor_id=${sId}&start_date=${formattedPreviousDate}&end_date=${formattedCurrentDate}&limit=10000`;
             console.log("Fetching data from URL:", url);
             const data = await fetchData(url);
 
-
             if (!data.results || data.results.length === 0) {
                 console.log('No data available for this station.');
-                // cLoading.style.display = 'none';
-                hideLoading('wrapper')
+                hideLoading('wrapper');
                 noData.style.display = 'block';
                 return;
             }
-
 
             const measurementName = data.results[0].measurement_name;
             const sensorName = data.results[0].sensor_name;
@@ -682,23 +682,21 @@
             const labels = data.results.map(observation => new Date(observation.recorded_at)).reverse();
             const values = data.results.map(observation => observation.value).reverse();
 
-            // Filter null values
             const filteredLabels = labels.filter((_, index) => values[index] !== null);
             const filteredValues = values.filter(value => value !== null);
 
-            // Downsample data if necessary
-            const maxPoints = 100; // Maximum number of points to display in the chart
+            const maxPoints = 100;
             const step = Math.ceil(filteredValues.length / maxPoints);
             const sampledLabels = filteredLabels.filter((_, index) => index % step === 0);
             const sampledValues = filteredValues.filter((_, index) => index % step === 0);
+
             createChart('smart-chart', `${sensorName}`, sampledLabels, sampledValues, measurementName, null, null, 'line', true, true);
-            //smartChart(sampledLabels, sampledValues);
-            // cLoading.style.display = 'none';
-            hideLoading('wrapper')
+            hideLoading('wrapper');
         } catch (error) {
             console.error('Error:', error);
         }
     }
+
 
     function windChart(data1, data2, canvasId, yAxisLabel) {
         if (charts[canvasId]) {
